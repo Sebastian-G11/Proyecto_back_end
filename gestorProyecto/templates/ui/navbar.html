@@ -177,66 +177,82 @@
 	}
 </style>
 
-<!-- Toggle Sidebar Button for Mobile -->
-<button class="mobile-toggle" onclick="toggleSidebar()">
-	<i class="bi bi-x-lg"></i>
-</button>
+<aside>
+	<!-- Toggle Sidebar Button for Mobile -->
+	<button class="mobile-toggle" onclick="toggleSidebar()">
+		<i class="bi bi-x-lg"></i>
+	</button>
 
-<!-- Sidebar Component -->
-<div class="sidebar d-flex flex-column" style="width: 280px">
-	<!-- Mobile Toggle Button (Solo visible en móvil) -->
+	<!-- Sidebar Component -->
+	<div class="sidebar d-flex flex-column" style="width: 280px">
+		<!-- Mobile Toggle Button (Solo visible en móvil) -->
 
-	<!-- User Header -->
-	<div class="sidebar-header">
-		<div class="user-avatar">JD</div>
-		<div class="user-name">Juan Díaz</div>
-		<div class="user-role">Administrador</div>
+		<!-- User Header -->
+		<div class="sidebar-header">
+			<div class="user-avatar">JD</div>
+			<div class="user-name">Juan Díaz</div>
+			<div class="user-role">Administrador</div>
+		</div>
+
+		<!-- Navigation Menu -->
+		<div class="sidebar-menu">
+			<nav class="nav flex-column">
+				<!-- Sección Principal -->
+				<div class="menu-section">Panel Principal</div>
+				<a class="nav-link" href="#">
+					<i class="bi bi-speedometer2"></i>
+					Dashboard
+				</a>
+
+				<!-- Sección de Gestión -->
+				<div class="menu-section">Gestión</div>
+				<a class="nav-link" href="#">
+					<i class="bi bi-people"></i>
+					Usuarios
+				</a>
+				<a class="nav-link" href="/acciones">
+					<i class="bi bi-folder"></i>
+					Acciones
+				</a>
+				<a class="nav-link" href="/actividades">
+					<i class="bi bi-subtract"></i>
+					Actividades
+				</a>
+				<a class="nav-link" href="#">
+					<i class="bi bi-box"></i>
+					Inventario
+				</a>
+			</nav>
+		</div>
+
+		<!-- Footer with Logout -->
+		<div class="sidebar-footer">
+			<button type="button" class="logout-btn">
+				<i class="bi bi-box-arrow-right me-2"></i>
+				Cerrar Sesión
+			</button>
+		</div>
 	</div>
-
-	<!-- Navigation Menu -->
-	<div class="sidebar-menu">
-		<nav class="nav flex-column">
-			<!-- Sección Principal -->
-			<div class="menu-section">Panel Principal</div>
-			<a class="nav-link" href="#">
-				<i class="bi bi-speedometer2"></i>
-				Dashboard
-			</a>
-
-			<!-- Sección de Gestión -->
-			<div class="menu-section">Gestión</div>
-			<a class="nav-link" href="#">
-				<i class="bi bi-people"></i>
-				Usuarios
-			</a>
-			<a class="nav-link" href="/acciones/">
-				<i class="bi bi-folder"></i>
-				Acciones
-			</a>
-			<a class="nav-link" href="#">
-				<i class="bi bi-file-text"></i>
-				Reportes
-			</a>
-			<a class="nav-link" href="#">
-				<i class="bi bi-box"></i>
-				Inventario
-			</a>
-		</nav>
-	</div>
-
-	<!-- Footer with Logout -->
-	<div class="sidebar-footer">
-		<button type="button" class="logout-btn">
-			<i class="bi bi-box-arrow-right me-2"></i>
-			Cerrar Sesión
-		</button>
-	</div>
-</div>
+</aside>
 
 <!-- Bootstrap JS CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
 <script>
+	// Este evento rescata la ruta actual y entrega el atributo active al elemento <a> que coincida con la ruta obtenida
+	document.addEventListener('DOMContentLoaded', function () {
+		const currentPath = window.location.pathname // Obtiene la ruta actual
+		const navLinks = document.querySelectorAll('.sidebar-menu .nav-link')
+
+		navLinks.forEach((link) => {
+			// Compara la ruta del enlace con la ruta actual
+			if (`${link.getAttribute('href')}/` === currentPath) {
+				navLinks.forEach((l) => l.classList.remove('active')) // Quita active de todos
+				link.classList.add('active') // Añade active al enlace actual
+			}
+		})
+	})
+
 	// Toggle sidebar en móvil
 	function toggleSidebar() {
 		const sidebar = document.querySelector('.sidebar')

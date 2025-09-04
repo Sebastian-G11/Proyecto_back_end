@@ -1,11 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
-	</head>
-	<body>
-		{% include "ui/navbar.html" %}
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listado de Actividades</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+      .detail-content {
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.3s ease;
+      }
+      .detail-content.open {
+        max-height: 1200px;
+      }
+      .detail-row td {
+        padding: 0;
+      }
+      .detail-inner {
+        padding: 1rem;
+        background-color: #f8f9fa;
+      }
+      .verification-list li {
+        margin-bottom: 0.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .verification-actions button {
+        margin-left: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    {% include "ui/navbar.html" %}
+
+    <main class="content" style="margin-left: 280px; padding: 2rem">
+      <h2>Listado de Actividades</h2>
+
+      <!-- Botón Añadir Actividad -->
+      <div class="mb-3">
+        <button class="btn btn-success" id="addActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Actividad</button>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered align-middle" id="activitiesTable">
+          <thead class="table-light">
+            <tr>
+              <th>Acción</th>
+              <th>Responsable</th>
+              <th>Estado</th>
+              <th>Detalles / Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for actividad in actividades %}
+            <tr class="align-middle">
+              <td>{{ actividad.accion_id }}</td>
+              <td>{{ actividad.responsable }}</td>
+              <td>
+                <span class="badge {% if actividad.estado == 1 %}bg-success{% else %}bg-secondary{% endif %}">
+                  {% if actividad.estado == 1 %}Activo{% else %}Inactivo{% endif %}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-info toggle-detail" data-target="details{{ forloop.counter }}">
+                  <i class="bi bi-chevron-down"></i>
+                </button>
+                <button class="btn btn-sm btn-warning edit-activity">Editar</button>
+                <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
+              </td>
+            </tr>
+            <tr class="detail-row">
+              <td colspan="4">
+                <div id="details{{ forloop.counter }}" class="detail-content">
+                  <div class="detail-inner d-flex justify-content-between">
+                    <div>
+                      <p><strong>Fecha Creación:</strong> {{ actividad.fecha_creacion }}</p>
+                      <p><strong>Fecha Actualización:</strong> {{ actividad.fecha_actualizacion }}</p>
+                    </div>
+                  </div>
+                  <hr />
+
+                  {% include "actividades/verificaciones.html" with verificaciones=actividad.medios_verificacion %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% include "actividades/modal.html" %}
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const activityModal = new bootstrap.Modal(document.getElementById("activityModal"));
+        let currentRow = null;
+        const tableBody = document.querySelector("#activitiesTable tbody");
+
+        tableBody.addEventListener("click", (e) => {
+          const target = e.target;
+
+          // Toggle detalle
+          if (target.closest(".toggle-detail")) {
+            const btn = target.closest(".toggle-detail");
+            const targetId = btn.getAttribute("data-target");
+            const content = document.getElementById(targetId);
+            content.classList.toggle("open");
+            btn.querySelector("i").classList.toggle("bi-chevron-up");
+            btn.querySelector("i").classList.toggle("bi-chevron-down");
+          }
+
+          // Editar actividad
+          if (target.closest(".edit-activity")) {
+            currentRow = target.closest("tr");
+            const cells = currentRow.children;
+            const form = document.getElementById("activityForm");
+            form.accion.value = cells[0].textContent;
+            form.responsable.value = cells[1].textContent;
+            form.estado.value = cells[2].textContent.trim() === "Activo" ? 1 : 0;
+            document.getElementById("activityModalLabel").textContent = "Editar Actividad";
+            activityModal.show();
+          }
+
+          // Eliminar actividad
+          if (target.closest(".delete-activity")) {
+            const row = target.closest("tr");
+            const detailRow = row.nextElementSibling;
+            if (confirm(`¿Seguro que quieres eliminar la actividad de "${row.children[0].textContent}"?`)) {
+              row.remove();
+              if (detailRow && detailRow.classList.contains("detail-row")) {
+                detailRow.remove();
+              }
+            }
+          }
+
+          // Crear/Editar medio de verificación
+          if (target.closest(".add-verification")) {
+            const btn = target.closest(".add-verification");
+            const container = btn.closest(".detail-content");
+            const name = container.querySelector(".verification-name").value.trim();
+            const url = container.querySelector(".verification-url").value.trim();
+            const list = container.querySelector(".verification-list");
+            if (name && url) {
+              const li = document.createElement("li");
+              li.className = "list-group-item";
+              li.innerHTML = `
+              <span><strong>${name}:</strong> <a href="${url}" target="_blank">${url}</a></span>
+              <span class="verification-actions">
+                <button class="btn btn-sm btn-warning edit-verification">Editar</button>
+                <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
+              </span>
+            `;
+              list.appendChild(li);
+              container.querySelector(".verification-name").value = "";
+              container.querySelector(".verification-url").value = "";
+            }
+          }
+
+          if (target.closest(".edit-verification")) {
+            const li = target.closest("li");
+            const container = li.closest(".detail-content");
+            const span = li.querySelector("span:first-child");
+            const [text, link] = span.innerHTML.split("<a");
+            const urlMatch = link.match(/href="([^"]+)"/);
+            container.querySelector(".verification-name").value = text.replace("<strong>", "").replace(":</strong> ", "");
+            container.querySelector(".verification-url").value = urlMatch ? urlMatch[1] : "";
+            li.remove();
+          }
+
+          if (target.closest(".delete-verification")) {
+            target.closest("li").remove();
+          }
+        });
+
+        // Abrir modal para añadir actividad
+        document.getElementById("addActivityBtn").addEventListener("click", () => {
+          currentRow = null;
+          const form = document.getElementById("activityForm");
+          form.reset();
+          document.getElementById("activityModalLabel").textContent = "Añadir Actividad";
+          activityModal.show();
+        });
+
+        // Guardar cambios
+        document.getElementById("saveActivityBtn").addEventListener("click", () => {
+          const form = document.getElementById("activityForm");
+          if (currentRow) {
+            const cells = currentRow.children;
+            cells[0].textContent = form.accion.value;
+            cells[1].textContent = form.responsable.value;
+            cells[2].innerHTML = `<span class="badge ${form.estado.value == 1 ? "bg-success" : "bg-secondary"}">${form.estado.value == 1 ? "Activo" : "Inactivo"}</span>`;
+          } else {
+            const newRow = document.createElement("tr");
+            newRow.className = "align-middle";
+            const rowCount = tableBody.querySelectorAll("tr").length + 1;
+            newRow.innerHTML = `
+            <td>${form.accion.value}</td>
+            <td>${form.responsable.value}</td>
+            <td><span class="badge ${form.estado.value == 1 ? "bg-success" : "bg-secondary"}">${form.estado.value == 1 ? "Activo" : "Inactivo"}</span></td>
+            <td>
+              <button class="btn btn-sm btn-info toggle-detail" data-target="detailsNew${rowCount}">
+                <i class="bi bi-chevron-down"></i>
+              </button>
+              <button class="btn btn-sm btn-warning edit-activity">Editar</button>
+              <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
+            </td>
+          `;
+            tableBody.appendChild(newRow);
+
+            const detailRow = document.createElement("tr");
+            detailRow.className = "detail-row";
+            detailRow.innerHTML = `
+            <td colspan="4">
+              <div id="detailsNew${rowCount}" class="detail-content">
+                <div class="detail-inner">
+                  <p><strong>Fecha Creación:</strong></p>
+                  <p><strong>Fecha Actualización:</strong></p>
+                  <hr />
+                  <div>
+                    <h6>Medios de Verificación</h6>
+                    <div class="row g-2 mb-2">
+                      <div class="col">
+                        <input type="text" class="form-control verification-name" placeholder="Nombre">
+                      </div>
+                      <div class="col">
+                        <input type="url" class="form-control verification-url" placeholder="URL">
+                      </div>
+                      <div class="col-auto">
+                        <button class="btn btn-primary add-verification">Crear</button>
+                      </div>
+                    </div>
+                    <ul class="verification-list list-group list-group-flush"></ul>
+                  </div>
+                </div>
+              </div>
+            </td>
+          `;
+            tableBody.appendChild(detailRow);
+          }
+          activityModal.hide();
+        });
+      });
+    </script>
+  </body>
 </html>
