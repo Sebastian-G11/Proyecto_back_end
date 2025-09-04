@@ -1,0 +1,44 @@
+<!-- actividades/modal.html -->
+<div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="activityModalLabel">Añadir Actividad</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="activityForm">
+          <!-- Acción asociada -->
+          <div class="mb-3">
+            <label for="accion" class="form-label">Acción</label>
+            <select class="form-select" id="accion" name="accion" required>
+              <option value="" disabled selected>Selecciona una acción</option>
+              {% for accion in acciones %}
+              <option value="{{ accion.nombre }}">{{ accion.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Responsable -->
+          <div class="mb-3">
+            <label for="responsable" class="form-label">Responsable</label>
+            <input type="text" class="form-control" id="responsable" name="responsable" placeholder="ID del responsable" required />
+          </div>
+
+          <!-- Estado -->
+          <div class="mb-3">
+            <label for="estado" class="form-label">Estado</label>
+            <select class="form-select" id="estado" name="estado" required>
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveActivityBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
