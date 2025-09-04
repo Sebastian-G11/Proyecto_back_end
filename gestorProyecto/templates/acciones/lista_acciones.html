@@ -3,9 +3,155 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Listado de Acciones</title>
+		<!-- Bootstrap CSS -->
+		<link
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+		<!-- Bootstrap Icons -->
+		<link
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
+			rel="stylesheet"
+		/>
+		<style>
+			.detail-content {
+				overflow: hidden;
+				max-height: 0;
+				transition: max-height 0.3s ease;
+			}
+			.detail-content.open {
+				max-height: 1200px;
+			}
+			.detail-row td {
+				padding: 0;
+			}
+			.detail-inner {
+				padding: 1rem;
+				background-color: #f8f9fa;
+			}
+			.verification-list li {
+				margin-bottom: 0.25rem;
+			}
+		</style>
 	</head>
 	<body>
 		{% include "ui/navbar.html" %}
+
+		<main class="content" style="margin-left: 280px; padding: 2rem">
+			<h2>Listado de Acciones</h2>
+			<div class="table-responsive mt-3">
+				<table class="table table-striped table-bordered align-middle">
+					<thead class="table-light">
+						<tr>
+							<th>Dimensión</th>
+							<th>Nombre</th>
+							<th>Responsable</th>
+							<th>Presupuesto Anual</th>
+							<th>Presupuesto Reajustado</th>
+							<th>Estado</th>
+							<th>Detalles</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="align-middle">
+							<td>1</td>
+							<td>Capacitación Personal</td>
+							<td>Juan Pérez</td>
+							<td>$5,000,000</td>
+							<td>$5,500,000</td>
+							<td>
+								<span class="badge bg-success">Activo</span>
+							</td>
+							<td>
+								<button
+									class="btn btn-sm btn-info toggle-detail"
+									data-target="details1"
+								>
+									<i class="bi bi-chevron-down"></i>
+								</button>
+							</td>
+						</tr>
+						<tr class="detail-row">
+							<td colspan="7">
+								<div id="details1" class="detail-content">
+									<div
+										class="detail-inner d-flex justify-content-between"
+									>
+										<div style="flex: 1">
+											<p>
+												<strong>Descripción:</strong>
+												Capacitación anual del equipo de
+												ventas.
+											</p>
+										</div>
+										<div class="text-end" style="flex: 1">
+											<p>
+												<strong>Fecha Creación:</strong>
+												01/01/2025 10:00
+											</p>
+											<p>
+												<strong
+													>Fecha
+													Actualización:</strong
+												>
+												05/02/2025 15:30
+											</p>
+										</div>
+									</div>
+									<hr />
+									<div>
+										<h6>Medios de Verificación</h6>
+										<div class="row g-2 mb-2">
+											<div class="col">
+												<input
+													type="text"
+													class="form-control verification-name"
+													placeholder="Nombre"
+												/>
+											</div>
+											<div class="col">
+												<input
+													type="url"
+													class="form-control verification-url"
+													placeholder="URL"
+												/>
+											</div>
+											<div class="col-auto">
+												<button class="btn btn-primary">
+													Crear
+												</button>
+											</div>
+										</div>
+										<ul
+											class="verification-list list-group list-group-flush"
+										></ul>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</main>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				// Toggle acordeón
+				const toggleButtons =
+					document.querySelectorAll('.toggle-detail')
+				toggleButtons.forEach((btn) => {
+					btn.addEventListener('click', () => {
+						const targetId = btn.getAttribute('data-target')
+						const content = document.getElementById(targetId)
+						content.classList.toggle('open')
+						btn.querySelector('i').classList.toggle('bi-chevron-up')
+						btn.querySelector('i').classList.toggle(
+							'bi-chevron-down'
+						)
+					})
+				})
+			})
+		</script>
 	</body>
 </html>
