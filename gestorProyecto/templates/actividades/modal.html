@@ -1,4 +1,3 @@
-<!-- actividades/modal.html -->
 <div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -10,13 +9,8 @@
         <form id="activityForm">
           <!-- Acción asociada -->
           <div class="mb-3">
-            <label for="accion" class="form-label">Acción</label>
-            <select class="form-select" id="accion" name="accion" required>
-              <option value="" disabled selected>Selecciona una acción</option>
-              {% for accion in acciones %}
-              <option value="{{ accion.nombre }}">{{ accion.nombre }}</option>
-              {% endfor %}
-            </select>
+            <label for="accion" class="form-label">Acción Asociada</label>
+            <input type="text" class="form-control" id="accion" name="accion" readonly />
           </div>
 
           <!-- Responsable -->

@@ -65,15 +65,14 @@
     {% include "ui/navbar.html" %}
 
     <main class="content" style="margin-left: 280px; padding: 2rem">
-      <h2 class="mb-3">Listado de Acciones</h2>
-
       <!-- Botón Añadir Acción -->
-      <div class="mb-3 text-end">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-3">Listado de Acciones</h2>
         <button class="btn btn-success" id="addActionBtn"><i class="bi bi-plus-lg"></i> Añadir Acción</button>
       </div>
 
       <!-- Tabla responsiva -->
-      <div class="table-responsive mt-3">
+      <div class="table-responsive">
         <table class="table table-striped table-bordered align-middle" id="actionsTable">
           <thead class="table-light">
             <tr>
