@@ -5,7 +5,6 @@ from django.shortcuts import render,redirect
 usuarios = [
     {'nombre' : 'sebas',  'contrasena' : '1234'},
      {'nombre' : 'pepe', 'contrasena' : '123'}
-    
 ]
 
 def display(request):
