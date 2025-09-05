@@ -27,7 +27,7 @@ import usuarios.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('autenticacion/', include(autenticacion.urls)),
+    path('', include(autenticacion.urls)),
     path('dimensiones/', include(dimensiones.urls)),
     path('acciones/', include(acciones.urls)),
     path('actividades/', include(actividades.urls)),
