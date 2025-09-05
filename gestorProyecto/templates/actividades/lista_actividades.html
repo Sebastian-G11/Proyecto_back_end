@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,40 +7,85 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet" />
     <style>
+      /* ----- Animación / acordeón ----- */
       .detail-content {
         overflow: hidden;
         max-height: 0;
-        transition: max-height 0.3s ease;
+        transition: max-height 0.32s ease;
       }
       .detail-content.open {
-        max-height: 1200px;
+        max-height: 1000px; /* suficiente para el contenido */
       }
+
+      /* ----- Estilos detalle ----- */
       .detail-row td {
         padding: 0;
+        border-top: none;
       }
       .detail-inner {
         padding: 1rem;
         background-color: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+        flex-wrap: wrap;
       }
+
+      /* ----- Verificaciones ----- */
       .verification-list li {
         margin-bottom: 0.25rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap; /* 🔹 ahora soporta pantallas pequeñas */
+      }
+      .verification-list a {
+        word-break: break-word; /* 🔹 evita desbordes en URLs largas */
       }
       .verification-actions button {
         margin-left: 0.25rem;
+      }
+
+      /* ----- Layout principal y responsive ----- */
+      .content {
+        margin-left: 280px; /* espacio para navbar/side */
+        padding: 2rem;
+      }
+
+      @media (max-width: 991px) {
+        /* 🔹 Ajustes móviles */
+        .content {
+          margin-left: 0 !important;
+          padding: 1rem !important;
+        }
+        .detail-inner {
+          flex-direction: column !important;
+          align-items: stretch;
+        }
+        .table-responsive {
+          overflow-x: auto;
+        }
+        table {
+          font-size: 0.9rem;
+        }
+        td,
+        th {
+          white-space: nowrap;
+          word-break: break-word;
+        }
+        .verification-actions {
+          margin-top: 0.5rem;
+        }
       }
     </style>
   </head>
   <body>
     {% include "ui/navbar.html" %}
 
-    <main class="content" style="margin-left: 280px; padding: 2rem">
-      <h2>Listado de Actividades</h2>
-
-      <!-- Botón Añadir Actividad -->
-      <div class="mb-3">
+    <main class="content">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Listado de Actividades</h2>
         <button class="btn btn-success" id="addActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Actividad</button>
       </div>
 
@@ -48,15 +93,16 @@
         <table class="table table-striped table-bordered align-middle" id="activitiesTable">
           <thead class="table-light">
             <tr>
-              <th>Acción</th>
+              <th>Actividad</th>
               <th>Responsable</th>
               <th>Estado</th>
-              <th>Detalles / Acciones</th>
+              <th class="text-center">Detalles / Acciones</th>
             </tr>
           </thead>
           <tbody>
             {% for actividad in actividades %}
-            <tr class="align-middle">
+            <!-- fila resumen -->
+            <tr class="align-middle action-row">
               <td>{{ actividad.accion_id }}</td>
               <td>{{ actividad.responsable }}</td>
               <td>
@@ -64,7 +110,7 @@
                   {% if actividad.estado == 1 %}Activo{% else %}Inactivo{% endif %}
                 </span>
               </td>
-              <td>
+              <td class="text-center">
                 <button class="btn btn-sm btn-info toggle-detail" data-target="details{{ forloop.counter }}">
                   <i class="bi bi-chevron-down"></i>
                 </button>
@@ -72,13 +118,15 @@
                 <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
               </td>
             </tr>
+
+            <!-- fila detalle (acordeón) -->
             <tr class="detail-row">
               <td colspan="4">
                 <div id="details{{ forloop.counter }}" class="detail-content">
-                  <div class="detail-inner d-flex justify-content-between">
-                    <div>
-                      <p><strong>Fecha Creación:</strong> {{ actividad.fecha_creacion }}</p>
-                      <p><strong>Fecha Actualización:</strong> {{ actividad.fecha_actualizacion }}</p>
+                  <div class="detail-inner">
+                    <div class="flex-fill">
+                      <p class="mb-1"><strong>Fecha Creación:</strong> {{ actividad.fecha_creacion }}</p>
+                      <p class="mb-0"><strong>Fecha Actualización:</strong> {{ actividad.fecha_actualizacion }}</p>
                     </div>
                   </div>
                   <hr />
@@ -96,89 +144,112 @@
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const activityModal = new bootstrap.Modal(document.getElementById("activityModal"));
         let currentRow = null;
         const tableBody = document.querySelector("#activitiesTable tbody");
 
+        // Delegación de eventos
         tableBody.addEventListener("click", (e) => {
           const target = e.target;
 
-          // Toggle detalle
-          if (target.closest(".toggle-detail")) {
-            const btn = target.closest(".toggle-detail");
-            const targetId = btn.getAttribute("data-target");
-            const content = document.getElementById(targetId);
+          // toggle detalle
+          const toggleBtn = target.closest(".toggle-detail");
+          if (toggleBtn) {
+            const content = document.getElementById(toggleBtn.dataset.target);
+            if (!content) return;
             content.classList.toggle("open");
-            btn.querySelector("i").classList.toggle("bi-chevron-up");
-            btn.querySelector("i").classList.toggle("bi-chevron-down");
+            const icon = toggleBtn.querySelector("i");
+            if (icon) {
+              icon.classList.toggle("bi-chevron-up");
+              icon.classList.toggle("bi-chevron-down");
+            }
+            return;
           }
 
-          // Editar actividad
-          if (target.closest(".edit-activity")) {
-            currentRow = target.closest("tr");
+          // editar actividad
+          // editar actividad
+          const editBtn = target.closest(".edit-activity");
+          if (editBtn) {
+            currentRow = editBtn.closest("tr.action-row");
+            if (!currentRow) return;
             const cells = currentRow.children;
             const form = document.getElementById("activityForm");
-            form.accion.value = cells[0].textContent;
-            form.responsable.value = cells[1].textContent;
-            form.estado.value = cells[2].textContent.trim() === "Activo" ? 1 : 0;
+
+            // rellenar el formulario con los valores de la fila
+            form.querySelector("#accion").value = cells[0].textContent.trim();
+            form.querySelector("#responsable").value = cells[1].textContent.trim();
+            form.querySelector("#estado").value = cells[2].textContent.includes("Activo") ? 1 : 0;
+
             document.getElementById("activityModalLabel").textContent = "Editar Actividad";
             activityModal.show();
+            return;
           }
 
-          // Eliminar actividad
-          if (target.closest(".delete-activity")) {
-            const row = target.closest("tr");
+          // eliminar actividad
+          const deleteBtn = target.closest(".delete-activity");
+          if (deleteBtn) {
+            const row = deleteBtn.closest("tr.action-row");
+            if (!row) return;
             const detailRow = row.nextElementSibling;
-            if (confirm(`¿Seguro que quieres eliminar la actividad de "${row.children[0].textContent}"?`)) {
+            if (confirm(`¿Seguro que quieres eliminar la actividad de "${row.children[0].textContent.trim()}"?`)) {
               row.remove();
-              if (detailRow && detailRow.classList.contains("detail-row")) {
-                detailRow.remove();
-              }
+              if (detailRow && detailRow.classList.contains("detail-row")) detailRow.remove();
             }
+            return;
           }
 
-          // Crear/Editar medio de verificación
-          if (target.closest(".add-verification")) {
-            const btn = target.closest(".add-verification");
-            const container = btn.closest(".detail-content");
-            const name = container.querySelector(".verification-name").value.trim();
-            const url = container.querySelector(".verification-url").value.trim();
+          // crear medio
+          const addVerBtn = target.closest(".add-verification");
+          if (addVerBtn) {
+            const container = addVerBtn.closest(".detail-content");
+            const nameInput = container.querySelector(".verification-name");
+            const urlInput = container.querySelector(".verification-url");
             const list = container.querySelector(".verification-list");
+            const name = nameInput.value.trim();
+            const url = urlInput.value.trim();
             if (name && url) {
               const li = document.createElement("li");
               li.className = "list-group-item";
               li.innerHTML = `
-              <span><strong>${name}:</strong> <a href="${url}" target="_blank">${url}</a></span>
-              <span class="verification-actions">
-                <button class="btn btn-sm btn-warning edit-verification">Editar</button>
-                <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
-              </span>
-            `;
+                <span><strong>${name}:</strong> <a href="${url}" target="_blank" rel="noopener">${url}</a></span>
+                <span class="verification-actions">
+                  <button class="btn btn-sm btn-warning edit-verification">Editar</button>
+                  <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
+                </span>
+              `;
               list.appendChild(li);
-              container.querySelector(".verification-name").value = "";
-              container.querySelector(".verification-url").value = "";
+              nameInput.value = "";
+              urlInput.value = "";
             }
+            return;
           }
 
-          if (target.closest(".edit-verification")) {
-            const li = target.closest("li");
+          // editar medio
+          const editVerBtn = target.closest(".edit-verification");
+          if (editVerBtn) {
+            const li = editVerBtn.closest("li");
             const container = li.closest(".detail-content");
-            const span = li.querySelector("span:first-child");
-            const [text, link] = span.innerHTML.split("<a");
-            const urlMatch = link.match(/href="([^"]+)"/);
-            container.querySelector(".verification-name").value = text.replace("<strong>", "").replace(":</strong> ", "");
-            container.querySelector(".verification-url").value = urlMatch ? urlMatch[1] : "";
+            const anchor = li.querySelector("a");
+            const url = anchor ? anchor.href : "";
+            const name = li.querySelector("strong").textContent.replace(":", "");
+            container.querySelector(".verification-name").value = name;
+            container.querySelector(".verification-url").value = url;
             li.remove();
+            return;
           }
 
-          if (target.closest(".delete-verification")) {
-            target.closest("li").remove();
+          // eliminar medio
+          const delVerBtn = target.closest(".delete-verification");
+          if (delVerBtn) {
+            delVerBtn.closest("li").remove();
+            return;
           }
         });
 
-        // Abrir modal para añadir actividad
+        // abrir modal para añadir actividad
         document.getElementById("addActivityBtn").addEventListener("click", () => {
           currentRow = null;
           const form = document.getElementById("activityForm");
@@ -187,62 +258,76 @@
           activityModal.show();
         });
 
-        // Guardar cambios
+        // guardar actividad
         document.getElementById("saveActivityBtn").addEventListener("click", () => {
-          const form = document.getElementById("activityForm");
-          if (currentRow) {
-            const cells = currentRow.children;
-            cells[0].textContent = form.accion.value;
-            cells[1].textContent = form.responsable.value;
-            cells[2].innerHTML = `<span class="badge ${form.estado.value == 1 ? "bg-success" : "bg-secondary"}">${form.estado.value == 1 ? "Activo" : "Inactivo"}</span>`;
-          } else {
+          // guardar actividad
+          document.getElementById("saveActivityBtn").addEventListener("click", () => {
+            const form = document.getElementById("activityForm");
+            const accion = form.querySelector("#accion").value;
+            const responsable = form.querySelector("#responsable").value;
+            const estado = form.querySelector("#estado").value;
+
+            if (currentRow) {
+              const cells = currentRow.children;
+              cells[0].textContent = accion;
+              cells[1].textContent = responsable;
+              cells[2].innerHTML = `<span class="badge ${estado == 1 ? "bg-success" : "bg-secondary"}">${estado == 1 ? "Activo" : "Inactivo"}</span>`;
+              activityModal.hide();
+              return;
+            }
+
+            // ... resto para añadir nueva fila
+
+            const idx = tableBody.querySelectorAll("tr.action-row").length + 1;
             const newRow = document.createElement("tr");
-            newRow.className = "align-middle";
-            const rowCount = tableBody.querySelectorAll("tr").length + 1;
+            newRow.className = "align-middle action-row";
             newRow.innerHTML = `
             <td>${form.accion.value}</td>
             <td>${form.responsable.value}</td>
             <td><span class="badge ${form.estado.value == 1 ? "bg-success" : "bg-secondary"}">${form.estado.value == 1 ? "Activo" : "Inactivo"}</span></td>
-            <td>
-              <button class="btn btn-sm btn-info toggle-detail" data-target="detailsNew${rowCount}">
+            <td class="text-center">
+              <button class="btn btn-sm btn-info toggle-detail" data-target="detailsNew${idx}">
                 <i class="bi bi-chevron-down"></i>
-              </button>
-              <button class="btn btn-sm btn-warning edit-activity">Editar</button>
-              <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
-            </td>
-          `;
+                </button>
+                <button class="btn btn-sm btn-warning edit-activity">Editar</button>
+                <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
+                </td>
+                `;
             tableBody.appendChild(newRow);
+          });
 
-            const detailRow = document.createElement("tr");
-            detailRow.className = "detail-row";
-            detailRow.innerHTML = `
+          const detailRow = document.createElement("tr");
+          detailRow.className = "detail-row";
+          detailRow.innerHTML = `
             <td colspan="4">
-              <div id="detailsNew${rowCount}" class="detail-content">
+              <div id="detailsNew${idx}" class="detail-content">
                 <div class="detail-inner">
-                  <p><strong>Fecha Creación:</strong></p>
-                  <p><strong>Fecha Actualización:</strong></p>
-                  <hr />
-                  <div>
-                    <h6>Medios de Verificación</h6>
-                    <div class="row g-2 mb-2">
-                      <div class="col">
-                        <input type="text" class="form-control verification-name" placeholder="Nombre">
-                      </div>
-                      <div class="col">
-                        <input type="url" class="form-control verification-url" placeholder="URL">
-                      </div>
-                      <div class="col-auto">
-                        <button class="btn btn-primary add-verification">Crear</button>
-                      </div>
-                    </div>
-                    <ul class="verification-list list-group list-group-flush"></ul>
+                  <div class="flex-fill">
+                    <p class="mb-1"><strong>Fecha Creación:</strong></p>
+                    <p class="mb-0"><strong>Fecha Actualización:</strong></p>
                   </div>
+                </div>
+                <hr />
+                <div>
+                  <h6>Medios de Verificación</h6>
+                  <div class="row g-2 mb-2">
+                    <div class="col">
+                      <input type="text" class="form-control verification-name" placeholder="Nombre">
+                    </div>
+                    <div class="col">
+                      <input type="url" class="form-control verification-url" placeholder="URL">
+                    </div>
+                    <div class="col-auto">
+                      <button class="btn btn-primary add-verification">Crear</button>
+                    </div>
+                  </div>
+                  <ul class="verification-list list-group list-group-flush"></ul>
                 </div>
               </div>
             </td>
           `;
-            tableBody.appendChild(detailRow);
-          }
+          tableBody.appendChild(detailRow);
+
           activityModal.hide();
         });
       });
