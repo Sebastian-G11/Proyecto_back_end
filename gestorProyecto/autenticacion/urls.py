@@ -3,5 +3,5 @@ from django.urls import path
 from  autenticacion.views import display
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', display)
+    path('', display)
 ]
