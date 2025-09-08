@@ -1,86 +1,64 @@
 <!-- Modal Editar / Añadir Acción -->
-<div
-	class="modal fade"
-	id="actionModal"
-	tabindex="-1"
-	aria-labelledby="actionModalLabel"
-	aria-hidden="true"
->
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="actionModalLabel">Editar Acción</h5>
-				<button
-					type="button"
-					class="btn-close"
-					data-bs-dismiss="modal"
-					aria-label="Cerrar"
-				></button>
-			</div>
-			<div class="modal-body">
-				<form id="actionForm">
-					<div class="mb-3">
-						<label class="form-label">Dimensión</label>
-						<input
-							type="text"
-							class="form-control"
-							name="dimension"
-						/>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Nombre</label>
-						<input type="text" class="form-control" name="name" />
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Responsable</label>
-						<input
-							type="text"
-							class="form-control"
-							name="responsible"
-						/>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Presupuesto Anual</label>
-						<input
-							type="text"
-							class="form-control"
-							name="annualBudget"
-						/>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Presupuesto Reajustado</label>
-						<input
-							type="text"
-							class="form-control"
-							name="adjustedBudget"
-						/>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Estado</label>
-						<select class="form-select" name="status">
-							<option value="Activo">Activo</option>
-							<option value="Inactivo">Inactivo</option>
-						</select>
-					</div>
-					<input type="hidden" name="rowIndex" />
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button
-					type="button"
-					class="btn btn-secondary"
-					data-bs-dismiss="modal"
-				>
-					Cancelar
-				</button>
-				<button
-					type="button"
-					class="btn btn-primary"
-					id="saveActionBtn"
-				>
-					Guardar cambios
-				</button>
-			</div>
-		</div>
-	</div>
+<div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="actionModalLabel">Editar Acción</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="actionForm">
+          <!-- Dimensión como select -->
+          <div class="mb-3">
+            <label class="form-label">Dimensión</label>
+            <select class="form-select" name="dimension" required>
+              <option value="" selected disabled>Selecciona una dimensión</option>
+              {% for dim in dimensiones %}
+              <option value="{{ dim.dimension_id }}">{{ dim.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Nombre de la acción -->
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" name="name" required />
+          </div>
+
+          <!-- Responsable -->
+          <div class="mb-3">
+            <label class="form-label">Responsable</label>
+            <input type="text" class="form-control" name="responsible" />
+          </div>
+
+          <!-- Presupuesto Anual -->
+          <div class="mb-3">
+            <label class="form-label">Presupuesto Anual</label>
+            <input type="text" class="form-control" name="annualBudget" />
+          </div>
+
+          <!-- Presupuesto Reajustado -->
+          <div class="mb-3">
+            <label class="form-label">Presupuesto Reajustado</label>
+            <input type="text" class="form-control" name="adjustedBudget" />
+          </div>
+
+          <!-- Estado -->
+          <div class="mb-3">
+            <label class="form-label">Estado</label>
+            <select class="form-select" name="status">
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+
+          <input type="hidden" name="rowIndex" />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveActionBtn">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
 </div>
