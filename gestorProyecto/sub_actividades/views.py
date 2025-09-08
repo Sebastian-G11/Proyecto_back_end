@@ -1,5 +1,5 @@
 from django.shortcuts import render
 
 # Create your views here.
-def display(request):
-    return render(request, "")
+def display_sub_actividades(request):
+    return render(request, "sub_actividades/prueba2.html")

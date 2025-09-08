@@ -1,7 +1,7 @@
-from django.contrib import admin
 from django.urls import path
-from  autenticacion.views import display
+from .views import display, logout
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', display)
+    path('', display, name='login'),  # login principal
+    path('logout/', logout, name='logout'),
 ]

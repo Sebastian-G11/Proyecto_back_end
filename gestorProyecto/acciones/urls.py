@@ -1,7 +1,7 @@
-from django.contrib import admin
 from django.urls import path
-from acciones.views import display
+from .views import display_acciones
+from autenticacion.views import login_required_simulado
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', display),
+    path('', login_required_simulado(display_acciones), name='acciones'),  # protegida
 ]
