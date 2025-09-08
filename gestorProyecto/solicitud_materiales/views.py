@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+## Mocks de actividades, solicitudes y usuarios para añadido dinámico, posteriormente vendrán de la misma BDD
 actividades = [
     {"actividad_id": 1, "nombre": "Capacitación Inicial"},
     {"actividad_id": 2, "nombre": "Implementación CRM"},

@@ -7,28 +7,43 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet" />
     <style>
-      .detail-content {
-        overflow: hidden;
-        max-height: 0;
-        transition: max-height 0.3s ease;
+      /* Margen dinámico del contenido según tamaño de pantalla */
+      #mainContent {
+        margin-left: 0; /* móvil / tablet */
+        padding: 2rem;
       }
-      .detail-content.open {
-        max-height: 800px;
+      @media (min-width: 992px) {
+        #mainContent {
+          margin-left: 280px; /* navbar fijo en escritorio */
+        }
       }
-      .detail-row td {
-        padding: 0;
+
+      /* Flex-wrap para header y botón en móviles */
+      .header-flex {
+        flex-wrap: wrap;
       }
-      .detail-inner {
-        padding: 1rem;
-        background-color: #f8f9fa;
+      .header-flex h2 {
+        margin-bottom: 0.5rem;
+      }
+      .header-flex button {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Tabla responsive */
+      .table-responsive {
+        overflow-x: auto;
       }
       @media (max-width: 768px) {
-        table {
+        table#solicitudesTable {
           font-size: 0.9rem;
         }
-        td,
-        th {
+        table#solicitudesTable th,
+        table#solicitudesTable td {
           white-space: nowrap;
+        }
+        .edit-solicitud,
+        .delete-solicitud {
+          margin-bottom: 0.25rem;
         }
       }
     </style>
@@ -36,14 +51,16 @@
   <body>
     {% include "ui/navbar.html" %}
 
-    <main class="content" style="margin-left: 280px; padding: 2rem">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Listado de Solicitudes de Materiales</h2>
+    <main class="content" id="mainContent">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center header-flex mb-3">
+        <h2 class="mb-0">Listado de Solicitudes de Materiales</h2>
         <button class="btn btn-success" id="addSolicitudBtn"><i class="bi bi-plus-lg"></i> Añadir Solicitud</button>
       </div>
 
+      <!-- Tabla responsiva -->
       <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle" id="solicitudesTable">
+        <table class="table table-striped table-bordered align-middle w-100" id="solicitudesTable">
           <thead class="table-light">
             <tr>
               <th>Actividad</th>
@@ -69,7 +86,7 @@
               <td>{{ solicitud.fecha_creacion }}</td>
               <td>{{ solicitud.responsable_nombre }}</td>
               <td class="text-nowrap">
-                <button class="btn btn-sm btn-warning edit-solicitud">Editar</button>
+                <button class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0">Editar</button>
                 <button class="btn btn-sm btn-danger delete-solicitud">Eliminar</button>
               </td>
             </tr>
@@ -82,7 +99,6 @@
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const solicitudModal = new bootstrap.Modal(document.getElementById("solicitudModal"));
@@ -98,14 +114,32 @@
             currentRow = target.closest("tr");
             const cells = currentRow.children;
             const form = document.getElementById("solicitudForm");
-            form.actividad.value = cells[0].textContent;
+
+            // Selección dinámica de actividad
+            const actividadSelect = form.actividad;
+            for (let i = 0; i < actividadSelect.options.length; i++) {
+              if (actividadSelect.options[i].text === cells[0].textContent) {
+                actividadSelect.selectedIndex = i;
+                break;
+              }
+            }
+
+            // Selección dinámica de responsable
+            const responsableSelect = form.responsable;
+            for (let i = 0; i < responsableSelect.options.length; i++) {
+              if (responsableSelect.options[i].text === cells[7].textContent) {
+                responsableSelect.selectedIndex = i;
+                break;
+              }
+            }
+
             form.materiales.value = cells[1].textContent;
             form.numero_orden.value = cells[2].textContent;
             form.valor_esperado.value = cells[3].textContent.replace("$", "");
             form.valor_final.value = cells[4].textContent.replace("$", "");
             form.codigo_factura.value = cells[5].textContent;
             form.fecha_creacion.value = cells[6].textContent;
-            form.responsable.value = cells[7].textContent;
+
             document.getElementById("solicitudModalLabel").textContent = "Editar Solicitud";
             solicitudModal.show();
           }
@@ -133,31 +167,31 @@
           const form = document.getElementById("solicitudForm");
           if (currentRow) {
             const cells = currentRow.children;
-            cells[0].textContent = form.actividad.value;
+            cells[0].textContent = form.actividad.options[form.actividad.selectedIndex].text;
             cells[1].textContent = form.materiales.value;
             cells[2].textContent = form.numero_orden.value;
             cells[3].textContent = `$${form.valor_esperado.value}`;
             cells[4].textContent = form.valor_final.value ? `$${form.valor_final.value}` : "-";
             cells[5].textContent = form.codigo_factura.value;
             cells[6].textContent = form.fecha_creacion.value;
-            cells[7].textContent = form.responsable.value;
+            cells[7].textContent = form.responsable.options[form.responsable.selectedIndex].text;
           } else {
             const newRow = document.createElement("tr");
             newRow.className = "align-middle";
             newRow.innerHTML = `
-            <td>${form.actividad.value}</td>
-            <td>${form.materiales.value}</td>
-            <td>${form.numero_orden.value}</td>
-            <td>$${form.valor_esperado.value}</td>
-            <td>${form.valor_final.value ? "$" + form.valor_final.value : "-"}</td>
-            <td>${form.codigo_factura.value}</td>
-            <td>${form.fecha_creacion.value}</td>
-            <td>${form.responsable.value}</td>
-            <td class="text-nowrap">
-              <button class="btn btn-sm btn-warning edit-solicitud">Editar</button>
-              <button class="btn btn-sm btn-danger delete-solicitud">Eliminar</button>
-            </td>
-          `;
+              <td>${form.actividad.options[form.actividad.selectedIndex].text}</td>
+              <td>${form.materiales.value}</td>
+              <td>${form.numero_orden.value}</td>
+              <td>$${form.valor_esperado.value}</td>
+              <td>${form.valor_final.value ? "$" + form.valor_final.value : "-"}</td>
+              <td>${form.codigo_factura.value}</td>
+              <td>${form.fecha_creacion.value}</td>
+              <td>${form.responsable.options[form.responsable.selectedIndex].text}</td>
+              <td class="text-nowrap">
+                <button class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0">Editar</button>
+                <button class="btn btn-sm btn-danger delete-solicitud">Eliminar</button>
+              </td>
+            `;
             tableBody.appendChild(newRow);
           }
           solicitudModal.hide();

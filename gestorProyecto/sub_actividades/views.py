@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+# Mock de actividades y subactividades para añadido dinámico, posteriormente vendrán desde la BDD
 actividades = [
     {
         "actividad_id": 1,

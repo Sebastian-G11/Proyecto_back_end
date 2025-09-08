@@ -1,9 +1,8 @@
 from django.shortcuts import render
 from datetime import datetime
 
-# Create your views here.
-def prueba2(request):
-    actividades = [
+## Mock de actividades y acciones para hacer el añadido dinámico en la template, posteriormente vendrán directamente desde la base de datos
+actividades = [
         {
             "accion_id": "Capacitación Personal",
             "responsable": "Pedro Silva",  
@@ -28,7 +27,7 @@ def prueba2(request):
             ],
         },
     ]  
-    acciones = [
+acciones = [
         {
           "nombre": "Capacitación Personal"
         },
@@ -37,4 +36,6 @@ def prueba2(request):
         }
     ]
 
+# Create your views here.
+def display_actividades(request):
     return render(request, 'actividades/lista_actividades.html', {"actividades": actividades, "acciones": acciones})
