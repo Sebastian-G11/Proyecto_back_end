@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+# Mock de dimensiones para hacer el añadido dinámico en el template, posteriormente esta estructurá vendrá directamente de la BDD
 dimensiones = [
     {
         "dimension_id": 1,

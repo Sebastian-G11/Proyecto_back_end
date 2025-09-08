@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from autenticacion.views import login_required_simulado
 
-@login_required_simulado
-def display_acciones(request):
-    user = request.session.get("user")
-    acciones = [
+## Mock de acciones y dimensiones para hacer el añadido dinámico en la template, posteriormente vendrán directamente desde la base de datos
+acciones = [
         {
             "dimension": "Gestión de Capacitaciones",
             "nombre": "Capacitación Personal",
@@ -36,7 +34,7 @@ def display_acciones(request):
         },
     ]
 
-    dimensiones = [
+dimensiones = [
     {
         "dimension_id": 1,
         "nombre": "Gestión de Capacitaciones"
@@ -46,6 +44,8 @@ def display_acciones(request):
         "nombre": "Interacción con el Cliente"
     }
     ]
-    
 
+@login_required_simulado
+def display_acciones(request):
+    user = request.session.get("user")
     return render(request, "acciones/lista_acciones.html", {"usuario": user, "acciones": acciones, "dimensiones": dimensiones})
