@@ -1,0 +1,67 @@
+<div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="solicitudModalLabel">Editar Solicitud</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="solicitudForm">
+          <div class="mb-3">
+            <label class="form-label">Actividad</label>
+            <select class="form-select" name="actividad" required>
+              <option value="" disabled selected>Selecciona una actividad</option>
+              {% for act in actividades %}
+              <option value="{{ act.nombre }}">{{ act.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Materiales Solicitados</label>
+            <input type="text" class="form-control" name="materiales" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Número Orden</label>
+            <input type="text" class="form-control" name="numero_orden" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Valor Esperado</label>
+            <input type="number" class="form-control" name="valor_esperado" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Valor Final Compra</label>
+            <input type="number" class="form-control" name="valor_final" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Código Factura</label>
+            <input type="text" class="form-control" name="codigo_factura" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Fecha Creación</label>
+            <input type="datetime-local" class="form-control" name="fecha_creacion" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Responsable</label>
+            <select class="form-select" name="responsable" required>
+              <option value="" disabled selected>Selecciona un responsable</option>
+              {% for user in responsables %}
+              <option value="{{ user.id }}">{{ user.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" id="saveSolicitudBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
