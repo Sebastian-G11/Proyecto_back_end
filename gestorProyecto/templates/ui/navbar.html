@@ -193,9 +193,13 @@
       <nav class="nav flex-column">
         <!-- Sección de Gestión -->
         <div class="menu-section">Gestión</div>
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="/usuarios">
           <i class="bi bi-people"></i>
           Usuarios
+        </a>
+        <a class="nav-link" href="/dimensiones">
+          <i class="bi bi-box-fill"></i>
+          Dimensiones
         </a>
         <a class="nav-link" href="/acciones">
           <i class="bi bi-folder"></i>
@@ -205,16 +209,22 @@
           <i class="bi bi-subtract"></i>
           Actividades
         </a>
+        <a class="nav-link" href="/sub_actividades">
+          <i class="bi bi-boxes"></i>
+          Sub Actividades
+        </a>
       </nav>
     </div>
 
     <!-- Footer with Logout -->
     <div class="sidebar-footer">
-    <a href="/logout/" class="logout-btn">
-      <i class="bi bi-box-arrow-right me-2"></i>
-      Cerrar Sesión
-    </a>
-  </div>
+     <button type="button" class="logout-btn">
+      <a href="/logout/" class="text-white text-decoration-none">
+       <i class="bi bi-box-arrow-right me-2"></i>
+       Cerrar Sesión
+      </a>
+     </button>
+    </div>
 </aside>
 
 <!-- Bootstrap JS CDN -->

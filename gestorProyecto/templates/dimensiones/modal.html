@@ -1,0 +1,26 @@
+<div class="modal fade" id="dimensionModal" tabindex="-1" aria-labelledby="dimensionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dimensionModalLabel">Añadir Dimensión</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="dimensionForm">
+          <div class="mb-3">
+            <label for="dimensionId" class="form-label">Dimensión ID</label>
+            <input type="text" class="form-control" id="dimensionId" name="dimensionId" required />
+          </div>
+          <div class="mb-3">
+            <label for="dimensionNombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="dimensionNombre" name="dimensionNombre" required />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveDimensionBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

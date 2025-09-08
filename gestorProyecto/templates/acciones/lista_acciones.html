@@ -127,7 +127,7 @@
         </table>
       </div>
 
-      {% include "acciones/modal.html" %}
+      {% include "acciones/modal.html" with dimensiones=dimensiones %}
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
@@ -159,12 +159,22 @@
             currentRow = target.closest("tr");
             const cells = currentRow.children;
             const form = document.getElementById("actionForm");
-            form.dimension.value = cells[0].textContent;
+
+            // Seleccionar opción correcta del select por nombre
+            const select = form.dimension;
+            for (let i = 0; i < select.options.length; i++) {
+              if (select.options[i].text === cells[0].textContent) {
+                select.selectedIndex = i;
+                break;
+              }
+            }
+
             form.name.value = cells[1].textContent;
             form.responsible.value = cells[2].textContent;
-            form.annualBudget.value = cells[3].textContent;
-            form.adjustedBudget.value = cells[4].textContent;
-            form.status.value = cells[5].textContent;
+            form.annualBudget.value = cells[3].textContent.replace("$", "");
+            form.adjustedBudget.value = cells[4].textContent.replace("$", "");
+            form.status.value = cells[5].textContent.trim();
+
             document.getElementById("actionModalLabel").textContent = "Editar Acción";
             actionModal.show();
           }
@@ -175,11 +185,10 @@
             const detailRow = currentRow.nextElementSibling;
             if (confirm(`¿Seguro que quieres eliminar la acción "${currentRow.children[1].textContent}"?`)) {
               currentRow.remove();
-              if (detailRow && detailRow.classList.contains("detail-row")) {
-                detailRow.remove();
-              }
+              if (detailRow && detailRow.classList.contains("detail-row")) detailRow.remove();
             }
           }
+
           // Editar medio de verificación
           if (target.closest(".edit-verification")) {
             const li = target.closest("li");
@@ -208,12 +217,12 @@
               const li = document.createElement("li");
               li.className = "list-group-item";
               li.innerHTML = `
-                    <span><strong>${name}:</strong> <a href="${url}" target="_blank">${url}</a></span>
-                    <span class="verification-actions">
-                        <button class="btn btn-sm btn-warning edit-verification">Editar</button>
-                        <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
-                    </span>
-                `;
+              <span><strong>${name}:</strong> <a href="${url}" target="_blank">${url}</a></span>
+              <span class="verification-actions">
+                  <button class="btn btn-sm btn-warning edit-verification">Editar</button>
+                  <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
+              </span>
+          `;
               list.appendChild(li);
               container.querySelector(".verification-name").value = "";
               container.querySelector(".verification-url").value = "";
@@ -233,14 +242,19 @@
         // Guardar cambios (añadir o editar)
         document.getElementById("saveActionBtn").addEventListener("click", () => {
           const form = document.getElementById("actionForm");
+
+          // Obtener texto del option seleccionado para mostrar nombre
+          const dimensionSelect = form.dimension;
+          const dimensionNombre = dimensionSelect.options[dimensionSelect.selectedIndex].text;
+
           if (currentRow) {
             // Editar
             const cells = currentRow.children;
-            cells[0].textContent = form.dimension.value;
+            cells[0].textContent = dimensionNombre;
             cells[1].textContent = form.name.value;
             cells[2].textContent = form.responsible.value;
-            cells[3].textContent = form.annualBudget.value;
-            cells[4].textContent = form.adjustedBudget.value;
+            cells[3].textContent = `$${form.annualBudget.value}`;
+            cells[4].textContent = `$${form.adjustedBudget.value}`;
             cells[5].innerHTML = `<span class="badge ${form.status.value === "Activo" ? "bg-success" : "bg-secondary"}">${form.status.value}</span>`;
           } else {
             // Añadir nueva fila
@@ -248,57 +262,58 @@
             newRow.className = "align-middle";
             const rowCount = tableBody.querySelectorAll("tr").length + 1;
             newRow.innerHTML = `
-                <td>${form.dimension.value}</td>
-                <td>${form.name.value}</td>
-                <td>${form.responsible.value}</td>
-                <td>${form.annualBudget.value}</td>
-                <td>${form.adjustedBudget.value}</td>
-                <td><span class="badge ${form.status.value === "Activo" ? "bg-success" : "bg-secondary"}">${form.status.value}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-info toggle-detail" data-target="detailsNew${rowCount}">
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-                    <button class="btn btn-sm btn-warning edit-action">Editar</button>
-                    <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
-                </td>
-            `;
+          <td>${dimensionNombre}</td>
+          <td>${form.name.value}</td>
+          <td>${form.responsible.value}</td>
+          <td>$${form.annualBudget.value}</td>
+          <td>$${form.adjustedBudget.value}</td>
+          <td><span class="badge ${form.status.value === "Activo" ? "bg-success" : "bg-secondary"}">${form.status.value}</span></td>
+          <td>
+              <button class="btn btn-sm btn-info toggle-detail" data-target="detailsNew${rowCount}">
+                  <i class="bi bi-chevron-down"></i>
+              </button>
+              <button class="btn btn-sm btn-warning edit-action">Editar</button>
+              <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
+          </td>
+      `;
             tableBody.appendChild(newRow);
 
             const detailRow = document.createElement("tr");
             detailRow.className = "detail-row";
             detailRow.innerHTML = `
-                <td colspan="7">
-                    <div id="detailsNew${rowCount}" class="detail-content">
-                        <div class="detail-inner d-flex justify-content-between">
-                            <div style="flex:1">
-                                <p><strong>Descripción:</strong></p>
-                            </div>
-                            <div class="text-end" style="flex:1">
-                                <p><strong>Fecha Creación:</strong></p>
-                                <p><strong>Fecha Actualización:</strong></p>
-                            </div>
-                        </div>
-                        <hr />
-                        <div>
-                            <h6>Medios de Verificación</h6>
-                            <div class="row g-2 mb-2">
-                                <div class="col">
-                                    <input type="text" class="form-control verification-name" placeholder="Nombre" />
-                                </div>
-                                <div class="col">
-                                    <input type="url" class="form-control verification-url" placeholder="URL" />
-                                </div>
-                                <div class="col-auto">
-                                    <button class="btn btn-primary add-verification">Crear</button>
-                                </div>
-                            </div>
-                            <ul class="verification-list list-group list-group-flush"></ul>
-                        </div>
-                    </div>
-                </td>
-            `;
+          <td colspan="7">
+              <div id="detailsNew${rowCount}" class="detail-content">
+                  <div class="detail-inner d-flex justify-content-between">
+                      <div style="flex:1">
+                          <p><strong>Descripción:</strong></p>
+                      </div>
+                      <div class="text-end" style="flex:1">
+                          <p><strong>Fecha Creación:</strong></p>
+                          <p><strong>Fecha Actualización:</strong></p>
+                      </div>
+                  </div>
+                  <hr />
+                  <div>
+                      <h6>Medios de Verificación</h6>
+                      <div class="row g-2 mb-2">
+                          <div class="col">
+                              <input type="text" class="form-control verification-name" placeholder="Nombre" />
+                          </div>
+                          <div class="col">
+                              <input type="url" class="form-control verification-url" placeholder="URL" />
+                          </div>
+                          <div class="col-auto">
+                              <button class="btn btn-primary add-verification">Crear</button>
+                          </div>
+                      </div>
+                      <ul class="verification-list list-group list-group-flush"></ul>
+                  </div>
+              </div>
+          </td>
+      `;
             tableBody.appendChild(detailRow);
           }
+
           actionModal.hide();
         });
       });

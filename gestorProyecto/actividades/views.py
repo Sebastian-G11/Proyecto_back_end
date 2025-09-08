@@ -7,6 +7,7 @@ def prueba2(request):
         {
             "accion_id": "Capacitación Personal",
             "responsable": "Pedro Silva",  
+            "nombre": "Clase de capacitación",
             "fecha_creacion": datetime(2025, 9, 4, 10, 0),
             "fecha_actualizacion": datetime(2025, 9, 5, 15, 30),
             "estado": 1,  # 1=Activo, 0=Inactivo
@@ -18,6 +19,7 @@ def prueba2(request):
         {
             "accion_id": "Implementación CRM",
             "responsable": "Pedro Silva",
+            "nombre": "Plan de uso de CRM",
             "fecha_creacion": datetime(2025, 9, 1, 11, 20),
             "fecha_actualizacion": datetime(2025, 9, 3, 9, 45),
             "estado": 0,
@@ -26,5 +28,13 @@ def prueba2(request):
             ],
         },
     ]  
+    acciones = [
+        {
+          "nombre": "Capacitación Personal"
+        },
+        {
+          "nombre": "Implementación CRM"
+        }
+    ]
 
-    return render(request, 'actividades/lista_actividades.html', {"actividades": actividades})
+    return render(request, 'actividades/lista_actividades.html', {"actividades": actividades, "acciones": acciones})

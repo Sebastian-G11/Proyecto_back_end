@@ -6,7 +6,7 @@ def display_acciones(request):
     user = request.session.get("user")
     acciones = [
         {
-            "dimension": 1,
+            "dimension": "Gestión de Capacitaciones",
             "nombre": "Capacitación Personal",
             "responsable": "Juan Pérez",
             "presupuesto_anual": 5000000,
@@ -21,7 +21,7 @@ def display_acciones(request):
             ],
         },
         {
-            "dimension": 2,
+            "dimension": "Interacción con el Cliente",
             "nombre": "Implementación CRM",
             "responsable": "María López",
             "presupuesto_anual": 8000000,
@@ -35,4 +35,17 @@ def display_acciones(request):
             ],
         },
     ]
-    return render(request, "acciones/lista_acciones.html", {"usuario": user, "acciones": acciones})
+
+    dimensiones = [
+    {
+        "dimension_id": 1,
+        "nombre": "Gestión de Capacitaciones"
+    },
+    {
+        "dimension_id": 2,
+        "nombre": "Interacción con el Cliente"
+    }
+    ]
+    
+
+    return render(request, "acciones/lista_acciones.html", {"usuario": user, "acciones": acciones, "dimensiones": dimensiones})

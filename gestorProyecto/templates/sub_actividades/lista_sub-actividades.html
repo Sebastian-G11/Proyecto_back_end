@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    {% include "ui/navbar.html" %}
+    <main class="content" style="margin-left: 280px; padding: 2rem">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-3">Listado de Sub-Actividades</h2>
+        <button class="btn btn-success" id="addSubActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Sub-Actividad</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle" id="subActivitiesTable">
+          <thead class="table-light">
+            <tr>
+              <th>Actividad</th>
+              <th>Nombre</th>
+              <th>Fecha Creación</th>
+              <th>Fecha Actualización</th>
+              <th>Grado Aprobación</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in subactividades %}
+            <tr>
+              <td>{{ sub.actividad }}</td>
+              <td>{{ sub.nombre }}</td>
+              <td>{{ sub.fecha_creacion }}</td>
+              <td>{{ sub.fecha_actualizacion }}</td>
+              <td>{{ sub.grado_aprobacion }}</td>
+              <td class="text-nowrap">
+                <button class="btn btn-sm btn-warning edit-subactivity">Editar</button>
+                <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% include "sub_actividades/modal.html" with actividades=actividades %}
+    </main>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const subActivityModal = new bootstrap.Modal(document.getElementById("subActivityModal"));
+        let currentRow = null;
+        const tableBody = document.querySelector("#subActivitiesTable tbody");
+
+        // Delegación de eventos
+        tableBody.addEventListener("click", (e) => {
+          const target = e.target;
+
+          // Editar subactividad
+          if (target.closest(".edit-subactivity")) {
+            currentRow = target.closest("tr");
+            const cells = currentRow.children;
+            const form = document.getElementById("subActivityForm");
+
+            // Selección dinámica de actividad
+            const select = form.actividad;
+            for (let i = 0; i < select.options.length; i++) {
+              if (select.options[i].text === cells[0].textContent) {
+                select.selectedIndex = i;
+                break;
+              }
+            }
+
+            form.nombre.value = cells[1].textContent;
+            form.grado_aprobacion.value = cells[4].textContent;
+            document.getElementById("subActivityModalLabel").textContent = "Editar Sub-Actividad";
+            subActivityModal.show();
+          }
+
+          // Eliminar subactividad
+          if (target.closest(".delete-subactivity")) {
+            const row = target.closest("tr");
+            if (confirm(`¿Seguro que quieres eliminar la sub-actividad "${row.children[1].textContent}"?`)) {
+              row.remove();
+            }
+          }
+        });
+
+        // Abrir modal para añadir subactividad
+        document.getElementById("addSubActivityBtn").addEventListener("click", () => {
+          currentRow = null;
+          const form = document.getElementById("subActivityForm");
+          form.reset();
+          document.getElementById("subActivityModalLabel").textContent = "Añadir Sub-Actividad";
+          subActivityModal.show();
+        });
+
+        // Guardar cambios (añadir o editar)
+        document.getElementById("saveSubActivityBtn").addEventListener("click", () => {
+          const form = document.getElementById("subActivityForm");
+          const actividadNombre = form.actividad.options[form.actividad.selectedIndex].text;
+
+          if (currentRow) {
+            // Editar
+            currentRow.children[0].textContent = actividadNombre;
+            currentRow.children[1].textContent = form.nombre.value;
+            currentRow.children[4].textContent = form.grado_aprobacion.value;
+          } else {
+            // Añadir nueva fila
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+        <td>${actividadNombre}</td>
+        <td>${form.nombre.value}</td>
+        <td>${new Date().toLocaleDateString()}</td>
+        <td>${new Date().toLocaleDateString()}</td>
+        <td>${form.grado_aprobacion.value}</td>
+        <td class="text-nowrap">
+          <button class="btn btn-sm btn-warning edit-subactivity">Editar</button>
+          <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>
+        </td>
+      `;
+            tableBody.appendChild(newRow);
+          }
+
+          subActivityModal.hide();
+        });
+      });
+    </script>
+  </body>
+</html>
