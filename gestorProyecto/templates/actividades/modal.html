@@ -7,10 +7,21 @@
       </div>
       <div class="modal-body">
         <form id="activityForm">
-          <!-- Acción asociada -->
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre de la Actividad</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Capacitación inicial" required />
+          </div>
+
+          <!-- Acción asociada (select con opciones dinámicas) -->
           <div class="mb-3">
             <label for="accion" class="form-label">Acción Asociada</label>
-            <input type="text" class="form-control" id="accion" name="accion" readonly />
+            <select class="form-select" id="accion" name="accion" required>
+              <option value="" selected disabled>Selecciona una acción</option>
+              {% for accion in acciones %}
+              <option value="{{ accion.nombre }}">{{ accion.nombre }}</option>
+              {% endfor %}
+            </select>
           </div>
 
           <!-- Responsable -->
