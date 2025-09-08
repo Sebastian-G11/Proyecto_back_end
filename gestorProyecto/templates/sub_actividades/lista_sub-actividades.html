@@ -3,18 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Listado de Sub-Actividades</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+      /* Margen dinámico del contenido según tamaño de pantalla */
+      #mainContent {
+        margin-left: 0; /* móvil / tablet */
+      }
+      @media (min-width: 992px) {
+        #mainContent {
+          margin-left: 280px; /* navbar fijo en escritorio */
+        }
+      }
+
+      /* Flex-wrap para header y botón en móviles */
+      .header-flex {
+        flex-wrap: wrap;
+      }
+      .header-flex h2 {
+        margin-bottom: 0.5rem;
+      }
+      .header-flex button {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Tabla responsive */
+      .table-responsive {
+        overflow-x: auto;
+      }
+      @media (max-width: 768px) {
+        table#subActivitiesTable {
+          font-size: 0.9rem;
+        }
+        table#subActivitiesTable th,
+        table#subActivitiesTable td {
+          white-space: nowrap;
+        }
+      }
+    </style>
   </head>
   <body>
     {% include "ui/navbar.html" %}
-    <main class="content" style="margin-left: 280px; padding: 2rem">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-3">Listado de Sub-Actividades</h2>
+
+    <main class="content p-3 p-md-4" id="mainContent">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center header-flex mb-3">
+        <h2 class="mb-0">Listado de Sub-Actividades</h2>
         <button class="btn btn-success" id="addSubActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Sub-Actividad</button>
       </div>
 
+      <!-- Tabla responsiva -->
       <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle" id="subActivitiesTable">
+        <table class="table table-striped table-bordered align-middle w-100" id="subActivitiesTable">
           <thead class="table-light">
             <tr>
               <th>Actividad</th>
@@ -34,7 +75,7 @@
               <td>{{ sub.fecha_actualizacion }}</td>
               <td>{{ sub.grado_aprobacion }}</td>
               <td class="text-nowrap">
-                <button class="btn btn-sm btn-warning edit-subactivity">Editar</button>
+                <button class="btn btn-sm btn-warning edit-subactivity mb-1 mb-md-0">Editar</button>
                 <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>
               </td>
             </tr>
@@ -45,6 +86,8 @@
 
       {% include "sub_actividades/modal.html" with actividades=actividades %}
     </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const subActivityModal = new bootstrap.Modal(document.getElementById("subActivityModal"));
@@ -108,16 +151,16 @@
             // Añadir nueva fila
             const newRow = document.createElement("tr");
             newRow.innerHTML = `
-        <td>${actividadNombre}</td>
-        <td>${form.nombre.value}</td>
-        <td>${new Date().toLocaleDateString()}</td>
-        <td>${new Date().toLocaleDateString()}</td>
-        <td>${form.grado_aprobacion.value}</td>
-        <td class="text-nowrap">
-          <button class="btn btn-sm btn-warning edit-subactivity">Editar</button>
-          <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>
-        </td>
-      `;
+              <td>${actividadNombre}</td>
+              <td>${form.nombre.value}</td>
+              <td>${new Date().toLocaleDateString()}</td>
+              <td>${new Date().toLocaleDateString()}</td>
+              <td>${form.grado_aprobacion.value}</td>
+              <td class="text-nowrap">
+                <button class="btn btn-sm btn-warning edit-subactivity mb-1 mb-md-0">Editar</button>
+                <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>
+              </td>
+            `;
             tableBody.appendChild(newRow);
           }
 
