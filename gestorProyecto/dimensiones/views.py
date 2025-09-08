@@ -1,5 +1,5 @@
 from django.shortcuts import render
 
 # Create your views here.
-def display(request):
-    return render(request, "")
+def display_dimensiones(request):
+    return render(request, "dimensiones/prueba1.html")

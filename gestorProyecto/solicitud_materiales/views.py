@@ -1,5 +1,5 @@
 from django.shortcuts import render
 
 # Create your views here.
-def display(request):
-    return render(request, "")
+def display_solicitud_materiales(request):
+    return render(request, "solicitud_materiales/prueba3.html")
