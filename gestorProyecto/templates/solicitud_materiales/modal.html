@@ -51,7 +51,7 @@
             <label class="form-label">Responsable</label>
             <select class="form-select" name="responsable" required>
               <option value="" disabled selected>Selecciona un responsable</option>
-              {% for user in responsables %}
+              {% for user in usuarios %}
               <option value="{{ user.id }}">{{ user.nombre }}</option>
               {% endfor %}
             </select>

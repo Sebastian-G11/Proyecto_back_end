@@ -69,7 +69,7 @@
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-3">Listado de Acciones</h2>
         {% if usuario.role_id == 10 %}
-          <button class="btn btn-success" id="addActionBtn"><i class="bi bi-plus-lg"></i> Añadir Acción</button>
+        <button class="btn btn-success" id="addActionBtn"><i class="bi bi-plus-lg"></i> Añadir Acción</button>
         {% endif %}
       </div>
 
@@ -107,8 +107,8 @@
                   <i class="bi bi-chevron-down"></i>
                 </button>
                 {% if usuario.role_id == 10 %}
-                  <button class="btn btn-sm btn-warning edit-action">Editar</button>
-                  <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
+                <button class="btn btn-sm btn-warning edit-action">Editar</button>
+                <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
                 {% endif %}
               </td>
             </tr>
@@ -148,7 +148,7 @@
         let currentRow = null;
         const tableBody = document.querySelector("#actionsTable tbody");
 
-        // Delegación de eventos para toda la tabla
+        // Delegación de eventos en la tabla
         tableBody.addEventListener("click", (e) => {
           const target = e.target;
 
@@ -187,54 +187,10 @@
             actionModal.show();
           }
 
-          // Eliminar acción
+          // Eliminar acción (solo confirm, no modifica DOM)
           if (target.closest(".delete-action")) {
-            const currentRow = target.closest("tr");
-            const detailRow = currentRow.nextElementSibling;
-            if (confirm(`¿Seguro que quieres eliminar la acción "${currentRow.children[1].textContent}"?`)) {
-              currentRow.remove();
-              if (detailRow && detailRow.classList.contains("detail-row")) detailRow.remove();
-            }
-          }
-
-          // Editar medio de verificación
-          if (target.closest(".edit-verification")) {
-            const li = target.closest("li");
-            const container = li.closest(".detail-content");
-            const span = li.querySelector("span:first-child");
-            const [text, link] = span.innerHTML.split("<a");
-            const urlMatch = link.match(/href="([^"]+)"/);
-            container.querySelector(".verification-name").value = text.replace("<strong>", "").replace(":</strong> ", "");
-            container.querySelector(".verification-url").value = urlMatch ? urlMatch[1] : "";
-            li.remove();
-          }
-
-          // Eliminar medio de verificación
-          if (target.closest(".delete-verification")) {
-            target.closest("li").remove();
-          }
-
-          // Crear medio de verificación
-          if (target.closest(".add-verification")) {
-            const btn = target.closest(".add-verification");
-            const container = btn.closest(".detail-content");
-            const name = container.querySelector(".verification-name").value.trim();
-            const url = container.querySelector(".verification-url").value.trim();
-            const list = container.querySelector(".verification-list");
-            if (name && url) {
-              const li = document.createElement("li");
-              li.className = "list-group-item";
-              li.innerHTML = `
-              <span><strong>${name}:</strong> <a href="${url}" target="_blank">${url}</a></span>
-              <span class="verification-actions">
-                  <button class="btn btn-sm btn-warning edit-verification">Editar</button>
-                  <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
-              </span>
-          `;
-              list.appendChild(li);
-              container.querySelector(".verification-name").value = "";
-              container.querySelector(".verification-url").value = "";
-            }
+            const row = target.closest("tr");
+            confirm(`¿Seguro que quieres eliminar la acción "${row.children[1].textContent}"?`);
           }
         });
 
@@ -247,81 +203,8 @@
           actionModal.show();
         });
 
-        // Guardar cambios (añadir o editar)
+        // Guardar cambios (solo cierra modal)
         document.getElementById("saveActionBtn").addEventListener("click", () => {
-          const form = document.getElementById("actionForm");
-
-          // Obtener texto del option seleccionado para mostrar nombre
-          const dimensionSelect = form.dimension;
-          const dimensionNombre = dimensionSelect.options[dimensionSelect.selectedIndex].text;
-
-          if (currentRow) {
-            // Editar
-            const cells = currentRow.children;
-            cells[0].textContent = dimensionNombre;
-            cells[1].textContent = form.name.value;
-            cells[2].textContent = form.responsible.value;
-            cells[3].textContent = `$${form.annualBudget.value}`;
-            cells[4].textContent = `$${form.adjustedBudget.value}`;
-            cells[5].innerHTML = `<span class="badge ${form.status.value === "Activo" ? "bg-success" : "bg-secondary"}">${form.status.value}</span>`;
-          } else {
-            // Añadir nueva fila
-            const newRow = document.createElement("tr");
-            newRow.className = "align-middle";
-            const rowCount = tableBody.querySelectorAll("tr").length + 1;
-            newRow.innerHTML = `
-          <td>${dimensionNombre}</td>
-          <td>${form.name.value}</td>
-          <td>${form.responsible.value}</td>
-          <td>$${form.annualBudget.value}</td>
-          <td>$${form.adjustedBudget.value}</td>
-          <td><span class="badge ${form.status.value === "Activo" ? "bg-success" : "bg-secondary"}">${form.status.value}</span></td>
-          <td>
-              <button class="btn btn-sm btn-info toggle-detail" data-target="detailsNew${rowCount}">
-                  <i class="bi bi-chevron-down"></i>
-              </button>
-              <button class="btn btn-sm btn-warning edit-action">Editar</button>
-              <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
-          </td>
-      `;
-            tableBody.appendChild(newRow);
-
-            const detailRow = document.createElement("tr");
-            detailRow.className = "detail-row";
-            detailRow.innerHTML = `
-          <td colspan="7">
-              <div id="detailsNew${rowCount}" class="detail-content">
-                  <div class="detail-inner d-flex justify-content-between">
-                      <div style="flex:1">
-                          <p><strong>Descripción:</strong></p>
-                      </div>
-                      <div class="text-end" style="flex:1">
-                          <p><strong>Fecha Creación:</strong></p>
-                          <p><strong>Fecha Actualización:</strong></p>
-                      </div>
-                  </div>
-                  <hr />
-                  <div>
-                      <h6>Medios de Verificación</h6>
-                      <div class="row g-2 mb-2">
-                          <div class="col">
-                              <input type="text" class="form-control verification-name" placeholder="Nombre" />
-                          </div>
-                          <div class="col">
-                              <input type="url" class="form-control verification-url" placeholder="URL" />
-                          </div>
-                          <div class="col-auto">
-                              <button class="btn btn-primary add-verification">Crear</button>
-                          </div>
-                      </div>
-                      <ul class="verification-list list-group list-group-flush"></ul>
-                  </div>
-              </div>
-          </td>
-      `;
-            tableBody.appendChild(detailRow);
-          }
-
           actionModal.hide();
         });
       });

@@ -100,11 +100,10 @@
               <th>Responsable</th>
               <th>Estado</th>
               {% if usuario.role_id == 30 %}
-                  <th class="text-center">Detalles</th>
+              <th class="text-center">Detalles</th>
               {% else %}
-                  <th class="text-center">Detalles / Acciones</th>
+              <th class="text-center">Detalles / Acciones</th>
               {% endif %}
-
             </tr>
           </thead>
           <tbody>
@@ -124,15 +123,15 @@
                   <i class="bi bi-chevron-down"></i>
                 </button>
                 {% if usuario.role_id == 10 %}
-                  <button class="btn btn-sm btn-warning edit-activity">Editar</button>
-                  <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
+                <button class="btn btn-sm btn-warning edit-activity">Editar</button>
+                <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
                 {% endif %}
               </td>
             </tr>
 
             <!-- fila detalle (acordeón) -->
             <tr class="detail-row">
-              <td colspan="4">
+              <td colspan="5">
                 <div id="details{{ forloop.counter }}" class="detail-content">
                   <div class="detail-inner">
                     <div class="flex-fill">
@@ -162,7 +161,7 @@
         let currentRow = null;
         const tableBody = document.querySelector("#activitiesTable tbody");
 
-        // Delegación de eventos
+        // Delegación de eventos en la tabla
         tableBody.addEventListener("click", (e) => {
           const target = e.target;
 
@@ -180,7 +179,7 @@
             return;
           }
 
-          // 🔹 Editar actividad
+          // 🔹 Editar actividad (solo abre modal con valores de la fila)
           const editBtn = target.closest(".edit-activity");
           if (editBtn) {
             currentRow = editBtn.closest("tr.action-row");
@@ -199,63 +198,12 @@
             return;
           }
 
-          // 🔹 Eliminar actividad
+          // 🔹 Eliminar actividad (solo confirm, no toca DOM)
           const deleteBtn = target.closest(".delete-activity");
           if (deleteBtn) {
             const row = deleteBtn.closest("tr.action-row");
             if (!row) return;
-            const detailRow = row.nextElementSibling;
-            if (confirm(`¿Seguro que quieres eliminar la actividad "${row.children[1].textContent.trim()}"?`)) {
-              row.remove();
-              if (detailRow && detailRow.classList.contains("detail-row")) detailRow.remove();
-            }
-            return;
-          }
-
-          // 🔹 Crear medio de verificación
-          const addVerBtn = target.closest(".add-verification");
-          if (addVerBtn) {
-            const container = addVerBtn.closest(".detail-content");
-            const nameInput = container.querySelector(".verification-name");
-            const urlInput = container.querySelector(".verification-url");
-            const list = container.querySelector(".verification-list");
-            const name = nameInput.value.trim();
-            const url = urlInput.value.trim();
-            if (name && url) {
-              const li = document.createElement("li");
-              li.className = "list-group-item";
-              li.innerHTML = `
-            <span><strong>${name}:</strong> <a href="${url}" target="_blank" rel="noopener">${url}</a></span>
-            <span class="verification-actions">
-              <button class="btn btn-sm btn-warning edit-verification">Editar</button>
-              <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
-            </span>
-          `;
-              list.appendChild(li);
-              nameInput.value = "";
-              urlInput.value = "";
-            }
-            return;
-          }
-
-          // 🔹 Editar medio
-          const editVerBtn = target.closest(".edit-verification");
-          if (editVerBtn) {
-            const li = editVerBtn.closest("li");
-            const container = li.closest(".detail-content");
-            const anchor = li.querySelector("a");
-            const url = anchor ? anchor.href : "";
-            const name = li.querySelector("strong").textContent.replace(":", "");
-            container.querySelector(".verification-name").value = name;
-            container.querySelector(".verification-url").value = url;
-            li.remove();
-            return;
-          }
-
-          // 🔹 Eliminar medio
-          const delVerBtn = target.closest(".delete-verification");
-          if (delVerBtn) {
-            delVerBtn.closest("li").remove();
+            confirm(`¿Seguro que quieres eliminar la actividad "${row.children[1].textContent.trim()}"?`);
             return;
           }
         });
@@ -269,79 +217,8 @@
           activityModal.show();
         });
 
-        // 🔹 Guardar actividad
+        // 🔹 Guardar actividad (solo cierra modal, no manipula tabla)
         document.getElementById("saveActivityBtn").addEventListener("click", () => {
-          const form = document.getElementById("activityForm");
-          const accion = form.querySelector("#accion").value;
-          const nombre = form.querySelector("#nombre").value;
-          const responsable = form.querySelector("#responsable").value;
-          const estado = form.querySelector("#estado").value;
-
-          if (currentRow) {
-            // 🔹 Actualizar fila existente
-            const cells = currentRow.children;
-            cells[0].textContent = accion;
-            cells[1].textContent = nombre;
-            cells[2].textContent = responsable;
-            cells[3].innerHTML = `<span class="badge ${estado == 1 ? "bg-success" : "bg-secondary"}">
-          ${estado == 1 ? "Activo" : "Inactivo"}</span>`;
-            activityModal.hide();
-            return;
-          }
-
-          // 🔹 Crear nueva fila
-          const idx = tableBody.querySelectorAll("tr.action-row").length + 1;
-
-          const newRow = document.createElement("tr");
-          newRow.className = "align-middle action-row";
-          newRow.innerHTML = `
-        <td>${accion}</td>
-        <td>${nombre}</td>
-        <td>${responsable}</td>
-        <td><span class="badge ${estado == 1 ? "bg-success" : "bg-secondary"}">${estado == 1 ? "Activo" : "Inactivo"}</span></td>
-        <td class="text-center">
-          <button class="btn btn-sm btn-info toggle-detail" data-target="detailsNew${idx}">
-            <i class="bi bi-chevron-down"></i>
-          </button>
-          <button class="btn btn-sm btn-warning edit-activity">Editar</button>
-          <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
-        </td>
-      `;
-          tableBody.appendChild(newRow);
-
-          // 🔹 Crear fila de detalle asociada
-          const detailRow = document.createElement("tr");
-          detailRow.className = "detail-row";
-          detailRow.innerHTML = `
-        <td colspan="5">
-          <div id="detailsNew${idx}" class="detail-content">
-            <div class="detail-inner">
-              <div class="flex-fill">
-                <p class="mb-1"><strong>Fecha Creación:</strong></p>
-                <p class="mb-0"><strong>Fecha Actualización:</strong></p>
-              </div>
-            </div>
-            <hr />
-            <div>
-              <h6>Medios de Verificación</h6>
-              <div class="row g-2 mb-2">
-                <div class="col">
-                  <input type="text" class="form-control verification-name" placeholder="Nombre">
-                </div>
-                <div class="col">
-                  <input type="url" class="form-control verification-url" placeholder="URL">
-                </div>
-                <div class="col-auto">
-                  <button class="btn btn-primary add-verification">Crear</button>
-                </div>
-              </div>
-              <ul class="verification-list list-group list-group-flush"></ul>
-            </div>
-          </div>
-        </td>
-      `;
-          tableBody.appendChild(detailRow);
-
           activityModal.hide();
         });
       });
