@@ -50,7 +50,9 @@
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center header-flex mb-3">
         <h2 class="mb-0">Listado de Sub-Actividades</h2>
+        {% if usuario.role_id == 10 %}
         <button class="btn btn-success" id="addSubActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Sub-Actividad</button>
+        {% endif %}
       </div>
 
       <!-- Tabla responsiva -->
@@ -63,7 +65,9 @@
               <th>Fecha Creación</th>
               <th>Fecha Actualización</th>
               <th>Grado Aprobación</th>
+              {% if usuario.role_id == 10 %}
               <th>Acciones</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -74,10 +78,12 @@
               <td>{{ sub.fecha_creacion }}</td>
               <td>{{ sub.fecha_actualizacion }}</td>
               <td>{{ sub.grado_aprobacion }}</td>
+              {% if usuario.role_id == 10 %}
               <td class="text-nowrap">
                 <button class="btn btn-sm btn-warning edit-subactivity mb-1 mb-md-0">Editar</button>
                 <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>
               </td>
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>

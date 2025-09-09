@@ -26,6 +26,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Tiempo de vida de la sesión (en segundos)
+SESSION_COOKIE_AGE = 600  # 5 minutos, por ejemplo
+
+# Cierra la sesión cuando se cierra el navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Application definition
 

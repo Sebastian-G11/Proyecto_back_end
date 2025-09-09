@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from autenticacion.views import login_required_simulado
 ## Mocks de actividades, solicitudes y usuarios para añadido dinámico, posteriormente vendrán de la misma BDD
 actividades = [
     {"actividad_id": 1, "nombre": "Capacitación Inicial"},
@@ -41,7 +41,8 @@ usuarios = [
 ]
 
 
-
+@login_required_simulado
 # Create your views here.
 def display_solicitud_materiales(request):
-    return render(request, "solicitud_materiales/lista_materiales.html", {"actividades": actividades, "solicitudes": solicitudes, "usurios": usuarios})
+    user = request.session.get("user")
+    return render(request, "solicitud_materiales/lista_materiales.html", {"usuario": user, "actividades": actividades, "solicitudes": solicitudes, "usurios": usuarios})

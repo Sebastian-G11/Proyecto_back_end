@@ -41,7 +41,9 @@
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
         <h2 class="mb-3">Listado de Usuarios</h2>
+        {% if user.role_id == 10 %}
         <button class="btn btn-success mb-2 mb-md-0" id="addUserBtn"><i class="bi bi-plus-lg"></i> Añadir Usuario</button>
+        {% endif %}
       </div>
 
       <!-- Tabla responsiva -->
@@ -53,7 +55,9 @@
               <th>Apellido</th>
               <th>Email</th>
               <th>Rol</th>
+              {% if user.role_id == 10 %}
               <th>Acciones</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -63,10 +67,12 @@
               <td>{{ usuario.apellido }}</td>
               <td>{{ usuario.email }}</td>
               <td>{{ usuario.rol }}</td>
+              {% if user.role_id == 10 %}
               <td class="text-nowrap">
                 <button class="btn btn-sm btn-warning edit-user mb-1 mb-md-0">Editar</button>
                 <button class="btn btn-sm btn-danger delete-user">Eliminar</button>
               </td>
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>

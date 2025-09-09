@@ -68,7 +68,9 @@
       <!-- Botón Añadir Acción -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-3">Listado de Acciones</h2>
-        <button class="btn btn-success" id="addActionBtn"><i class="bi bi-plus-lg"></i> Añadir Acción</button>
+        {% if usuario.role_id == 10 %}
+          <button class="btn btn-success" id="addActionBtn"><i class="bi bi-plus-lg"></i> Añadir Acción</button>
+        {% endif %}
       </div>
 
       <!-- Tabla responsiva -->
@@ -82,7 +84,11 @@
               <th>Presupuesto Anual</th>
               <th>Presupuesto Reajustado</th>
               <th>Estado</th>
+              {% if usuario.role_id == 10 %}
               <th>Detalles / Acciones</th>
+              {% else %}
+              <th>Detalles</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -100,8 +106,10 @@
                 <button class="btn btn-sm btn-info toggle-detail" data-target="details{{ forloop.counter }}">
                   <i class="bi bi-chevron-down"></i>
                 </button>
-                <button class="btn btn-sm btn-warning edit-action">Editar</button>
-                <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
+                {% if usuario.role_id == 10 %}
+                  <button class="btn btn-sm btn-warning edit-action">Editar</button>
+                  <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
+                {% endif %}
               </td>
             </tr>
             <tr class="detail-row">

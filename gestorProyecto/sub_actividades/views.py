@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from autenticacion.views import login_required_simulado
 # Mock de actividades y subactividades para añadido dinámico, posteriormente vendrán desde la BDD
 actividades = [
     {
@@ -29,7 +29,8 @@ subactividades = [
     }
 ]
 
-
+@login_required_simulado
 # Create your views here.
 def display_sub_actividades(request):
-    return render(request, "sub_actividades/lista_sub-actividades.html", { "actividades": actividades, "subactividades": subactividades })
+    user = request.session.get("user")
+    return render(request, "sub_actividades/lista_sub-actividades.html", {"usuario":user, "actividades": actividades, "subactividades": subactividades })
