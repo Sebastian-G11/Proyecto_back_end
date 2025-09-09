@@ -45,4 +45,4 @@ usuarios = [
 # Create your views here.
 def display_solicitud_materiales(request):
     user = request.session.get("user")
-    return render(request, "solicitud_materiales/lista_materiales.html", {"usuario": user, "actividades": actividades, "solicitudes": solicitudes, "usurios": usuarios})
+    return render(request, "solicitud_materiales/lista_materiales.html", {"usuario": user, "actividades": actividades, "solicitudes": solicitudes, "usuarios": usuarios})

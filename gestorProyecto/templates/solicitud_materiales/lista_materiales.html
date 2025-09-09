@@ -111,13 +111,23 @@
         let currentRow = null;
         const tableBody = document.querySelector("#solicitudesTable tbody");
 
-        // Delegación de eventos
+        // Abrir modal para añadir solicitud
+        document.getElementById("addSolicitudBtn").addEventListener("click", () => {
+          currentRow = null;
+          const form = document.getElementById("solicitudForm");
+          form.reset();
+          document.getElementById("solicitudModalLabel").textContent = "Añadir Solicitud";
+          solicitudModal.show();
+        });
+
+        // Delegación de eventos en la tabla
         tableBody.addEventListener("click", (e) => {
           const target = e.target;
 
           // Editar solicitud
-          if (target.closest(".edit-solicitud")) {
-            currentRow = target.closest("tr");
+          const editBtn = target.closest(".edit-solicitud");
+          if (editBtn) {
+            currentRow = editBtn.closest("tr");
             const cells = currentRow.children;
             const form = document.getElementById("solicitudForm");
 
@@ -148,58 +158,20 @@
 
             document.getElementById("solicitudModalLabel").textContent = "Editar Solicitud";
             solicitudModal.show();
+            return;
           }
 
-          // Eliminar solicitud
-          if (target.closest(".delete-solicitud")) {
-            const row = target.closest("tr");
-            if (confirm(`¿Seguro que quieres eliminar la solicitud de "${row.children[1].textContent}"?`)) {
-              row.remove();
-            }
+          // Eliminar solicitud (solo confirm)
+          const deleteBtn = target.closest(".delete-solicitud");
+          if (deleteBtn) {
+            const row = deleteBtn.closest("tr");
+            confirm(`¿Seguro que quieres eliminar la solicitud de "${row.children[1].textContent}"?`);
+            return;
           }
         });
 
-        // Abrir modal para añadir solicitud
-        document.getElementById("addSolicitudBtn").addEventListener("click", () => {
-          currentRow = null;
-          const form = document.getElementById("solicitudForm");
-          form.reset();
-          document.getElementById("solicitudModalLabel").textContent = "Añadir Solicitud";
-          solicitudModal.show();
-        });
-
-        // Guardar cambios
+        // Guardar cambios (solo cierra modal)
         document.getElementById("saveSolicitudBtn").addEventListener("click", () => {
-          const form = document.getElementById("solicitudForm");
-          if (currentRow) {
-            const cells = currentRow.children;
-            cells[0].textContent = form.actividad.options[form.actividad.selectedIndex].text;
-            cells[1].textContent = form.materiales.value;
-            cells[2].textContent = form.numero_orden.value;
-            cells[3].textContent = `$${form.valor_esperado.value}`;
-            cells[4].textContent = form.valor_final.value ? `$${form.valor_final.value}` : "-";
-            cells[5].textContent = form.codigo_factura.value;
-            cells[6].textContent = form.fecha_creacion.value;
-            cells[7].textContent = form.responsable.options[form.responsable.selectedIndex].text;
-          } else {
-            const newRow = document.createElement("tr");
-            newRow.className = "align-middle";
-            newRow.innerHTML = `
-              <td>${form.actividad.options[form.actividad.selectedIndex].text}</td>
-              <td>${form.materiales.value}</td>
-              <td>${form.numero_orden.value}</td>
-              <td>$${form.valor_esperado.value}</td>
-              <td>${form.valor_final.value ? "$" + form.valor_final.value : "-"}</td>
-              <td>${form.codigo_factura.value}</td>
-              <td>${form.fecha_creacion.value}</td>
-              <td>${form.responsable.options[form.responsable.selectedIndex].text}</td>
-              <td class="text-nowrap">
-                <button class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0">Editar</button>
-                <button class="btn btn-sm btn-danger delete-solicitud">Eliminar</button>
-              </td>
-            `;
-            tableBody.appendChild(newRow);
-          }
           solicitudModal.hide();
         });
       });

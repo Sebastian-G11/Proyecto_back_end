@@ -89,32 +89,6 @@
         let currentRow = null;
         const tableBody = document.querySelector("#usersTable tbody");
 
-        // Delegación de eventos
-        tableBody.addEventListener("click", (e) => {
-          const target = e.target;
-
-          // Editar usuario
-          if (target.closest(".edit-user")) {
-            currentRow = target.closest("tr");
-            const cells = currentRow.children;
-            const form = document.getElementById("userForm");
-            form.nombre.value = cells[0].textContent;
-            form.apellido.value = cells[1].textContent;
-            form.email.value = cells[2].textContent;
-            form.rol.value = cells[3].textContent;
-            document.getElementById("userModalLabel").textContent = "Editar Usuario";
-            userModal.show();
-          }
-
-          // Eliminar usuario
-          if (target.closest(".delete-user")) {
-            const currentRow = target.closest("tr");
-            if (confirm(`¿Seguro que quieres eliminar al usuario "${currentRow.children[0].textContent} ${currentRow.children[1].textContent}"?`)) {
-              currentRow.remove();
-            }
-          }
-        });
-
         // Abrir modal para añadir usuario
         document.getElementById("addUserBtn").addEventListener("click", () => {
           currentRow = null;
@@ -124,34 +98,36 @@
           userModal.show();
         });
 
-        // Guardar cambios
-        document.getElementById("saveUserBtn").addEventListener("click", () => {
-          const form = document.getElementById("userForm");
+        // Delegación de eventos en la tabla
+        tableBody.addEventListener("click", (e) => {
+          const target = e.target;
 
-          if (currentRow) {
-            // Editar fila existente
+          // Editar usuario
+          const editBtn = target.closest(".edit-user");
+          if (editBtn) {
+            currentRow = editBtn.closest("tr");
             const cells = currentRow.children;
-            cells[0].textContent = form.nombre.value;
-            cells[1].textContent = form.apellido.value;
-            cells[2].textContent = form.email.value;
-            cells[3].textContent = form.rol.value;
-          } else {
-            // Crear nueva fila
-            const newRow = document.createElement("tr");
-            newRow.className = "align-middle";
-            newRow.innerHTML = `
-              <td>${form.nombre.value}</td>
-              <td>${form.apellido.value}</td>
-              <td>${form.email.value}</td>
-              <td>${form.rol.value}</td>
-              <td class="text-nowrap">
-                <button class="btn btn-sm btn-warning edit-user mb-1 mb-md-0">Editar</button>
-                <button class="btn btn-sm btn-danger delete-user">Eliminar</button>
-              </td>
-            `;
-            tableBody.appendChild(newRow);
+            const form = document.getElementById("userForm");
+            form.nombre.value = cells[0].textContent;
+            form.apellido.value = cells[1].textContent;
+            form.email.value = cells[2].textContent;
+            form.rol.value = cells[3].textContent;
+            document.getElementById("userModalLabel").textContent = "Editar Usuario";
+            userModal.show();
+            return;
           }
 
+          // Eliminar usuario (solo confirmación)
+          const deleteBtn = target.closest(".delete-user");
+          if (deleteBtn) {
+            const row = deleteBtn.closest("tr");
+            confirm(`¿Seguro que quieres eliminar al usuario "${row.children[0].textContent} ${row.children[1].textContent}"?`);
+            return;
+          }
+        });
+
+        // Guardar cambios (solo cierra modal)
+        document.getElementById("saveUserBtn").addEventListener("click", () => {
           userModal.hide();
         });
       });

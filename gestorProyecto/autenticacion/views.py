@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 
 # Lista de usuarios simulada
 usuarios = [
-    {'nombre': 'sebas', 'contrasena': '1234', 'role': 'usuario', 'role_id' : 30}, 
-    {'nombre': 'pepe', 'contrasena': '123', 'role': 'administrador', 'role_id' : 10}
+    {'nombre': 'sebas', 'contrasena': '1234', 'role': 'Usuario', 'role_id' : 30}, 
+    {'nombre': 'pepe', 'contrasena': '123', 'role': 'Administrador', 'role_id' : 10}
 ]
 
 # Login

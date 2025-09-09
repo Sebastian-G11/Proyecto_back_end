@@ -100,13 +100,23 @@
         let currentRow = null;
         const tableBody = document.querySelector("#subActivitiesTable tbody");
 
-        // Delegación de eventos
+        // Abrir modal para añadir sub-actividad
+        document.getElementById("addSubActivityBtn").addEventListener("click", () => {
+          currentRow = null;
+          const form = document.getElementById("subActivityForm");
+          form.reset();
+          document.getElementById("subActivityModalLabel").textContent = "Añadir Sub-Actividad";
+          subActivityModal.show();
+        });
+
+        // Delegación de eventos en la tabla
         tableBody.addEventListener("click", (e) => {
           const target = e.target;
 
-          // Editar subactividad
-          if (target.closest(".edit-subactivity")) {
-            currentRow = target.closest("tr");
+          // Editar sub-actividad
+          const editBtn = target.closest(".edit-subactivity");
+          if (editBtn) {
+            currentRow = editBtn.closest("tr");
             const cells = currentRow.children;
             const form = document.getElementById("subActivityForm");
 
@@ -123,53 +133,20 @@
             form.grado_aprobacion.value = cells[4].textContent;
             document.getElementById("subActivityModalLabel").textContent = "Editar Sub-Actividad";
             subActivityModal.show();
+            return;
           }
 
-          // Eliminar subactividad
-          if (target.closest(".delete-subactivity")) {
-            const row = target.closest("tr");
-            if (confirm(`¿Seguro que quieres eliminar la sub-actividad "${row.children[1].textContent}"?`)) {
-              row.remove();
-            }
+          // Eliminar sub-actividad (solo confirm)
+          const deleteBtn = target.closest(".delete-subactivity");
+          if (deleteBtn) {
+            const row = deleteBtn.closest("tr");
+            confirm(`¿Seguro que quieres eliminar la sub-actividad "${row.children[1].textContent}"?`);
+            return;
           }
         });
 
-        // Abrir modal para añadir subactividad
-        document.getElementById("addSubActivityBtn").addEventListener("click", () => {
-          currentRow = null;
-          const form = document.getElementById("subActivityForm");
-          form.reset();
-          document.getElementById("subActivityModalLabel").textContent = "Añadir Sub-Actividad";
-          subActivityModal.show();
-        });
-
-        // Guardar cambios (añadir o editar)
+        // Guardar cambios (solo cierra modal)
         document.getElementById("saveSubActivityBtn").addEventListener("click", () => {
-          const form = document.getElementById("subActivityForm");
-          const actividadNombre = form.actividad.options[form.actividad.selectedIndex].text;
-
-          if (currentRow) {
-            // Editar
-            currentRow.children[0].textContent = actividadNombre;
-            currentRow.children[1].textContent = form.nombre.value;
-            currentRow.children[4].textContent = form.grado_aprobacion.value;
-          } else {
-            // Añadir nueva fila
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-              <td>${actividadNombre}</td>
-              <td>${form.nombre.value}</td>
-              <td>${new Date().toLocaleDateString()}</td>
-              <td>${new Date().toLocaleDateString()}</td>
-              <td>${form.grado_aprobacion.value}</td>
-              <td class="text-nowrap">
-                <button class="btn btn-sm btn-warning edit-subactivity mb-1 mb-md-0">Editar</button>
-                <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>
-              </td>
-            `;
-            tableBody.appendChild(newRow);
-          }
-
           subActivityModal.hide();
         });
       });

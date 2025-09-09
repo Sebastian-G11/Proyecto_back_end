@@ -51,7 +51,7 @@
               <td class="text-center">
                 <button class="btn btn-sm btn-warning edit-dimension">Editar</button>
                 <button class="btn btn-sm btn-danger delete-dimension">Eliminar</button>
-              </td> 
+              </td>
               {% endif %}
             </tr>
             {% endfor %}
@@ -77,32 +77,8 @@
           dimensionModal.show();
         });
 
-        // Guardar dimensión (crear o editar)
+        // Guardar dimensión (solo cierra modal, no toca la tabla)
         document.getElementById("saveDimensionBtn").addEventListener("click", () => {
-          const form = document.getElementById("dimensionForm");
-          const id = form.dimensionId.value.trim();
-          const nombre = form.dimensionNombre.value.trim();
-
-          if (!id || !nombre) return;
-
-          if (currentRow) {
-            const cells = currentRow.children;
-            cells[0].textContent = id;
-            cells[1].textContent = nombre;
-          } else {
-            const newRow = document.createElement("tr");
-            newRow.className = "align-middle dimension-row";
-            newRow.innerHTML = `
-              <td>${id}</td>
-              <td>${nombre}</td>
-              <td class="text-center">
-                <button class="btn btn-sm btn-warning edit-dimension">Editar</button>
-                <button class="btn btn-sm btn-danger delete-dimension">Eliminar</button>
-              </td>
-            `;
-            tableBody.appendChild(newRow);
-          }
-
           dimensionModal.hide();
         });
 
@@ -123,9 +99,7 @@
 
           if (deleteBtn) {
             const row = deleteBtn.closest("tr.dimension-row");
-            if (confirm(`¿Seguro que quieres eliminar la dimensión "${row.children[1].textContent}"?`)) {
-              row.remove();
-            }
+            confirm(`¿Seguro que quieres eliminar la dimensión "${row.children[1].textContent}"?`);
           }
         });
       });
