@@ -3,6 +3,7 @@
 
   <!-- Inputs para agregar un nuevo medio -->
   <div class="row g-2 mb-2">
+    {% if usuario.role_id == 10%}
     <div class="col">
       <input type="text" class="form-control verification-name" placeholder="Nombre" />
     </div>
@@ -12,6 +13,7 @@
     <div class="col-auto">
       <button class="btn btn-primary add-verification">Crear</button>
     </div>
+    {% endif %}
   </div>
 
   <!-- Lista de medios de verificación existentes -->
@@ -23,8 +25,10 @@
         <a href="{{ verificacion.url }}" target="_blank">{{ verificacion.url }}</a>
       </span>
       <span class="verification-actions">
+        {% if usuario.role_id == 10 %}
         <button class="btn btn-sm btn-warning edit-verification">Editar</button>
         <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
+        {% endif %}
       </span>
     </li>
     {% endfor %}

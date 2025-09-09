@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from datetime import datetime
-
+from autenticacion.views import login_required_simulado
 ## Mock de actividades y acciones para hacer el añadido dinámico en la template, posteriormente vendrán directamente desde la base de datos
 actividades = [
         {
@@ -35,7 +35,8 @@ acciones = [
           "nombre": "Implementación CRM"
         }
     ]
-
+@login_required_simulado
 # Create your views here.
 def display_actividades(request):
-    return render(request, 'actividades/lista_actividades.html', {"actividades": actividades, "acciones": acciones})
+    user = request.session.get("user")
+    return render(request, 'actividades/lista_actividades.html', {"usuario": user,"actividades": actividades, "acciones": acciones})

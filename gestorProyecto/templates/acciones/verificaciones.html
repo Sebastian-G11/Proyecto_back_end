@@ -3,6 +3,7 @@
 
   <!-- Inputs para agregar -->
   <div class="row g-2 mb-2">
+    {% if usuario.role_id == 10 %}
     <div class="col">
       <input type="text" class="form-control verification-name" placeholder="Nombre" />
     </div>
@@ -12,6 +13,7 @@
     <div class="col-auto">
       <button class="btn btn-primary add-verification">Crear</button>
     </div>
+    {% endif %}
   </div>
 
   <!-- Lista de medios de verificación -->

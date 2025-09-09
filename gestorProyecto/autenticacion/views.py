@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 
 # Lista de usuarios simulada
 usuarios = [
-    {'nombre': 'sebas', 'contrasena': '1234', 'role': 'user'},
-    {'nombre': 'pepe', 'contrasena': '123', 'role': 'admin'}
+    {'nombre': 'sebas', 'contrasena': '1234', 'role': 'usuario', 'role_id' : 30}, 
+    {'nombre': 'pepe', 'contrasena': '123', 'role': 'administrador', 'role_id' : 10}
 ]
 
 # Login
@@ -15,6 +15,7 @@ def display(request):
         encontrado = next((u for u in usuarios if u['nombre'] == user and u['contrasena'] == pwd), None)
         if encontrado:
             request.session["user"] = encontrado
+            request.session.set_expiry(600)
             return redirect("/acciones/")
         else:
             mensaje = "Usuario o contraseña incorrecta"
@@ -33,8 +34,4 @@ def login_required_simulado(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
-# Ruta protegida
-@login_required_simulado
-def acciones(request):
-    user = request.session["user"]
-    return render(request, "acciones/lista_acciones.html", {"usuario": user})
+

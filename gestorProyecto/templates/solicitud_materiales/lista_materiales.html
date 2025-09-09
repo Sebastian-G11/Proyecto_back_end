@@ -55,7 +55,9 @@
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center header-flex mb-3">
         <h2 class="mb-0">Listado de Solicitudes de Materiales</h2>
+        {% if usuario.role_id == 10 %}
         <button class="btn btn-success" id="addSolicitudBtn"><i class="bi bi-plus-lg"></i> Añadir Solicitud</button>
+        {% endif %}
       </div>
 
       <!-- Tabla responsiva -->
@@ -71,7 +73,9 @@
               <th>Código Factura</th>
               <th>Fecha Creación</th>
               <th>Responsable</th>
+              {% if usuario.role_id == 10 %}
               <th>Acciones</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -85,10 +89,12 @@
               <td>{{ solicitud.codigo_factura }}</td>
               <td>{{ solicitud.fecha_creacion }}</td>
               <td>{{ solicitud.responsable_nombre }}</td>
+              {% if usuario.role_id == 10 %}
               <td class="text-nowrap">
                 <button class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0">Editar</button>
                 <button class="btn btn-sm btn-danger delete-solicitud">Eliminar</button>
               </td>
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>

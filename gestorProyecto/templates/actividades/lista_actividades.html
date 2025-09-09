@@ -86,7 +86,9 @@
     <main class="content">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Listado de Actividades</h2>
+        {% if usuario.role_id == 10 %}
         <button class="btn btn-success" id="addActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Actividad</button>
+        {% endif %}
       </div>
 
       <div class="table-responsive mt-3">
@@ -97,7 +99,12 @@
               <th>Nombre</th>
               <th>Responsable</th>
               <th>Estado</th>
-              <th class="text-center">Detalles / Acciones</th>
+              {% if usuario.role_id == 30 %}
+                  <th class="text-center">Detalles</th>
+              {% else %}
+                  <th class="text-center">Detalles / Acciones</th>
+              {% endif %}
+
             </tr>
           </thead>
           <tbody>
@@ -116,8 +123,10 @@
                 <button class="btn btn-sm btn-info toggle-detail" data-target="details{{ forloop.counter }}">
                   <i class="bi bi-chevron-down"></i>
                 </button>
-                <button class="btn btn-sm btn-warning edit-activity">Editar</button>
-                <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
+                {% if usuario.role_id == 10 %}
+                  <button class="btn btn-sm btn-warning edit-activity">Editar</button>
+                  <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
+                {% endif %}
               </td>
             </tr>
 

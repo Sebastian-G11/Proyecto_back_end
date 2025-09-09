@@ -26,7 +26,9 @@
     <main class="content">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Listado de Dimensiones</h2>
+        {% if usuario.role_id == 10 %}
         <button class="btn btn-success" id="addDimensionBtn"><i class="bi bi-plus-lg"></i> Añadir Dimensión</button>
+        {% endif %}
       </div>
 
       <div class="table-responsive">
@@ -35,7 +37,9 @@
             <tr>
               <th>Dimensión ID</th>
               <th>Nombre</th>
+              {% if usuario.role_id == 10 %}
               <th class="text-center">Acciones</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -43,10 +47,12 @@
             <tr class="align-middle dimension-row">
               <td>{{ dimension.dimension_id }}</td>
               <td>{{ dimension.nombre }}</td>
+              {% if usuario.role_id == 10 %}
               <td class="text-center">
                 <button class="btn btn-sm btn-warning edit-dimension">Editar</button>
                 <button class="btn btn-sm btn-danger delete-dimension">Eliminar</button>
-              </td>
+              </td> 
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
