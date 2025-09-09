@@ -10,6 +10,14 @@ Este proyecto está desarrollado en **Django** y permite gestionar usuarios, dim
 - Django 4.x
 - pip
 
+--
+
+## 🔹 Link del proyecto desplegado
+
+```bash
+https://benjamonmon.pythonanywhere.com/
+``` 
+
 ---
 
 ## 🔹 Instalación
