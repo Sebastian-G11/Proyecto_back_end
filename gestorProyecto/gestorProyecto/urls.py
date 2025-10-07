@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path,include
 import autenticacion.urls
 import dimensiones.urls
-import dimensiones.urls
 import acciones.urls
 import actividades.urls
 import sub_actividades.urls
