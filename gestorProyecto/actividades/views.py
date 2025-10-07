@@ -39,4 +39,4 @@ acciones = [
 # Create your views here.
 def display_actividades(request):
     user = request.session.get("user")
-    return render(request, 'actividades/lista_actividades.html', {"usuario": user,"actividades": actividades, "acciones": acciones})
+    return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "acciones": acciones})

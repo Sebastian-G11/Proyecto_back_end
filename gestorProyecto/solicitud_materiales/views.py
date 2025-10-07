@@ -4,6 +4,8 @@ from solicitud_materiales.models import SolicitudMaterial
 from solicitud_materiales.form import FormSolicitudMaterial
 from solicitud_materiales.service import solicitud_service
 from django import forms
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
 
 ## Mocks de actividades, solicitudes y usuarios para añadido dinámico, posteriormente vendrán de la misma BDD
 actividades = [
@@ -25,34 +27,67 @@ usuarios = [
 def display_solicitud_materiales(request):
     user = request.session.get("user")
     solicitudes = solicitud_service.get_solicitudes()
-    return render(request, "solicitud_materiales/lista_materiales.html", {"usuario": user, "actividades": actividades, "solicitudes": solicitudes, "usuarios": usuarios})
+    return render(request, "solicitud_materiales/lista_materiales.html", {"user": user, "actividades": actividades, "solicitudes": solicitudes, "usuarios": usuarios})
 
+@login_required_simulado
 def crear_solicitud(request):
     user = request.session.get("user")
+    
     if request.method == "POST":
-        # Procesar el formulario enviado
         form = FormSolicitudMaterial(request.POST)
         if form.is_valid():
-          try:
-                solicitud_service.create_solicitud(form.cleaned_data)
-                return redirect('/solicitud_materiales')  # Redirigir a la lista de solicitudes
-          except forms.ValidationError as e:
-                form.add_error(None, str(e))  # Añadir error no relacionado con un campo específico
+            try:
+                solicitud = form.save()
+                messages.success(request, f'Solicitud "{solicitud.materiales_solicitados}" creada exitosamente')
+                return redirect('/solicitud_materiales')
+            except ValueError as e:
+                messages.error(request, str(e))
+                form.add_error(None, str(e))
+            except Exception as e:
+                messages.error(request, "Ocurrió un error al crear la solicitud")
+                form.add_error(None, f"Error inesperado: {str(e)}")
     else:
         form = FormSolicitudMaterial()
     
-    return render(request, "solicitud_materiales/crear_solicitud.html", {"usuario": user, "form": form})
+    return render(request, "solicitud_materiales/crear_solicitud.html", {
+        "usuario": user, 
+        "form": form
+    })
 
+@login_required_simulado
 def editar_solicitud(request, id):
     user = request.session.get("user")
-    solicitud = SolicitudMaterial.objects.get(id=id)
+    solicitud = get_object_or_404(SolicitudMaterial, solicitud_id=id)
 
     if request.method == "POST":
         form = FormSolicitudMaterial(request.POST, instance=solicitud)
         if form.is_valid():
-            form.save()
-            return redirect('display_solicitud_materiales')
+            try:
+                form.save()
+                # ✅ Agregar mensaje de éxito
+                messages.success(request, f'Solicitud "{solicitud.materiales_solicitados}" actualizada exitosamente')
+                return redirect('/solicitud_materiales')
+            except Exception as e:
+                messages.error(request, f"Error al actualizar la solicitud: {str(e)}")
+                form.add_error(None, str(e))
     else:
         form = FormSolicitudMaterial(instance=solicitud)
     
-    return render(request, "solicitud_materiales/editar_solicitud.html", {"usuario": user, "form": form, "solicitud": solicitud})
+    return render(request, "solicitud_materiales/editar_solicitud.html", {
+        "usuario": user, 
+        "form": form, 
+        "solicitud": solicitud
+    })
+
+@login_required_simulado
+def eliminar_solicitud(request, id):
+    if request.method == "POST":
+        try:
+            solicitud = get_object_or_404(SolicitudMaterial, solicitud_id=id)
+            materiales = solicitud.materiales_solicitados
+            solicitud.delete()
+            messages.success(request, f'Solicitud "{materiales}" eliminada exitosamente')
+        except Exception as e:
+            messages.error(request, f"Error al eliminar la solicitud: {str(e)}")
+    
+    return redirect('/solicitud_materiales')

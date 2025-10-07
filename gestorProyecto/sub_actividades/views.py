@@ -33,4 +33,4 @@ subactividades = [
 # Create your views here.
 def display_sub_actividades(request):
     user = request.session.get("user")
-    return render(request, "sub_actividades/lista_sub-actividades.html", {"usuario":user, "actividades": actividades, "subactividades": subactividades })
+    return render(request, "sub_actividades/lista_sub-actividades.html", {"user":user, "actividades": actividades, "subactividades": subactividades })
