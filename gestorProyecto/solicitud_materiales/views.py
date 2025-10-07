@@ -37,7 +37,7 @@ def crear_solicitud(request):
         form = FormSolicitudMaterial(request.POST)
         if form.is_valid():
             try:
-                solicitud = form.save()
+                solicitud = solicitud_service.create_solicitud(form.cleaned_data)
                 messages.success(request, f'Solicitud "{solicitud.materiales_solicitados}" creada exitosamente')
                 return redirect('/solicitud_materiales')
             except ValueError as e:
@@ -63,9 +63,9 @@ def editar_solicitud(request, id):
         form = FormSolicitudMaterial(request.POST, instance=solicitud)
         if form.is_valid():
             try:
-                form.save()
+                solicitud = solicitud_service.update_solicitud(id, form.cleaned_data)
                 # ✅ Agregar mensaje de éxito
-                messages.success(request, f'Solicitud "{solicitud.materiales_solicitados}" actualizada exitosamente')
+                messages.success(request, f'Solicitud actualizada exitosamente')
                 return redirect('/solicitud_materiales')
             except Exception as e:
                 messages.error(request, f"Error al actualizar la solicitud: {str(e)}")
@@ -85,7 +85,7 @@ def eliminar_solicitud(request, id):
         try:
             solicitud = get_object_or_404(SolicitudMaterial, solicitud_id=id)
             materiales = solicitud.materiales_solicitados
-            solicitud.delete()
+            solicitud_service.delete_solicitud(id)
             messages.success(request, f'Solicitud "{materiales}" eliminada exitosamente')
         except Exception as e:
             messages.error(request, f"Error al eliminar la solicitud: {str(e)}")
