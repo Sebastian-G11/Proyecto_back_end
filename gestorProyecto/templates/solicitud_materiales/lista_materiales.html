@@ -55,10 +55,24 @@
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center header-flex mb-3">
         <h2 class="mb-0">Listado de Solicitudes de Materiales</h2>
-        {% if usuario.role_id == 10 %}
+        {% if user.role_id == 10 %}
         <a class="btn btn-success" id="addSolicitudBtn" href="/solicitud_materiales/crear-solicitud/"><i class="bi bi-plus-lg"></i> Añadir Solicitud</a>
         {% endif %}
       </div>
+
+      <!-- ✅ Mensajes flash -->
+      {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'danger' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+          <strong> {% if message.tags == 'success' %}Éxito!{% elif message.tags == 'danger' %}Error!{% else %}Aviso!{% endif %} </strong>
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
 
       <!-- Tabla responsiva -->
       <div class="table-responsive">
@@ -74,7 +88,7 @@
               <th>Código Factura</th>
               <th>Fecha Creación</th>
               <th>Responsable</th>
-              {% if usuario.role_id == 10 %}
+              {% if user.role_id == 10 %}
               <th>Acciones</th>
               {% endif %}
             </tr>
@@ -86,14 +100,16 @@
               <td>{{ solicitud.materiales_solicitados }}</td>
               <td>{{ solicitud.numero_orden }}</td>
               <td>${{ solicitud.valor_esperado }}</td>
-              <td>{% if solicitud.valor_final_compra %}${{ solicitud.valor_final_compra }}{% else %}-{% endif %}</td>
+              <td>{% if solicitud.valor_final %}${{ solicitud.valor_final }}{% else %}-{% endif %}</td>
               <td>{{ solicitud.codigo_factura }}</td>
               <td>{{ solicitud.fecha_creacion }}</td>
               <td>{{ solicitud.responsable_nombre }}</td>
-              {% if usuario.role_id == 10 %}
+              {% if user.role_id == 10 %}
               <td class="text-nowrap">
-                <a class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0" href="/solicitud_materiales/editar-solicitud/{{ solicitud.id }}">Editar</a>
-                <button class="btn btn-sm btn-danger delete-solicitud">Eliminar</button>
+                <a class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0" href="/solicitud_materiales/editar-solicitud/{{ solicitud.solicitud_id }}">Editar</a>
+                <button class="btn btn-sm btn-danger delete-solicitud" data-solicitud-id="{{ solicitud.solicitud_id }}" data-materiales="{{ solicitud.materiales_solicitados }}">
+                  Eliminar
+                </button>
               </td>
               {% endif %}
             </tr>
@@ -105,6 +121,9 @@
         {% endif %}
       </div>
 
+      <!-- Formulario oculto para eliminar (POST request) -->
+      <form id="deleteForm" method="POST" style="display: none">{% csrf_token %}</form>
+
       {% include "solicitud_materiales/modal.html" with actividades=actividades responsables=usuarios %}
     </main>
 
@@ -114,22 +133,34 @@
         const solicitudModal = new bootstrap.Modal(document.getElementById("solicitudModal"));
         let currentRow = null;
         const tableBody = document.querySelector("#solicitudesTable tbody");
+        const deleteForm = document.getElementById("deleteForm");
 
         // Delegación de eventos en la tabla
         tableBody.addEventListener("click", (e) => {
           const target = e.target;
 
-          // Eliminar solicitud (solo confirm)
+          // Botón eliminar (puede ser el botón o el ícono dentro)
           const deleteBtn = target.closest(".delete-solicitud");
           if (deleteBtn) {
-            const row = deleteBtn.closest("tr");
-            confirm(`¿Seguro que quieres eliminar la solicitud de "${row.children[1].textContent}"?`);
+            e.preventDefault();
+
+            const solicitudId = deleteBtn.getAttribute("data-solicitud-id");
+            const materiales = deleteBtn.getAttribute("data-materiales");
+
+            // Mostrar confirmación
+            if (confirm(`¿Seguro que quieres eliminar la solicitud de "${materiales}"?`)) {
+              // Configurar el formulario para hacer POST
+              deleteForm.action = `/solicitud_materiales/eliminar-solicitud/${solicitudId}`;
+
+              // Enviar el formulario
+              deleteForm.submit();
+            }
             return;
           }
         });
 
         // Guardar cambios (solo cierra modal)
-        document.getElementById("saveSolicitudBtn").addEventListener("click", () => {
+        document.getElementById("saveSolicitudBtn")?.addEventListener("click", () => {
           solicitudModal.hide();
         });
       });

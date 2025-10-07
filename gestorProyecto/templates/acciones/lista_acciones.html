@@ -84,7 +84,7 @@
               <th>Presupuesto Anual</th>
               <th>Presupuesto Reajustado</th>
               <th>Estado</th>
-              {% if usuario.role_id == 10 %}
+              {% if user.role_id == 10 %}
               <th>Detalles / Acciones</th>
               {% else %}
               <th>Detalles</th>
@@ -106,7 +106,7 @@
                 <button class="btn btn-sm btn-info toggle-detail" data-target="details{{ forloop.counter }}">
                   <i class="bi bi-chevron-down"></i>
                 </button>
-                {% if usuario.role_id == 10 %}
+                {% if user.role_id == 10 %}
                 <button class="btn btn-sm btn-warning edit-action">Editar</button>
                 <button class="btn btn-sm btn-danger delete-action">Eliminar</button>
                 {% endif %}
