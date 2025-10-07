@@ -65,7 +65,7 @@
               <th>Fecha Creación</th>
               <th>Fecha Actualización</th>
               <th>Grado Aprobación</th>
-              {% if usuario.role_id == 10 %}
+              {% if user.role_id == 10 %}
               <th>Acciones</th>
               {% endif %}
             </tr>
@@ -78,7 +78,7 @@
               <td>{{ sub.fecha_creacion }}</td>
               <td>{{ sub.fecha_actualizacion }}</td>
               <td>{{ sub.grado_aprobacion }}</td>
-              {% if usuario.role_id == 10 %}
+              {% if user.role_id == 10 %}
               <td class="text-nowrap">
                 <button class="btn btn-sm btn-warning edit-subactivity mb-1 mb-md-0">Editar</button>
                 <button class="btn btn-sm btn-danger delete-subactivity">Eliminar</button>

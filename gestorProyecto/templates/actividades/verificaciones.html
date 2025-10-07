@@ -25,7 +25,7 @@
         <a href="{{ verificacion.url }}" target="_blank">{{ verificacion.url }}</a>
       </span>
       <span class="verification-actions">
-        {% if usuario.role_id == 10 %}
+        {% if user.role_id == 10 %}
         <button class="btn btn-sm btn-warning edit-verification">Editar</button>
         <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
         {% endif %}

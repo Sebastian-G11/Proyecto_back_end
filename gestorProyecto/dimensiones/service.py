@@ -9,4 +9,4 @@ class DimensionService:
        self.repository.get_dimensions
 
 
-dimension_service = DimensionService(DimensionRepository)
+dimension_service = DimensionService(DimensionRepository())

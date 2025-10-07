@@ -15,4 +15,4 @@ dimensiones = [
 # Create your views here.
 def display_dimensiones(request):
     user = request.session.get("user")
-    return render(request, "dimensiones/lista_dimensiones.html", {"usuario":user, "dimensiones": dimensiones })
+    return render(request, "dimensiones/lista_dimensiones.html", {"user":user, "dimensiones": dimensiones })

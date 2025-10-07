@@ -48,4 +48,4 @@ dimensiones = [
 @login_required_simulado
 def display_acciones(request):
     user = request.session.get("user")
-    return render(request, "acciones/lista_acciones.html", {"usuario": user, "acciones": acciones, "dimensiones": dimensiones})
+    return render(request, "acciones/lista_acciones.html", {"user": user, "acciones": acciones, "dimensiones": dimensiones})
