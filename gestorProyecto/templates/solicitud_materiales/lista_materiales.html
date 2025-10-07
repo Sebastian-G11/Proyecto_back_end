@@ -56,12 +56,13 @@
       <div class="d-flex justify-content-between align-items-center header-flex mb-3">
         <h2 class="mb-0">Listado de Solicitudes de Materiales</h2>
         {% if usuario.role_id == 10 %}
-        <button class="btn btn-success" id="addSolicitudBtn"><i class="bi bi-plus-lg"></i> Añadir Solicitud</button>
+        <a class="btn btn-success" id="addSolicitudBtn" href="/solicitud_materiales/crear-solicitud/"><i class="bi bi-plus-lg"></i> Añadir Solicitud</a>
         {% endif %}
       </div>
 
       <!-- Tabla responsiva -->
       <div class="table-responsive">
+        {% if solicitudes %}
         <table class="table table-striped table-bordered align-middle w-100" id="solicitudesTable">
           <thead class="table-light">
             <tr>
@@ -91,7 +92,7 @@
               <td>{{ solicitud.responsable_nombre }}</td>
               {% if usuario.role_id == 10 %}
               <td class="text-nowrap">
-                <button class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0">Editar</button>
+                <a class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0" href="/solicitud_materiales/editar-solicitud/{{ solicitud.id }}">Editar</a>
                 <button class="btn btn-sm btn-danger delete-solicitud">Eliminar</button>
               </td>
               {% endif %}
@@ -99,6 +100,9 @@
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <div class="alert alert-info" role="alert">No hay solicitudes de materiales registradas.</div>
+        {% endif %}
       </div>
 
       {% include "solicitud_materiales/modal.html" with actividades=actividades responsables=usuarios %}
@@ -111,55 +115,9 @@
         let currentRow = null;
         const tableBody = document.querySelector("#solicitudesTable tbody");
 
-        // Abrir modal para añadir solicitud
-        document.getElementById("addSolicitudBtn").addEventListener("click", () => {
-          currentRow = null;
-          const form = document.getElementById("solicitudForm");
-          form.reset();
-          document.getElementById("solicitudModalLabel").textContent = "Añadir Solicitud";
-          solicitudModal.show();
-        });
-
         // Delegación de eventos en la tabla
         tableBody.addEventListener("click", (e) => {
           const target = e.target;
-
-          // Editar solicitud
-          const editBtn = target.closest(".edit-solicitud");
-          if (editBtn) {
-            currentRow = editBtn.closest("tr");
-            const cells = currentRow.children;
-            const form = document.getElementById("solicitudForm");
-
-            // Selección dinámica de actividad
-            const actividadSelect = form.actividad;
-            for (let i = 0; i < actividadSelect.options.length; i++) {
-              if (actividadSelect.options[i].text === cells[0].textContent) {
-                actividadSelect.selectedIndex = i;
-                break;
-              }
-            }
-
-            // Selección dinámica de responsable
-            const responsableSelect = form.responsable;
-            for (let i = 0; i < responsableSelect.options.length; i++) {
-              if (responsableSelect.options[i].text === cells[7].textContent) {
-                responsableSelect.selectedIndex = i;
-                break;
-              }
-            }
-
-            form.materiales.value = cells[1].textContent;
-            form.numero_orden.value = cells[2].textContent;
-            form.valor_esperado.value = cells[3].textContent.replace("$", "");
-            form.valor_final.value = cells[4].textContent.replace("$", "");
-            form.codigo_factura.value = cells[5].textContent;
-            form.fecha_creacion.value = cells[6].textContent;
-
-            document.getElementById("solicitudModalLabel").textContent = "Editar Solicitud";
-            solicitudModal.show();
-            return;
-          }
 
           // Eliminar solicitud (solo confirm)
           const deleteBtn = target.closest(".delete-solicitud");
