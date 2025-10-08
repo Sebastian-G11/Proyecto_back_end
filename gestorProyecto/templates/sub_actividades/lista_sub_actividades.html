@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listado de Sub-Actividades</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <style>
+      /* Ajustes de responsividad */
+      @media (max-width: 768px) {
+        table#subActividadesTable {
+          font-size: 0.9rem;
+        }
+        table#subActividadesTable th,
+        table#subActividadesTable td {
+          white-space: nowrap;
+        }
+      }
+
+      /* Tabla scrollable en móviles */
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      /* Margen dinámico según tamaño */
+      #mainContent {
+        margin-left: 0;
+      }
+      @media (min-width: 992px) {
+        #mainContent {
+          margin-left: 280px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include "ui/navbar.html" %}
+
+    <main class="content p-3 p-md-4" id="mainContent">
+      <!-- Encabezado -->
+      <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+        <h2 class="mb-3">Listado de Sub-Actividades</h2>
+        <a href="{% url 'subactividades:agregar_subactividad' %}" class="btn btn-success mb-2 mb-md-0">
+          <i class="bi bi-plus-lg"></i> Añadir Sub-Actividad
+        </a>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle w-100" id="subActividadesTable">
+          <thead class="table-light">
+            <tr>
+              <th>Actividad</th>
+              <th>Nombre</th>
+              <th>Grado de Aprobación</th>
+              <th>Fecha de Creación</th>
+              <th>Última Actualización</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for subactividad in subactividades %}
+            <tr>
+              <td>{{ subactividad.actividad }}</td>
+              <td>{{ subactividad.nombre }}</td>
+              <td>{{ subactividad.grado_aprobacion }}%</td>
+              <td>{{ subactividad.fecha_creacion|date:"d/m/Y H:i" }}</td>
+              <td>{{ subactividad.fecha_actualizacion|date:"d/m/Y H:i" }}</td>
+              <td>
+                <a href="{% url 'subactividades:editar_subactividad' subactividad.id %}" class="btn btn-warning">
+                  Editar
+                </a>
+                <button
+                  class="btn btn-danger delete-subactividad"
+                  data-subactividad-id="{{ subactividad.id }}"
+                  data-subactividad="{{ subactividad.nombre }}"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted">
+                No hay sub-actividades registradas.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Formulario oculto para eliminar subactividad -->
+      <form id="deleteForm" method="POST" style="display: none">
+        {% csrf_token %}
+      </form>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const deleteForm = document.getElementById("deleteForm");
+        const tableBody = document.querySelector("#subActividadesTable tbody");
+
+        // Delegación de eventos para botón de eliminación
+        tableBody.addEventListener("click", (e) => {
+          const deleteBtn = e.target.closest(".delete-subactividad");
+          if (deleteBtn) {
+            e.preventDefault();
+
+            const subactividadId = deleteBtn.getAttribute("data-subactividad-id");
+            const subactividadNombre = deleteBtn.getAttribute("data-subactividad");
+
+            if (confirm(`¿Seguro que quieres eliminar la sub-actividad "${subactividadNombre}"?`)) {
+              deleteForm.action = `/sub_actividades/eliminar/${subactividadId}/`;
+              deleteForm.submit();
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
