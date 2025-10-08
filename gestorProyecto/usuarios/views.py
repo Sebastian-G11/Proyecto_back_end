@@ -13,10 +13,9 @@ def display(request):
     usuarios = repo.get_users()
     user = request.session.get("user")
 
-    # Renderiza con el contexto correcto (usuarios + user)
     return render(request, "usuarios/lista_usuarios.html", {
         "usuarios": usuarios,
-        "user": user,  # Usuario logueado
+        "user": user, 
     })
     
     
@@ -29,15 +28,15 @@ def agregar_usuario(request):
         form = FormUsuario(request.POST)
 
         if form.is_valid():
-            form.save()  # Guarda el nuevo usuario
+            form.save() 
             messages.success(request, "Usuario agregado correctamente.")
-            return redirect('usuarios:listado_usuarios')  # Redirige para evitar reenvíos de formulario
+            return redirect('usuarios:listado_usuarios') 
         else:
             messages.error(request, "Error al agregar el usuario. Verifique los datos.")
             return render(request, 'usuarios/crear_usuario.html', {'form': form})
 
     else:
-        form = FormUsuario()  # Inicializa el formulario vacío para una solicitud GET
+        form = FormUsuario() 
     return render(request, 'usuarios/crear_usuario.html', {'form': form})
 
 
@@ -62,7 +61,6 @@ def actualizar_usuario(request, id):
     else:
         form = FormUsuario(instance=usuario)
 
-    # Renderizar la página con el formulario de edición
     return render(request, "usuarios/editar_usuario.html", {"form": form, "usuario": usuario})
 
 

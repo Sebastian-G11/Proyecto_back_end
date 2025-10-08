@@ -104,7 +104,6 @@
         margin-top: 5px;
       }
 
-      /* Íconos dentro de las etiquetas, no dentro del input */
       .label-icon {
         color: #6c757d;
         margin-right: 6px;
@@ -123,7 +122,6 @@
         <form method="POST">
           {% csrf_token %}
 
-          <!-- Actividad -->
           <div class="mb-4">
             <label class="form-label">
               <i class="bi bi-diagram-3-fill label-icon"></i>{{ form.actividad.label }}
@@ -134,7 +132,6 @@
             {% endif %}
           </div>
 
-          <!-- Nombre -->
           <div class="mb-4">
             <label class="form-label">
               <i class="bi bi-pencil-square label-icon"></i>{{ form.nombre.label }}
@@ -145,7 +142,6 @@
             {% endif %}
           </div>
 
-          <!-- Grado de aprobación -->
           <div class="mb-4">
             <label class="form-label">
               <i class="bi bi-bar-chart-line label-icon"></i>{{ form.grado_aprobacion.label }}

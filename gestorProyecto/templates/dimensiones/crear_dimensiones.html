@@ -117,17 +117,14 @@
         <form method="post" id="dimensionForm">
           {% csrf_token %}
 
-          <!-- Campo ID (solo visualización) -->
           <div class="mb-4">
             <label class="form-label"> <i class="bi bi-file-earmark-code me-2"></i> ID de Dimensión </label>
             <div class="icon-input">
               <i class="bi bi-file-earmark-code"></i>
-              <!-- Aquí mostramos el ID que se asignará -->
               <input type="text" class="form-control" value="ID que se asignará: {{ dimension_id }}" readonly />
             </div>
           </div>
 
-          <!-- Campo de nombre -->
           <div class="mb-4">
             <label class="form-label"> <i class="bi bi-bounding-box me-2"></i>{{ form.nombre.label }} </label>
             <div class="icon-input">
@@ -139,7 +136,6 @@
             {% endif %}
           </div>
 
-          <!-- Botones para guardar o cancelar -->
           <div class="d-flex gap-3 justify-content-center mt-5">
             <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-2"></i>Guardar Dimensión</button>
             <a href="/dimensiones" class="btn btn-secondary"> <i class="bi bi-x-circle me-2"></i>Cancelar </a>
