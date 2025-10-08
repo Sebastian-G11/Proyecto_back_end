@@ -100,25 +100,21 @@
         <form method="post" id="editUserForm">
           {% csrf_token %}
 
-          <!-- Campo de nombre -->
           <div class="mb-4">
             <label class="form-label">Nombre</label>
             <input type="text" class="form-control" name="nombre" value="{{ form.nombre.value }}" required />
           </div>
 
-          <!-- Campo de apellido -->
           <div class="mb-4">
             <label class="form-label">Apellido</label>
             <input type="text" class="form-control" name="apellido" value="{{ form.apellido.value }}" required />
           </div>
 
-          <!-- Campo de email -->
           <div class="mb-4">
             <label class="form-label">Email</label>
             <input type="email" class="form-control" name="email" value="{{ form.email.value }}" required />
           </div>
 
-          <!-- Campo de rol -->
           <div class="mb-4">
             <label class="form-label">Rol</label>
             <select class="form-select" name="rol" required>

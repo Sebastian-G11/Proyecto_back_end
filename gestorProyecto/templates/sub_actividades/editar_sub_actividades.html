@@ -100,7 +100,6 @@
         <form method="post">
           {% csrf_token %}
 
-          <!-- Actividad -->
           <div class="mb-4">
             <label class="form-label">Actividad</label>
             <select class="form-select" name="actividad" required>
@@ -109,13 +108,11 @@
             </select>
           </div>
 
-          <!-- Nombre -->
           <div class="mb-4">
             <label class="form-label">Nombre</label>
             <input type="text" class="form-control" name="nombre" value="{{ form.nombre.value }}" required />
           </div>
 
-          <!-- Grado de Aprobación -->
           <div class="mb-4">
             <label class="form-label">Grado de Aprobación</label>
             <input type="number" step="0.01" class="form-control" name="grado_aprobacion" value="{{ form.grado_aprobacion.value }}" required />

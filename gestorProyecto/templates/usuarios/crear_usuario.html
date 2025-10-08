@@ -117,7 +117,6 @@
         <form method="post" id="userForm">
           {% csrf_token %}
 
-          <!-- Campo de nombre -->
           <div class="mb-4">
             <label class="form-label"> <i class="bi bi-person me-2"></i>{{ form.nombre.label }} </label>
             <div class="icon-input">
@@ -129,7 +128,6 @@
             {% endif %}
           </div>
 
-          <!-- Campo de apellido -->
           <div class="mb-4">
             <label class="form-label"> <i class="bi bi-person-lines-fill me-2"></i>{{ form.apellido.label }} </label>
             <div class="icon-input">
@@ -141,7 +139,6 @@
             {% endif %}
           </div>
 
-          <!-- Campo de email -->
           <div class="mb-4">
             <label class="form-label"> <i class="bi bi-envelope me-2"></i>{{ form.email.label }} </label>
             <div class="icon-input">
@@ -153,7 +150,6 @@
             {% endif %}
           </div>
 
-          <!-- Campo de rol -->
           <div class="mb-4">
             <label class="form-label"> <i class="bi bi-person-badge me-2"></i>{{ form.rol.label }} </label>
             <div class="icon-input">
@@ -165,7 +161,6 @@
             {% endif %}
           </div>
 
-          <!-- Botones para guardar o cancelar -->
           <div class="d-flex gap-3 justify-content-center mt-5">
             <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-2"></i>Guardar Usuario</button>
             <a href="/usuarios" class="btn btn-secondary"> <i class="bi bi-x-circle me-2"></i>Cancelar </a>

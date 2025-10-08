@@ -4,7 +4,6 @@ from .validations import validar_grado_aprobacion, validar_nombre_unico
 class SubActividadService:
     @staticmethod
     def crear_sub_actividad(actividad, nombre, grado_aprobacion):
-        # Validaciones antes de crear la sub-actividad
         validar_grado_aprobacion(grado_aprobacion)
         validar_nombre_unico(nombre, actividad)
         
@@ -23,7 +22,6 @@ class SubActividadService:
 
     @staticmethod
     def actualizar_sub_actividad(id, actividad, nombre, grado_aprobacion):
-        # Validaciones antes de actualizar la sub-actividad
         validar_grado_aprobacion(grado_aprobacion)
         validar_nombre_unico(nombre, actividad)
         

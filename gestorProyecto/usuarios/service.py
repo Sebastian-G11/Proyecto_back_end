@@ -22,5 +22,4 @@ class UserService:
     def delete_user(self, id):
         return self.repository.delete_users(id)
 
-# Instanciamos el servicio con el repositorio
 user_service = UserService(UsersRepository())
