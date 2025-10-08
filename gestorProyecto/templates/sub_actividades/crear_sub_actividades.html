@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nueva Sub-Actividad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        min-height: 100vh;
+        padding: 40px 0;
+      }
+
+      .form-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid #e9ecef;
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      .form-header h2 {
+        color: #495057;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .form-header p {
+        color: #6c757d;
+        font-size: 0.95rem;
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+
+      .form-control,
+      .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #adb5bd;
+        box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.15);
+      }
+
+      .input-group-text {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 10px 0 0 10px;
+      }
+
+      .btn-primary {
+        background: #6c757d;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 40px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary:hover {
+        background: #495057;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+      }
+
+      .btn-secondary {
+        background: #e9ecef;
+        color: #495057;
+        border: 1px solid #ced4da;
+        border-radius: 10px;
+        padding: 12px 40px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+
+      .btn-secondary:hover {
+        background: #dee2e6;
+        color: #495057;
+        border-color: #adb5bd;
+      }
+
+      .invalid-feedback {
+        font-size: 0.85rem;
+        margin-top: 5px;
+      }
+
+      /* Íconos dentro de las etiquetas, no dentro del input */
+      .label-icon {
+        color: #6c757d;
+        margin-right: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="form-container">
+        <div class="form-header">
+          <i class="bi bi-diagram-3" style="font-size: 3rem; color: #6c757d"></i>
+          <h2>Nueva Sub-Actividad</h2>
+          <p>Complete el formulario con los datos de la nueva sub-actividad</p>
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <!-- Actividad -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-diagram-3-fill label-icon"></i>{{ form.actividad.label }}
+            </label>
+            {{ form.actividad }}
+            {% if form.actividad.errors %}
+            <div class="invalid-feedback d-block">{{ form.actividad.errors }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Nombre -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-pencil-square label-icon"></i>{{ form.nombre.label }}
+            </label>
+            {{ form.nombre }}
+            {% if form.nombre.errors %}
+            <div class="invalid-feedback d-block">{{ form.nombre.errors }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Grado de aprobación -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-bar-chart-line label-icon"></i>{{ form.grado_aprobacion.label }}
+            </label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-percent"></i></span>
+              {{ form.grado_aprobacion }}
+            </div>
+            {% if form.grado_aprobacion.errors %}
+            <div class="invalid-feedback d-block">{{ form.grado_aprobacion.errors }}</div>
+            {% endif %}
+          </div>
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="d-flex gap-3 justify-content-center mt-5">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-circle me-2"></i>Guardar Sub-Actividad
+            </button>
+            <a href="{% url 'subactividades:listar_subactividades' %}" class="btn btn-secondary">
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
