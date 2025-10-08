@@ -1,18 +1,18 @@
 from abc import ABC, abstractmethod
 
-class DimensionRepositoryI(ABC):
+class DimensionesRepositoryI(ABC):
     @abstractmethod
-    def get_dimensions(self):
+    def get_dimensiones(self):
         pass
-    
+
     @abstractmethod
-    def create_dimensions(self):
+    def create_dimension(self, nombre):
         pass
-    
+
     @abstractmethod
-    def update_dimensions(self, id) -> bool:
+    def update_dimension(self, id, nombre) -> bool:
         pass
-    
+
     @abstractmethod
-    def delete_dimensions(self, id) -> bool:
+    def delete_dimension(self, id) -> bool:
         pass

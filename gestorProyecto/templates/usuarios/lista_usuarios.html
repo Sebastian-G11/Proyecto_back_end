@@ -42,7 +42,7 @@
       <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
         <h2 class="mb-3">Listado de Usuarios</h2>
         {% if user.role_id == 10 %}
-        <button class="btn btn-success mb-2 mb-md-0" id="addUserBtn"><i class="bi bi-plus-lg"></i> Añadir Usuario</button>
+        <a href="{% url 'usuarios:agregar_usuario' %}" class="btn btn-success mb-2 mb-md-0"><i class="bi bi-plus-lg"></i> Añadir Usuario</a>
         {% endif %}
       </div>
 
@@ -55,80 +55,56 @@
               <th>Apellido</th>
               <th>Email</th>
               <th>Rol</th>
-              {% if user.role_id == 10 %}
               <th>Acciones</th>
-              {% endif %}
             </tr>
           </thead>
           <tbody>
             {% for usuario in usuarios %}
-            <tr class="align-middle">
+            <tr data-user-id="{{ usuario.id }}">
               <td>{{ usuario.nombre }}</td>
               <td>{{ usuario.apellido }}</td>
               <td>{{ usuario.email }}</td>
               <td>{{ usuario.rol }}</td>
-              {% if user.role_id == 10 %}
-              <td class="text-nowrap">
-                <button class="btn btn-sm btn-warning edit-user mb-1 mb-md-0">Editar</button>
-                <button class="btn btn-sm btn-danger delete-user">Eliminar</button>
+              <td>
+                <a href="{% url 'usuarios:actualizar_usuario' usuario.id %}" class="btn btn-warning">Editar</a>
+                <button class="btn btn-danger delete-user" data-user-id="{{ usuario.id }}" data-usuario="{{ usuario.nombre }} {{ usuario.apellido }}">
+                  Eliminar
+                </button>
               </td>
-              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
 
-      {% include "usuarios/modal.html" %}
+      <!-- Formulario oculto para eliminar usuario (POST request) -->
+      <form id="deleteForm" method="POST" style="display: none">{% csrf_token %}</form>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const userModal = new bootstrap.Modal(document.getElementById("userModal"));
-        let currentRow = null;
+        const deleteForm = document.getElementById("deleteForm");
+
+        // Delegación de eventos en la tabla para eliminar usuario
         const tableBody = document.querySelector("#usersTable tbody");
-
-        // Abrir modal para añadir usuario
-        document.getElementById("addUserBtn").addEventListener("click", () => {
-          currentRow = null;
-          const form = document.getElementById("userForm");
-          form.reset();
-          document.getElementById("userModalLabel").textContent = "Añadir Usuario";
-          userModal.show();
-        });
-
-        // Delegación de eventos en la tabla
         tableBody.addEventListener("click", (e) => {
-          const target = e.target;
-
-          // Editar usuario
-          const editBtn = target.closest(".edit-user");
-          if (editBtn) {
-            currentRow = editBtn.closest("tr");
-            const cells = currentRow.children;
-            const form = document.getElementById("userForm");
-            form.nombre.value = cells[0].textContent;
-            form.apellido.value = cells[1].textContent;
-            form.email.value = cells[2].textContent;
-            form.rol.value = cells[3].textContent;
-            document.getElementById("userModalLabel").textContent = "Editar Usuario";
-            userModal.show();
-            return;
-          }
-
-          // Eliminar usuario (solo confirmación)
-          const deleteBtn = target.closest(".delete-user");
+          const deleteBtn = e.target.closest(".delete-user");
           if (deleteBtn) {
-            const row = deleteBtn.closest("tr");
-            confirm(`¿Seguro que quieres eliminar al usuario "${row.children[0].textContent} ${row.children[1].textContent}"?`);
-            return;
-          }
-        });
+            e.preventDefault();
+            
+            const userId = deleteBtn.getAttribute("data-user-id");
+            const usuarioNombre = deleteBtn.getAttribute("data-usuario");
 
-        // Guardar cambios (solo cierra modal)
-        document.getElementById("saveUserBtn").addEventListener("click", () => {
-          userModal.hide();
+            // Confirmación de eliminación
+            if (confirm(`¿Seguro que quieres eliminar al usuario "${usuarioNombre}"?`)) {
+              // Configura el formulario para eliminar el usuario
+              deleteForm.action = `/usuarios/eliminar/${userId}/`;
+
+              // Envía el formulario para eliminar al usuario
+              deleteForm.submit();
+            }
+          }
         });
       });
     </script>

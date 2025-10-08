@@ -7,15 +7,26 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet" />
     <style>
-      .content {
-        margin-left: 280px;
-        padding: 2rem;
+      @media (max-width: 768px) {
+        table#dimensionsTable {
+          font-size: 0.9rem;
+        }
+        table#dimensionsTable th,
+        table#dimensionsTable td {
+          white-space: nowrap;
+        }
       }
 
-      @media (max-width: 991px) {
-        .content {
-          margin-left: 0 !important;
-          padding: 1rem !important;
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      #mainContent {
+        margin-left: 0;
+      }
+      @media (min-width: 992px) {
+        #mainContent {
+          margin-left: 280px;
         }
       }
     </style>
@@ -23,83 +34,65 @@
   <body>
     {% include "ui/navbar.html" %}
 
-    <main class="content">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Listado de Dimensiones</h2>
-        {% if usuario.role_id == 10 %}
-        <button class="btn btn-success" id="addDimensionBtn"><i class="bi bi-plus-lg"></i> Añadir Dimensión</button>
-        {% endif %}
+    <main class="content p-3 p-md-4" id="mainContent">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+        <h2 class="mb-3">Listado de Dimensiones</h2>
+
+        <a href="{% url 'dimensiones:agregar_dimension' %}" class="btn btn-success mb-2 mb-md-0"><i class="bi bi-plus-lg"></i> Añadir Dimensión</a>
+
       </div>
 
+      <!-- Tabla responsiva -->
       <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle" id="dimensionsTable">
+        <table class="table table-striped table-bordered align-middle w-100" id="dimensionsTable">
           <thead class="table-light">
             <tr>
               <th>Dimensión ID</th>
               <th>Nombre</th>
-              {% if usuario.role_id == 10 %}
-              <th class="text-center">Acciones</th>
-              {% endif %}
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {% for dimension in dimensiones %}
-            <tr class="align-middle dimension-row">
-              <td>{{ dimension.dimension_id }}</td>
+            <tr data-dimension-id="{{ dimension.id }}">
+              <td>{{ dimension.id }}</td>
               <td>{{ dimension.nombre }}</td>
-              {% if user.role_id == 10 %}
-              <td class="text-center">
-                <button class="btn btn-sm btn-warning edit-dimension">Editar</button>
-                <button class="btn btn-sm btn-danger delete-dimension">Eliminar</button>
+              <td>
+                <a href="{% url 'dimensiones:editar_dimension' dimension.id %}" class="btn btn-warning">Editar</a>
+                <button class="btn btn-danger delete-dimension" data-dimension-id="{{ dimension.id }}" data-dimension="{{ dimension.nombre }}">
+                  Eliminar
+                </button>
               </td>
-              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
-    </main>
 
-    {% include "dimensiones/modal.html" %}
+      <form id="deleteForm" method="POST" style="display: none">{% csrf_token %}</form>
+    </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const dimensionModal = new bootstrap.Modal(document.getElementById("dimensionModal"));
-        let currentRow = null;
+        const deleteForm = document.getElementById("deleteForm");
+
+        // Delegación de eventos para eliminar dimensión
         const tableBody = document.querySelector("#dimensionsTable tbody");
-
-        // Abrir modal para añadir dimensión
-        document.getElementById("addDimensionBtn").addEventListener("click", () => {
-          currentRow = null;
-          document.getElementById("dimensionForm").reset();
-          document.getElementById("dimensionModalLabel").textContent = "Añadir Dimensión";
-          dimensionModal.show();
-        });
-
-        // Guardar dimensión (solo cierra modal, no toca la tabla)
-        document.getElementById("saveDimensionBtn").addEventListener("click", () => {
-          dimensionModal.hide();
-        });
-
-        // Delegación de eventos para editar y eliminar
         tableBody.addEventListener("click", (e) => {
-          const editBtn = e.target.closest(".edit-dimension");
           const deleteBtn = e.target.closest(".delete-dimension");
-
-          if (editBtn) {
-            currentRow = editBtn.closest("tr.dimension-row");
-            const cells = currentRow.children;
-            const form = document.getElementById("dimensionForm");
-            form.dimensionId.value = cells[0].textContent;
-            form.dimensionNombre.value = cells[1].textContent;
-            document.getElementById("dimensionModalLabel").textContent = "Editar Dimensión";
-            dimensionModal.show();
-          }
-
           if (deleteBtn) {
-            const row = deleteBtn.closest("tr.dimension-row");
-            confirm(`¿Seguro que quieres eliminar la dimensión "${row.children[1].textContent}"?`);
+            e.preventDefault();
+
+            const dimensionId = deleteBtn.getAttribute("data-dimension-id");
+            const dimensionNombre = deleteBtn.getAttribute("data-dimension");
+
+            // Confirmación de eliminación
+            if (confirm(`¿Seguro que quieres eliminar la dimensión "${dimensionNombre}"?`)) {
+              deleteForm.action = `/dimensiones/eliminar/${dimensionId}/`;
+              deleteForm.submit();
+            }
           }
         });
       });
