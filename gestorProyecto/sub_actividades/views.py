@@ -5,10 +5,9 @@ from .services import subactividad_service
 from .models import SubActividad
 
 def listar_subactividades(request):
-    user = request.session.get("user")
     subactividades = subactividad_service.obtener_sub_actividades()  
     return render(request, "sub_actividades/lista_sub_actividades.html", {
-        "subactividades": subactividades,"user": user
+        "subactividades": subactividades,
     })
 
 
