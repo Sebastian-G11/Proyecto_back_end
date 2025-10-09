@@ -10,9 +10,10 @@ repo = DimensionesRepository()
 
 @login_required_simulado
 def lista_dimensiones(request):
-    dimensiones = Dimensiones.objects.all()  # O el filtro que necesites
+    user = request.session.get("user")
+    dimensiones = Dimensiones.objects.all() 
     return render(request, "dimensiones/lista_dimensiones.html", {
-        "dimensiones": dimensiones
+        "dimensiones": dimensiones,"user": user
     })
 
 
@@ -26,7 +27,6 @@ def agregar_dimension(request):
     else:
         form = FormDimensiones()
 
-    # Obtener el siguiente ID para la nueva dimensión
     dimension_id = Dimensiones.objects.aggregate(Max('id'))['id__max'] + 1 if Dimensiones.objects.exists() else 1
 
     return render(request, "dimensiones/crear_dimensiones.html", {
@@ -47,7 +47,7 @@ def editar_dimension(request, id):
     if request.method == 'POST':
         form = FormDimensiones(request.POST, instance=dimension)
         if form.is_valid():
-            form.save()  # Actualiza la dimensión
+            form.save()
             messages.success(request, "Dimensión actualizada correctamente.")
             return redirect('dimensiones:listado_dimensiones')
         else:
