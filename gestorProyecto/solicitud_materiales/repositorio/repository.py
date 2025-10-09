@@ -4,7 +4,6 @@ from solicitud_materiales.models import SolicitudMaterial
 class SolicitudRepository(SolicitudRepositoryI):
     solicitudes_model = SolicitudMaterial
 
-
     def create_solicitud(self, data):
         return self.solicitudes_model.objects.create(**data)
     

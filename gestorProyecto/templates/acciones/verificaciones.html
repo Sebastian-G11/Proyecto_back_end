@@ -22,6 +22,12 @@
     <li class="list-group-item">
       <span>{{ verificacion.nombre }}</span>
       <a href="{{ verificacion.url }}">{{ verificacion.url }}</a>
+      <span class="verification-actions">
+        {% if user.role_id == 10 %}
+        <button class="btn btn-sm btn-warning edit-verification">Editar</button>
+        <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
+        {% endif %}
+      </span>
     </li>
     {% endfor %}
   </ul>

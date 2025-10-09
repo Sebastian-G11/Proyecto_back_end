@@ -10,7 +10,7 @@ repo = DimensionesRepository()
 
 @login_required_simulado
 def lista_dimensiones(request):
-    dimensiones = Dimensiones.objects.all()  # O el filtro que necesites
+    dimensiones = dimensiones_service.get_all_dimensiones()  
     return render(request, "dimensiones/lista_dimensiones.html", {
         "dimensiones": dimensiones
     })
