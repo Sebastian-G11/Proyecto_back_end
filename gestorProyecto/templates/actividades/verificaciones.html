@@ -1,21 +1,11 @@
 <div>
-  <h6>Medios de Verificación</h6>
-
   <!-- Inputs para agregar un nuevo medio -->
-  <div class="row g-2 mb-2">
-    {% if usuario.role_id == 10%}
-    <div class="col">
-      <input type="text" class="form-control verification-name" placeholder="Nombre" />
-    </div>
-    <div class="col">
-      <input type="url" class="form-control verification-url" placeholder="URL" />
-    </div>
-    <div class="col-auto">
-      <button class="btn btn-primary add-verification">Crear</button>
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="mb-0">Medios de Verificación</h6>
+    {% if user.role_id == 10 %}
+    <a class="btn btn-sm btn-primary add-verification" href="/actividades/crear-verificacion/"> <i class="bi bi-plus-lg"></i> Crear </a>
     {% endif %}
   </div>
-
   <!-- Lista de medios de verificación existentes -->
   <ul class="verification-list list-group list-group-flush">
     {% for verificacion in verificaciones %}
@@ -26,11 +16,44 @@
       </span>
       <span class="verification-actions">
         {% if user.role_id == 10 %}
-        <button class="btn btn-sm btn-warning edit-verification">Editar</button>
-        <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
+        <a class="btn btn-sm btn-warning edit-verification" href="/actividades/editar-verificacion/{{ verificacion.verificacion_id }}/"> <i class="bi bi-pencil"></i> Editar </a>
+        <button class="btn btn-sm btn-danger delete-verification" data-verificacion-id="{{ verificacion.verificacion_id }}" data-verificacion-nombre="{{ verificacion.nombre }}">
+          <i class="bi bi-trash"></i> Eliminar
+        </button>
         {% endif %}
       </span>
     </li>
     {% endfor %}
   </ul>
+
+  <!-- Formulario oculto para eliminar verificaciones (POST request) -->
+  <form id="deleteVerificacionForm" method="POST" style="display: none">{% csrf_token %}</form>
 </div>
+
+<script>
+  // Script para eliminar verificaciones con confirmación
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteVerificacionForm = document.getElementById("deleteVerificacionForm");
+
+    // Delegación de eventos para los botones de eliminar
+    document.addEventListener("click", function (e) {
+      const deleteBtn = e.target.closest(".delete-verification");
+
+      if (deleteBtn) {
+        e.preventDefault();
+
+        const verificacionId = deleteBtn.getAttribute("data-verificacion-id");
+        const verificacionNombre = deleteBtn.getAttribute("data-verificacion-nombre");
+
+        // Mostrar confirmación
+        if (confirm(`¿Seguro que quieres eliminar el medio de verificación "${verificacionNombre}"?`)) {
+          // Configurar el formulario para hacer POST
+          deleteVerificacionForm.action = `/actividades/eliminar-verificacion/${verificacionId}/`;
+
+          // Enviar el formulario
+          deleteVerificacionForm.submit();
+        }
+      }
+    });
+  });
+</script>

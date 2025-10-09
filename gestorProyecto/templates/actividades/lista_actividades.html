@@ -86,12 +86,27 @@
     <main class="content">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Listado de Actividades</h2>
-        {% if usuario.role_id == 10 %}
-        <button class="btn btn-success" id="addActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Actividad</button>
+        {% if user.role_id == 10 %}
+        <a href="/actividades/crear-actividad/" class="btn btn-success" id="addActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Actividad</a>
         {% endif %}
       </div>
 
+      <!-- ✅ Mensajes flash -->
+      {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'danger' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+          <strong> {% if message.tags == 'success' %}Éxito!{% elif message.tags == 'danger' %}Error!{% else %}Aviso!{% endif %} </strong>
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
       <div class="table-responsive mt-3">
+        {% if actividades %}
         <table class="table table-striped table-bordered align-middle" id="activitiesTable">
           <thead class="table-light">
             <tr>
@@ -123,8 +138,10 @@
                   <i class="bi bi-chevron-down"></i>
                 </button>
                 {% if user.role_id == 10 %}
-                <button class="btn btn-sm btn-warning edit-activity">Editar</button>
-                <button class="btn btn-sm btn-danger delete-activity">Eliminar</button>
+                <a class="btn btn-sm btn-warning edit-activity" href="/actividades/editar-actividad/{{ actividad.actividad_id }}/"> <i class="bi bi-pencil"></i> Editar </a>
+                <button class="btn btn-sm btn-danger delete-activity" data-actividad-id="{{ actividad.actividad_id }}" data-actividad-nombre="{{ actividad.nombre }}">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
                 {% endif %}
               </td>
             </tr>
@@ -141,14 +158,20 @@
                   </div>
                   <hr />
 
-                  {% include "actividades/verificaciones.html" with verificaciones=actividad.medios_verificacion %}
+                  {% include "actividades/verificaciones.html" with verificaciones=verificaciones %}
                 </div>
               </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <div class="alert alert-info">No hay actividades registradas.</div>
+        {% endif %}
       </div>
+
+      <!-- Formulario oculto para eliminar actividades (POST request) -->
+      <form id="deleteForm" method="POST" style="display: none">{% csrf_token %}</form>
 
       {% include "actividades/modal.html" with acciones=acciones %}
     </main>
@@ -179,31 +202,23 @@
             return;
           }
 
-          // 🔹 Editar actividad (solo abre modal con valores de la fila)
-          const editBtn = target.closest(".edit-activity");
-          if (editBtn) {
-            currentRow = editBtn.closest("tr.action-row");
-            if (!currentRow) return;
-            const cells = currentRow.children;
-            const form = document.getElementById("activityForm");
-
-            // Rellenar formulario con los valores de la fila
-            form.querySelector("#accion").value = cells[0].textContent.trim();
-            form.querySelector("#nombre").value = cells[1].textContent.trim();
-            form.querySelector("#responsable").value = cells[2].textContent.trim();
-            form.querySelector("#estado").value = cells[3].textContent.includes("Activo") ? 1 : 0;
-
-            document.getElementById("activityModalLabel").textContent = "Editar Actividad";
-            activityModal.show();
-            return;
-          }
-
-          // 🔹 Eliminar actividad (solo confirm, no toca DOM)
+          // 🔹 Eliminar actividad
           const deleteBtn = target.closest(".delete-activity");
           if (deleteBtn) {
-            const row = deleteBtn.closest("tr.action-row");
-            if (!row) return;
-            confirm(`¿Seguro que quieres eliminar la actividad "${row.children[1].textContent.trim()}"?`);
+            e.preventDefault();
+
+            const actividadId = deleteBtn.getAttribute("data-actividad-id");
+            const actividadNombre = deleteBtn.getAttribute("data-actividad-nombre");
+
+            // Mostrar confirmación
+            if (confirm(`¿Seguro que quieres eliminar la actividad "${actividadNombre}"?`)) {
+              // Configurar el formulario para hacer POST
+              const deleteForm = document.getElementById("deleteForm");
+              deleteForm.action = `/actividades/eliminar-actividad/${actividadId}/`;
+
+              // Enviar el formulario
+              deleteForm.submit();
+            }
             return;
           }
         });

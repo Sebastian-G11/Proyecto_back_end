@@ -1,24 +1,23 @@
 from abc import ABC, abstractmethod
 
-class AccionesRepositoryI(ABC):
+class ActividadesRepositoryI(ABC):
     @abstractmethod
-    def get_acciones(self):
+    def get_actividades(self):
         pass
 
     @abstractmethod
-    def create_accion(self, data):
+    def create_actividad(self, data):
         pass
 
     @abstractmethod
-    def update_accion(self, id, data) -> bool:
+    def update_actividad(self, id, data) -> bool:
         pass
 
     @abstractmethod
-    def delete_accion(self, id) -> bool:
+    def delete_actividad(self, id) -> bool:
         pass
 
-
-class VerificacionRepositoryI(ABC):
+class VerificacionesRepositoryI(ABC):
     @abstractmethod
     def get_verificaciones(self):
         pass

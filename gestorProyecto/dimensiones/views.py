@@ -10,9 +10,11 @@ repo = DimensionesRepository()
 
 @login_required_simulado
 def lista_dimensiones(request):
+    user = request.session.get("user")
     dimensiones = dimensiones_service.get_all_dimensiones()  
     return render(request, "dimensiones/lista_dimensiones.html", {
-        "dimensiones": dimensiones
+        "dimensiones": dimensiones,
+        "user": user
     })
 
 

@@ -1,18 +1,9 @@
 <div>
-  <h6>Medios de Verificación</h6>
-
-  <!-- Inputs para agregar -->
-  <div class="row g-2 mb-2">
+  <!-- Header con botón de crear -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h6 class="mb-0">Medios de Verificación</h6>
     {% if user.role_id == 10 %}
-    <div class="col">
-      <input type="text" class="form-control verification-name" placeholder="Nombre" />
-    </div>
-    <div class="col">
-      <input type="url" class="form-control verification-url" placeholder="URL" />
-    </div>
-    <div class="col-auto">
-      <button class="btn btn-primary add-verification">Crear</button>
-    </div>
+    <a class="btn btn-sm btn-primary add-verification" href="/acciones/crear-verificacion"> <i class="bi bi-plus-lg"></i> Crear </a>
     {% endif %}
   </div>
 
@@ -24,11 +15,32 @@
       <a href="{{ verificacion.url }}">{{ verificacion.url }}</a>
       <span class="verification-actions">
         {% if user.role_id == 10 %}
-        <button class="btn btn-sm btn-warning edit-verification">Editar</button>
-        <button class="btn btn-sm btn-danger delete-verification">Eliminar</button>
+        <a class="btn btn-sm btn-warning edit-verification" href="/acciones/editar-verificacion/{{ verificacion.verificacion_id }}">Editar</a>
+        <button class="btn btn-sm btn-danger delete-verification" data-verificacion-id="{{ verificacion.verificacion_id }}" data-verificacion-nombre="{{ verificacion.nombre }}">
+          <i class="bi bi-trash"></i> Eliminar
+        </button>
         {% endif %}
       </span>
     </li>
     {% endfor %}
   </ul>
+
+  <form id="deleteVerificacionForm" method="POST" style="display: none">{% csrf_token %}</form>
 </div>
+
+<script>
+  document.addEventListener("click", function (e) {
+    const deleteBtn = e.target.closest(".delete-verification");
+
+    if (deleteBtn) {
+      const verificacionId = deleteBtn.getAttribute("data-verificacion-id");
+      const verificacionNombre = deleteBtn.getAttribute("data-verificacion-nombre");
+
+      // Confirmación
+      if (confirm(`¿Seguro que quieres eliminar "${verificacionNombre}"?`)) {
+        deleteVerificacionForm.action = `/acciones/eliminar-verificacion/${verificacionId}/`;
+        deleteVerificacionForm.submit();
+      }
+    }
+  });
+</script>
