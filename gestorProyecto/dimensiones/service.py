@@ -1,10 +1,13 @@
 from .repositorio.repository import DimensionesRepository
+from .repositorio.repository_interface  import DimensionesRepositoryI
 from .validations import validate_nombre
 
 class DimensionesService:
-
-    def __init__(self, repository):
+    def __init__(self, repository: DimensionesRepositoryI):
         self.repository = repository
+
+    def get_all_dimensiones(self):
+        return self.repository.get_dimensiones()
 
     def create_dimension(self, nombre):
         # Validaciones antes de crear la dimensión
