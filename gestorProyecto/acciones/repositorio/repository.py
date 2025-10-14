@@ -15,6 +15,8 @@ class AccionesRepository(AccionesRepositoryI):
     def delete_accion(self, id):
         return self.acciones_model.objects.filter(accion_id=id).delete()
     
+    def get_by_filter(self, q_filter):
+        return self.acciones_model.objects.filter(q_filter)
 
 class VerificacionRepository(VerificacionRepositoryI):
     verificaciones_model = VerificacionAccion

@@ -16,3 +16,7 @@ class DimensionesRepositoryI(ABC):
     @abstractmethod
     def delete_dimension(self, id) -> bool:
         pass
+    
+    @abstractmethod
+    def get_by_filter(self, q_filters):
+        pass

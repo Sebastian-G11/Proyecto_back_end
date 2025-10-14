@@ -20,8 +20,16 @@ acciones = [
 @login_required_simulado
 def display_actividades(request):
     user = request.session.get("user")
-    actividades_list = actividades_service.get_actividades()
     verificaciones = verificaciones_service.get_verificaciones()
+
+    search_query = request.GET.get('search', '')
+    if search_query:
+        actividades_list = actividades_service.get_by_filter(search_query)
+
+        if not actividades_list:
+            messages.info(request, f'No se encontraron actividades que coincidan con "{search_query}"')
+    else:
+        actividades_list = actividades_service.get_actividades()
 
     paginator = Paginator(actividades_list, 3)
     page = request.GET.get('page')
@@ -33,7 +41,7 @@ def display_actividades(request):
     except EmptyPage:
         actividades = paginator.page(paginator.num_pages)
 
-    return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "acciones": acciones, "verificaciones": verificaciones})
+    return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "acciones": acciones, "verificaciones": verificaciones, "search_query": search_query})
 
 @login_required_simulado
 def display_crear_actividad(request):

@@ -15,3 +15,6 @@ class SolicitudRepository(SolicitudRepositoryI):
 
     def delete_solicitud(self, id):
         return self.solicitudes_model.objects.filter(solicitud_id=id).delete()
+    
+    def get_by_filter(self, q_filters):
+        return self.solicitudes_model.objects.filter(q_filters)

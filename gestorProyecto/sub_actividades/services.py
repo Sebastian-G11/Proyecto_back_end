@@ -1,4 +1,6 @@
 from .repositorio.repository import SubActividadRepository
+from django.db.models import Q
+
 
 class SubActividadService:
     @staticmethod
@@ -25,5 +27,11 @@ class SubActividadService:
     def eliminar_sub_actividad(id):
         repository = SubActividadRepository()
         return repository.eliminar_sub_actividad(id)
+    
+    @staticmethod
+    def get_by_filter(search_query):
+        q_filters = Q(nombre__icontains=search_query) | Q()
+        repository = SubActividadRepository()
+        return repository.get_by_filter(q_filters)
 
 subactividad_service = SubActividadService()
