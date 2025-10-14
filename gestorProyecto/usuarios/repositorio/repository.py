@@ -3,6 +3,7 @@ from ..models import Usuarios
 from ..validations import validate_nombre, validate_apellido, validate_email, validate_rol
 
 class UsersRepository(UsersRepositoryI):
+    usuario_model = Usuarios
 
     def create_users(self, nombre, apellido, email, rol='Usuario'):
         # Realiza las validaciones antes de crear el usuario
@@ -41,3 +42,6 @@ class UsersRepository(UsersRepositoryI):
             return False
         usuario.delete()
         return True
+    
+    def get_by_filter(self, q_filters):
+        return self.usuario_model.objects.filter(q_filters)

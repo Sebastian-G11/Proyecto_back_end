@@ -16,3 +16,7 @@ class UsersRepositoryI(ABC):
     @abstractmethod
     def delete_users(self, id) -> bool:
         pass
+
+    @abstractmethod
+    def get_by_filter(self, q_filters):
+        pass   

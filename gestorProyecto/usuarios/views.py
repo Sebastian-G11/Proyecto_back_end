@@ -4,6 +4,7 @@ from .repositorio.repository import UsersRepository
 from .forms import FormUsuario
 from autenticacion.views import login_required_simulado
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .service import user_service
 
 repo = UsersRepository()
 
@@ -14,6 +15,16 @@ def display(request):
     """
     usuarios_list = repo.get_users()
     user = request.session.get("user")
+
+
+    search_query = request.GET.get('search', '')
+    if search_query:
+        usuarios_list = user_service.get_by_filter(search_query)
+
+        if not usuarios_list:
+            messages.info(request, f'No se encontraron usuarios que coincidan con "{search_query}"')
+    else:
+        usuarios_list = user_service.get_users()
 
     paginator = Paginator(usuarios_list, 3)
     page = request.GET.get('page')

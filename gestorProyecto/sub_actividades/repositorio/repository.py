@@ -2,6 +2,8 @@ from .repository_interface import SubActividadRepositoryInterface
 from sub_actividades.models import SubActividad
 
 class SubActividadRepository(SubActividadRepositoryInterface):
+    sub_actividades_model = SubActividad
+
     def crear_sub_actividad(self, actividad, nombre, grado_aprobacion):
         sub_actividad = SubActividad(
             actividad=actividad,
@@ -28,3 +30,6 @@ class SubActividadRepository(SubActividadRepositoryInterface):
     def eliminar_sub_actividad(self, id):
         sub_actividad = self.obtener_sub_actividad_por_id(id)
         sub_actividad.delete()
+
+    def get_by_filter(self, q_filters):
+        return self.sub_actividades_model.objects.filter(q_filters)

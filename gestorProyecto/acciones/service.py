@@ -1,5 +1,6 @@
 from .repositorio.repository_interface import AccionesRepositoryI, VerificacionRepositoryI
 from .repositorio.repository import AccionesRepository, VerificacionRepository
+from django.db.models import Q
 
 class AccionesService:
     def __init__(self, repository: AccionesRepositoryI):
@@ -17,6 +18,10 @@ class AccionesService:
     def delete_accion(self, id):
         return self.repository.delete_accion(id)
     
+    def get_by_filter(self, search_query):
+        q_filter = Q(nombre__icontains=search_query) | Q(descripcion__icontains=search_query)
+        return self.repository.get_by_filter(q_filter)
+
 
 class VerificacionService:
     def __init__(self, repository: VerificacionRepositoryI):
@@ -33,6 +38,7 @@ class VerificacionService:
 
     def delete_verificacion(self, id):
         return self.repository.delete_verificacion(id)
+
 
 acciones_service = AccionesService(AccionesRepository())
 verificacion_service = VerificacionService(VerificacionRepository())

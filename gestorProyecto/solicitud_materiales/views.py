@@ -27,9 +27,17 @@ usuarios = [
 # Create your views here.
 def display_solicitud_materiales(request):
     user = request.session.get("user")
-    solicitudes = solicitud_service.get_solicitudes()
 
-    paginator = Paginator(solicitudes, 3)
+    search_query = request.GET.get('search', '')
+    if search_query:
+        solicitudes_list = solicitud_service.get_by_filter(search_query)
+
+        if not solicitudes_list:
+            messages.info(request, f'No se encontraron solicitudes que coincidan con "{search_query}"')
+    else:
+        solicitudes_list = solicitud_service.get_solicitudes()
+
+    paginator = Paginator(solicitudes_list, 3)
     page = request.GET.get('page')
     
     try:
@@ -39,7 +47,7 @@ def display_solicitud_materiales(request):
     except EmptyPage:
         solicitudes = paginator.page(paginator.num_pages)
 
-    return render(request, "solicitud_materiales/lista_materiales.html", {"user": user, "actividades": actividades, "solicitudes": solicitudes, "usuarios": usuarios})
+    return render(request, "solicitud_materiales/lista_materiales.html", {"user": user, "actividades": actividades, "solicitudes": solicitudes, "usuarios": usuarios, "search_query": search_query})
 
 @login_required_simulado
 def crear_solicitud(request):

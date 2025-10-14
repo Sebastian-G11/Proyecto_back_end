@@ -17,6 +17,10 @@ class AccionesRepositoryI(ABC):
     def delete_accion(self, id) -> bool:
         pass
 
+    @abstractmethod
+    def get_by_filter(self, q_filters):
+        pass
+
 
 class VerificacionRepositoryI(ABC):
     @abstractmethod

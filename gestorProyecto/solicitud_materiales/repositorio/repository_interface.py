@@ -17,3 +17,7 @@ class SolicitudRepositoryI(ABC):
     @abstractmethod
     def delete_solicitud(self, id) -> bool:
         pass
+
+    @abstractmethod
+    def get_by_filter(self, q_filters):
+        pass

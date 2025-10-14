@@ -9,6 +9,16 @@ def listar_subactividades(request):
     subactividades_list = subactividad_service.obtener_sub_actividades()  
     user = request.session.get("user")
 
+    search_query = request.GET.get('search', '')
+    if search_query:
+        subactividades_list = subactividad_service.get_by_filter(search_query)
+
+        if not subactividades_list:
+            messages.info(request, f'No se encontraron sub-actividades que coincidan con "{search_query}"')
+    else:
+        subactividades_list = subactividad_service.obtener_sub_actividades()
+
+
     paginator = Paginator(subactividades_list, 3)
     page = request.GET.get('page')
 

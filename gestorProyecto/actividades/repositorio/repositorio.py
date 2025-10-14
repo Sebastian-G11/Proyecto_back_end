@@ -12,10 +12,12 @@ class ActividadesRepository(ActividadesRepositoryI):
 
     def update_actividad(self, id, data) -> bool:
         return self.actividades_model.objects.filter(actividad_id=id).update(**data)
-    
 
     def delete_actividad(self, id) -> bool:
         return self.actividades_model.objects.filter(actividad_id=id).delete()
+    
+    def get_by_filter(self, q_filters):
+        return self.actividades_model.objects.filter(q_filters)
 
 class VerificacionesRepository(VerificacionesRepositoryI):
     verificaciones_model = VerificacionActividad
