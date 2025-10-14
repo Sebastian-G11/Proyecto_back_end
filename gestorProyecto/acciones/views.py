@@ -5,6 +5,7 @@ from .forms import AccionForm, VerificacionForm
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from .models import Accion, VerificacionAccion
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 ## Mock de acciones y dimensiones para hacer el añadido dinámico en la template, posteriormente vendrán directamente desde la base de datos
 dimensiones = [
@@ -28,8 +29,19 @@ verificaciones = [
 @login_required_simulado
 def display_acciones(request):
     user = request.session.get("user")
-    acciones = acciones_service.get_all_acciones()
+    acciones_list = acciones_service.get_all_acciones()
     verificaciones = verificacion_service.get_all_verificaciones()
+
+    paginator = Paginator(acciones_list, 5)  
+    page = request.GET.get('page')
+
+    try:
+        acciones = paginator.page(page)
+    except PageNotAnInteger:
+        acciones = paginator.page(1)
+    except EmptyPage:
+        acciones = paginator.page(paginator.num_pages)
+
     return render(request, "acciones/lista_acciones.html", {"user": user, "acciones": acciones, "dimensiones": dimensiones, "verificaciones": verificaciones})
 
 @login_required_simulado

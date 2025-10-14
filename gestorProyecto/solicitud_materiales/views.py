@@ -6,6 +6,7 @@ from solicitud_materiales.service import solicitud_service
 from django import forms
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 ## Mocks de actividades, solicitudes y usuarios para añadido dinámico, posteriormente vendrán de la misma BDD
 actividades = [
@@ -27,6 +28,17 @@ usuarios = [
 def display_solicitud_materiales(request):
     user = request.session.get("user")
     solicitudes = solicitud_service.get_solicitudes()
+
+    paginator = Paginator(solicitudes, 3)
+    page = request.GET.get('page')
+    
+    try:
+        solicitudes = paginator.page(page)
+    except PageNotAnInteger:
+        solicitudes = paginator.page(1)
+    except EmptyPage:
+        solicitudes = paginator.page(paginator.num_pages)
+
     return render(request, "solicitud_materiales/lista_materiales.html", {"user": user, "actividades": actividades, "solicitudes": solicitudes, "usuarios": usuarios})
 
 @login_required_simulado

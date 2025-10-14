@@ -3,10 +3,22 @@ from django.contrib import messages
 from .forms import SubActividadForm
 from .services import subactividad_service 
 from .models import SubActividad
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def listar_subactividades(request):
-    subactividades = subactividad_service.obtener_sub_actividades()  
+    subactividades_list = subactividad_service.obtener_sub_actividades()  
     user = request.session.get("user")
+
+    paginator = Paginator(subactividades_list, 3)
+    page = request.GET.get('page')
+
+    try:
+        subactividades = paginator.page(page)
+    except PageNotAnInteger:
+        subactividades = paginator.page(1)
+    except EmptyPage:
+        subactividades = paginator.page(paginator.num_pages)
+
     return render(request, "sub_actividades/lista_sub_actividades.html", {
         "subactividades": subactividades,
         "user": user
