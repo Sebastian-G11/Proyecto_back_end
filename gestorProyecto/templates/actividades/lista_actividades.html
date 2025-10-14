@@ -170,6 +170,8 @@
         {% endif %}
       </div>
 
+      {% include "ui/pagination.html" with data=actividades %}
+
       <!-- Formulario oculto para eliminar actividades (POST request) -->
       <form id="deleteForm" method="POST" style="display: none">{% csrf_token %}</form>
 

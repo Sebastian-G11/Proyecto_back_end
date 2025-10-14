@@ -3,6 +3,8 @@ from django.contrib import messages
 from .repositorio.repository import UsersRepository
 from .forms import FormUsuario
 from autenticacion.views import login_required_simulado
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 repo = UsersRepository()
 
 @login_required_simulado
@@ -10,8 +12,17 @@ def display(request):
     """
     Muestra la lista de usuarios.
     """
-    usuarios = repo.get_users()
+    usuarios_list = repo.get_users()
     user = request.session.get("user")
+
+    paginator = Paginator(usuarios_list, 3)
+    page = request.GET.get('page')
+    try:
+        usuarios = paginator.page(page)
+    except PageNotAnInteger:
+        usuarios = paginator.page(1)
+    except EmptyPage:
+        usuarios = paginator.page(paginator.num_pages)
 
     return render(request, "usuarios/lista_usuarios.html", {
         "usuarios": usuarios,

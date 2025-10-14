@@ -6,12 +6,24 @@ from .service import dimensiones_service
 from .repositorio.repository import DimensionesRepository
 from .models import Dimensiones
 from autenticacion.views import login_required_simulado
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 repo = DimensionesRepository()
 
 @login_required_simulado
 def lista_dimensiones(request):
     user = request.session.get("user")
-    dimensiones = dimensiones_service.get_all_dimensiones()  
+    dimensiones_list = dimensiones_service.get_all_dimensiones() 
+
+    paginator = Paginator(dimensiones_list, 3)
+    page = request.GET.get('page')
+    try:
+        dimensiones = paginator.page(page)
+    except PageNotAnInteger:
+        dimensiones = paginator.page(1)
+    except EmptyPage:
+        dimensiones = paginator.page(paginator.num_pages)
+
     return render(request, "dimensiones/lista_dimensiones.html", {
         "dimensiones": dimensiones,
         "user": user
