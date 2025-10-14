@@ -77,7 +77,9 @@
               <th>Apellido</th>
               <th>Email</th>
               <th>Rol</th>
+              {% if user.role_id == 10 %}
               <th>Acciones</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -87,6 +89,7 @@
               <td>{{ usuario.apellido }}</td>
               <td>{{ usuario.email }}</td>
               <td>{{ usuario.rol }}</td>
+              {% if user.role_id == 10 %}
               <td>
                 <a href="{% url 'usuarios:actualizar_usuario' usuario.id %}" class="btn btn-warning">Editar</a>
                 <button
@@ -97,6 +100,7 @@
                   Eliminar
                 </button>
               </td>
+              {% endif %}
             </tr>
             {% endfor %}
           </tbody>
