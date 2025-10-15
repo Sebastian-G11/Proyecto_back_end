@@ -9,17 +9,17 @@ class DimensionesRepository(DimensionesRepositoryI):
 
     def get_dimension_by_id(self, id):
         try:
-            return self.dimensiones_model.objects.get(id=id)
-        except Dimensiones.DoesNotExist:
+            return self.dimensiones_model.objects.get(pk=id)
+        except self.dimensiones_model.DoesNotExist:
             return None
 
     def create_dimension(self, nombre):
-        dimension = Dimensiones(nombre=nombre)
-        self.dimensiones_model.save()
+        dimension = self.dimensiones_model(nombre=nombre)
+        dimension.save()
         return dimension
 
     def update_dimension(self, id, nombre):
-        dimension = self.dimensiones_model.get_dimension_by_id(id)
+        dimension = self.get_dimension_by_id(id)
         if dimension:
             dimension.nombre = nombre
             dimension.save()
@@ -27,11 +27,11 @@ class DimensionesRepository(DimensionesRepositoryI):
         return None
 
     def delete_dimension(self, id):
-        dimension = self.dimensiones_model.get_dimension_by_id(id)
+        dimension = self.get_dimension_by_id(id)
         if not dimension:
             return False
         dimension.delete()
         return True
-    
+
     def get_by_filter(self, q_filters):
         return self.dimensiones_model.objects.filter(q_filters)

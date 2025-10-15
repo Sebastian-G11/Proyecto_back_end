@@ -1,4 +1,3 @@
-from .validations import validate_nombre, validate_apellido, validate_email, validate_rol
 from .repositorio.repository_interface import UsersRepositoryI
 from .repositorio.repository import UsersRepository
 from django.db.models import Q
