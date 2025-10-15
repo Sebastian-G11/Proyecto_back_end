@@ -3,7 +3,13 @@ from django.contrib import messages
 from .forms import SubActividadForm
 from .services import subactividad_service 
 from .models import SubActividad
+from autenticacion.views import login_required_simulado, admin_required
 
+
+
+
+
+@login_required_simulado
 def listar_subactividades(request):
     subactividades = subactividad_service.obtener_sub_actividades()  
     user = request.session.get("user")
@@ -12,7 +18,8 @@ def listar_subactividades(request):
         "user": user
     })
 
-
+@admin_required
+@login_required_simulado
 def agregar_subactividad(request):
     if request.method == 'POST':
         form = SubActividadForm(request.POST)
@@ -34,6 +41,8 @@ def agregar_subactividad(request):
     return render(request, 'sub_actividades/crear_sub_actividades.html', {'form': form})
 
 
+@admin_required
+@login_required_simulado
 def editar_subactividad(request, id):
     subactividad = get_object_or_404(SubActividad, id=id)
     
@@ -58,6 +67,8 @@ def editar_subactividad(request, id):
     return render(request, 'sub_actividades/editar_sub_actividades.html', {'form': form, 'subactividad': subactividad})
 
 
+@admin_required
+@login_required_simulado
 def eliminar_subactividad(request, id):
     if request.method == 'POST':
         try:

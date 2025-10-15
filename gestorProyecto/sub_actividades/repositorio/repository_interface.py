@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class SubActividadRepositoryInterface(ABC):
+class SubActividadRepositoryI(ABC):
     @abstractmethod
     def crear_sub_actividad(self, actividad, nombre, grado_aprobacion):
         pass

@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from autenticacion.views import login_required_simulado
+from autenticacion.views import login_required_simulado, admin_required
 from .service import actividades_service, verificaciones_service
 from .forms import ActividadForm, VerificacionForm
 from django.contrib import messages
@@ -23,6 +23,8 @@ def display_actividades(request):
     verificaciones = verificaciones_service.get_verificaciones()
     return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "acciones": acciones, "verificaciones": verificaciones})
 
+
+@admin_required
 @login_required_simulado
 def display_crear_actividad(request):
     user = request.session.get("user")
@@ -38,6 +40,7 @@ def display_crear_actividad(request):
 
     return render(request, 'actividades/crear_actividad.html', {"user": user, "form": form})
 
+@admin_required
 @login_required_simulado
 def display_editar_actividad(request, id):
     user = request.session.get("user")
@@ -54,6 +57,8 @@ def display_editar_actividad(request, id):
 
     return render(request, 'actividades/editar_actividad.html', {"user": user, "form": form, "actividad": actividad})
 
+
+@admin_required
 @login_required_simulado
 def eliminar_actividad(request, id):
     actividad = get_object_or_404(Actividad, actividad_id=id)
@@ -65,6 +70,8 @@ def eliminar_actividad(request, id):
 
     return render(request, 'actividades/confirmar_eliminacion.html', {"actividad": actividad})
 
+
+@admin_required
 @login_required_simulado
 def display_crear_verificacion(request):
     user = request.session.get("user")
@@ -80,6 +87,7 @@ def display_crear_verificacion(request):
 
     return render(request, "actividades/crear_verificacion.html", {"user": user, "form": form})
 
+@admin_required
 @login_required_simulado
 def display_editar_verificacion(request, id):
     user = request.session.get("user")
@@ -96,6 +104,7 @@ def display_editar_verificacion(request, id):
 
     return render(request, "actividades/editar_verificacion.html", {"user": user, "form": form, "verificacion": verificacion})
 
+@admin_required
 @login_required_simulado
 def eliminar_verificacion(request, id):
     verificacion = get_object_or_404(VerificacionActividad, verificacion_id=id)

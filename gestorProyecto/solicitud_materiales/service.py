@@ -1,6 +1,6 @@
 from solicitud_materiales.repositorio.repository_interface import SolicitudRepositoryI
 from solicitud_materiales.repositorio.repository import SolicitudRepository
-from solicitud_materiales.validations import validate_materiales
+
 
 class SolicitudService:
    def __init__(self, repository: SolicitudRepositoryI):

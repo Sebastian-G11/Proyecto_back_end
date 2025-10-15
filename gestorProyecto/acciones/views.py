@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from autenticacion.views import login_required_simulado
+from autenticacion.views import login_required_simulado, admin_required
 from .service import acciones_service, verificacion_service
 from .forms import AccionForm, VerificacionForm
 from django.contrib import messages
@@ -32,6 +32,7 @@ def display_acciones(request):
     verificaciones = verificacion_service.get_all_verificaciones()
     return render(request, "acciones/lista_acciones.html", {"user": user, "acciones": acciones, "dimensiones": dimensiones, "verificaciones": verificaciones})
 
+@admin_required
 @login_required_simulado
 def display_create_accion(request):
     user = request.session.get("user")
@@ -47,6 +48,8 @@ def display_create_accion(request):
 
     return render(request, "acciones/crear_accion.html", {"user": user, "dimensiones": dimensiones, "form": form})
 
+
+@admin_required
 @login_required_simulado
 def display_edit_accion(request, id):
     user = request.session.get("user")
@@ -63,6 +66,7 @@ def display_edit_accion(request, id):
 
     return render(request, "acciones/editar_accion.html", {"user": user, "dimensiones": dimensiones, "form": form}) 
 
+@admin_required
 @login_required_simulado
 def delete_accion(request, id):
     if request.method == "POST":
@@ -75,6 +79,7 @@ def delete_accion(request, id):
             messages.error(request, f'Error al eliminar la acción: {str(e)}')
     return redirect("/acciones")
 
+@admin_required
 @login_required_simulado
 def display_create_verificacion(request):
     user = request.session.get("user")
@@ -93,6 +98,7 @@ def display_create_verificacion(request):
 
     return render(request, "acciones/crear_verificacion.html", {"user": user, "dimensiones": dimensiones, "form": form})
 
+@admin_required
 @login_required_simulado
 def display_edit_verificacion(request, id):
     user = request.session.get("user")
@@ -109,6 +115,7 @@ def display_edit_verificacion(request, id):
 
     return render(request, "acciones/editar_verificacion.html", {"user": user, "dimensiones": dimensiones, "form": form})
 
+@admin_required
 @login_required_simulado
 def eliminar_verificacion(request, id):
     if request.method == "POST":
