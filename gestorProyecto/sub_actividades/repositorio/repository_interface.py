@@ -20,3 +20,7 @@ class SubActividadRepositoryI(ABC):
     @abstractmethod
     def eliminar_sub_actividad(self, id):
         pass
+
+    @abstractmethod
+    def get_by_filter(self, q_filters):
+        pass

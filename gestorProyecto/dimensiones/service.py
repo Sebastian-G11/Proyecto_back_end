@@ -1,5 +1,6 @@
 from .repositorio.repository import DimensionesRepository
 from .repositorio.repository_interface  import DimensionesRepositoryI
+from django.db.models import Q
 
 
 class DimensionesService:
@@ -17,5 +18,9 @@ class DimensionesService:
 
     def delete_dimension(self, id):
         return self.repository.delete_dimension(id)
+    
+    def get_by_filter(self, search_query):
+        q_filters = Q(nombre__icontains=search_query) | Q()
+        return self.repository.get_by_filter(q_filters)
 
 dimensiones_service = DimensionesService(DimensionesRepository())

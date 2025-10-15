@@ -6,16 +6,38 @@ from .service import dimensiones_service
 from .repositorio.repository import DimensionesRepository
 from .models import Dimensiones
 from autenticacion.views import login_required_simulado, admin_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 repo = DimensionesRepository()
 
 
 @login_required_simulado
 def lista_dimensiones(request):
     user = request.session.get("user")
-    dimensiones = dimensiones_service.get_all_dimensiones()  
+
+    search_query = request.GET.get('search', '')
+    if search_query:
+        dimensiones_list = dimensiones_service.get_by_filter(search_query)
+
+        if not dimensiones_list:
+            messages.info(request, f'No se encontraron dimensiones que coincidan con "{search_query}"')
+    else:
+        dimensiones_list = dimensiones_service.get_all_dimensiones()
+
+
+    paginator = Paginator(dimensiones_list, 3)
+    page = request.GET.get('page')
+    try:
+        dimensiones = paginator.page(page)
+    except PageNotAnInteger:
+        dimensiones = paginator.page(1)
+    except EmptyPage:
+        dimensiones = paginator.page(paginator.num_pages)
+
     return render(request, "dimensiones/lista_dimensiones.html", {
         "dimensiones": dimensiones,
-        "user": user
+        "user": user,
+        "search_query": search_query
     })
 
 @admin_required

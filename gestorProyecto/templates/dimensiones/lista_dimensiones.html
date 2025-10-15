@@ -29,6 +29,70 @@
           margin-left: 280px;
         }
       }
+
+      .search-container {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+      }
+      .search-box {
+        position: relative;
+      }
+      .search-box input {
+        padding-left: 45px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+      .search-box input:focus {
+        border-color: #6c757d;
+        box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.15);
+      }
+      .search-box .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 1.2rem;
+        pointer-events: none;
+      }
+      .btn-search {
+        background: #6c757d;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 30px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      .btn-search:hover {
+        background: #495057;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+      }
+      .btn-clear {
+        background: #e9ecef;
+        color: #495057;
+        border: 1px solid #ced4da;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      .btn-clear:hover {
+        background: #dee2e6;
+        color: #495057;
+      }
+      .search-results-info {
+        background: #e7f3ff;
+        border-left: 4px solid #0d6efd;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
     </style>
   </head>
   <body>
@@ -38,9 +102,7 @@
       <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
         <h2 class="mb-3">Listado de Dimensiones</h2>
         {% if user.role_id == 10 %}
-        <a href="{% url 'dimensiones:agregar_dimension' %}" class="btn btn-success mb-2 mb-md-0">
-          <i class="bi bi-plus-lg"></i> Añadir Dimensión
-        </a>
+        <a href="{% url 'dimensiones:agregar_dimension' %}" class="btn btn-success mb-2 mb-md-0"> <i class="bi bi-plus-lg"></i> Añadir Dimensión </a>
         {% endif %}
       </div>
 
@@ -48,18 +110,34 @@
       <div class="mb-4">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          <i
-            class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'danger' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"
-          ></i>
-          <strong>
-            {% if message.tags == 'success' %}Éxito!{% elif message.tags == 'danger' %}Error!{% else %}Aviso!{% endif %}
-          </strong>
+          <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'danger' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+          <strong> {% if message.tags == 'success' %}Éxito!{% elif message.tags == 'danger' %}Error!{% else %}Aviso!{% endif %} </strong>
           {{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}
       </div>
+
       {% endif %}
+      <!-- Barra de búsqueda -->
+      <div class="search-container">
+        <form method="GET" action="/dimensiones" class="row g-3 align-items-center">
+          <div class="col-md-8">
+            <div class="search-box">
+              <i class="bi bi-search search-icon"></i>
+              <input type="text" name="search" class="form-control form-control-lg" placeholder="Buscar por nombre" value="{{ search_query }}" autofocus />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-search flex-grow-1"><i class="bi bi-search me-2"></i>Buscar</button>
+              {% if search_query %}
+              <a href="/dimensiones" class="btn btn-clear"> <i class="bi bi-x-circle me-1"></i>Limpiar </a>
+              {% endif %}
+            </div>
+          </div>
+        </form>
+      </div>
 
       {% if dimensiones %}
       <div class="table-responsive">
@@ -81,13 +159,7 @@
               {% if user.role_id == 10 %}
               <td>
                 <a href="{% url 'dimensiones:editar_dimension' dimension.id %}" class="btn btn-warning">Editar</a>
-                <button
-                  class="btn btn-danger delete-dimension"
-                  data-dimension-id="{{ dimension.id }}"
-                  data-dimension="{{ dimension.nombre }}"
-                >
-                  Eliminar
-                </button>
+                <button class="btn btn-danger delete-dimension" data-dimension-id="{{ dimension.id }}" data-dimension="{{ dimension.nombre }}">Eliminar</button>
               </td>
               {% endif %}
             </tr>
@@ -96,10 +168,8 @@
         </table>
       </div>
       {% else %}
-      <div class="alert alert-info" role="alert">
-        <i class="bi bi-info-circle me-2"></i> No hay dimensiones registradas.
-      </div>
-      {% endif %}
+      <div class="alert alert-info" role="alert"><i class="bi bi-info-circle me-2"></i> No hay dimensiones registradas.</div>
+      {% endif %} {% include "ui/pagination.html" with data=dimensiones %}
 
       <form id="deleteForm" method="POST" style="display: none">{% csrf_token %}</form>
     </main>

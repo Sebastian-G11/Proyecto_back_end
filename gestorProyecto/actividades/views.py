@@ -4,6 +4,7 @@ from .service import actividades_service, verificaciones_service
 from .forms import ActividadForm, VerificacionForm
 from django.contrib import messages
 from .models import Actividad, VerificacionActividad
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 ## Mock de actividades y acciones para hacer el añadido dinámico en la template, posteriormente vendrán directamente desde la base de datos
 
@@ -19,9 +20,28 @@ acciones = [
 @login_required_simulado
 def display_actividades(request):
     user = request.session.get("user")
-    actividades = actividades_service.get_actividades()
     verificaciones = verificaciones_service.get_verificaciones()
-    return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "acciones": acciones, "verificaciones": verificaciones})
+
+    search_query = request.GET.get('search', '')
+    if search_query:
+        actividades_list = actividades_service.get_by_filter(search_query)
+
+        if not actividades_list:
+            messages.info(request, f'No se encontraron actividades que coincidan con "{search_query}"')
+    else:
+        actividades_list = actividades_service.get_actividades()
+
+    paginator = Paginator(actividades_list, 3)
+    page = request.GET.get('page')
+
+    try:
+        actividades = paginator.page(page)
+    except PageNotAnInteger:
+        actividades = paginator.page(1)
+    except EmptyPage:
+        actividades = paginator.page(paginator.num_pages)
+
+    return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "acciones": acciones, "verificaciones": verificaciones, "search_query": search_query})
 
 
 @admin_required

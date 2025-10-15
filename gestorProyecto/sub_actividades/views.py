@@ -4,6 +4,7 @@ from .forms import SubActividadForm
 from .services import subactividad_service 
 from .models import SubActividad
 from autenticacion.views import login_required_simulado, admin_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 
@@ -11,8 +12,29 @@ from autenticacion.views import login_required_simulado, admin_required
 
 @login_required_simulado
 def listar_subactividades(request):
-    subactividades = subactividad_service.obtener_sub_actividades()  
+    subactividades_list = subactividad_service.obtener_sub_actividades()  
     user = request.session.get("user")
+
+    search_query = request.GET.get('search', '')
+    if search_query:
+        subactividades_list = subactividad_service.get_by_filter(search_query)
+
+        if not subactividades_list:
+            messages.info(request, f'No se encontraron sub-actividades que coincidan con "{search_query}"')
+    else:
+        subactividades_list = subactividad_service.obtener_sub_actividades()
+
+
+    paginator = Paginator(subactividades_list, 3)
+    page = request.GET.get('page')
+
+    try:
+        subactividades = paginator.page(page)
+    except PageNotAnInteger:
+        subactividades = paginator.page(1)
+    except EmptyPage:
+        subactividades = paginator.page(paginator.num_pages)
+
     return render(request, "sub_actividades/lista_sub_actividades.html", {
         "subactividades": subactividades,
         "user": user

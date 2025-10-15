@@ -3,6 +3,7 @@ from ..models import Usuarios
 
 
 class UsersRepository(UsersRepositoryI):
+    usuario_model = Usuarios
 
     def create_users(self, nombre, apellido, email, rol='Usuario'):
         usuario = Usuarios(nombre=nombre, apellido=apellido, email=email, rol=rol)
@@ -36,3 +37,6 @@ class UsersRepository(UsersRepositoryI):
             return False
         usuario.delete()
         return True
+    
+    def get_by_filter(self, q_filters):
+        return self.usuario_model.objects.filter(q_filters)
