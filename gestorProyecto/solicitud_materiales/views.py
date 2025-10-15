@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from autenticacion.views import login_required_simulado
+from autenticacion.views import login_required_simulado, admin_required
 from solicitud_materiales.models import SolicitudMaterial
 from solicitud_materiales.form import FormSolicitudMaterial
 from solicitud_materiales.service import solicitud_service
@@ -24,7 +24,6 @@ usuarios = [
 
 
 @login_required_simulado
-# Create your views here.
 def display_solicitud_materiales(request):
     user = request.session.get("user")
 
@@ -49,6 +48,8 @@ def display_solicitud_materiales(request):
 
     return render(request, "solicitud_materiales/lista_materiales.html", {"user": user, "actividades": actividades, "solicitudes": solicitudes, "usuarios": usuarios, "search_query": search_query})
 
+
+@admin_required
 @login_required_simulado
 def crear_solicitud(request):
     user = request.session.get("user")
@@ -74,6 +75,8 @@ def crear_solicitud(request):
         "form": form
     })
 
+
+@admin_required
 @login_required_simulado
 def editar_solicitud(request, id):
     user = request.session.get("user")
@@ -84,7 +87,6 @@ def editar_solicitud(request, id):
         if form.is_valid():
             try:
                 solicitud = solicitud_service.update_solicitud(id, form.cleaned_data)
-                # ✅ Agregar mensaje de éxito
                 messages.success(request, f'Solicitud actualizada exitosamente')
                 return redirect('/solicitud_materiales')
             except Exception as e:
@@ -99,6 +101,8 @@ def editar_solicitud(request, id):
         "solicitud": solicitud
     })
 
+
+@admin_required
 @login_required_simulado
 def eliminar_solicitud(request, id):
     if request.method == "POST":

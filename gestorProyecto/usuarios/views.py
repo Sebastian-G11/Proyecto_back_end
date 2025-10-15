@@ -2,17 +2,17 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .repositorio.repository import UsersRepository
 from .forms import FormUsuario
-from autenticacion.views import login_required_simulado
+from autenticacion.views import login_required_simulado, admin_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .service import user_service
 
 repo = UsersRepository()
 
+
+
 @login_required_simulado
 def display(request):
-    """
-    Muestra la lista de usuarios.
-    """
+    usuarios = repo.get_users()
     usuarios_list = repo.get_users()
     user = request.session.get("user")
 
@@ -41,11 +41,9 @@ def display(request):
     })
     
     
+@admin_required
 @login_required_simulado
 def agregar_usuario(request):
-    """
-    Agregar un nuevo usuario.
-    """
     if request.method == 'POST':
         form = FormUsuario(request.POST)
 
@@ -62,11 +60,9 @@ def agregar_usuario(request):
     return render(request, 'usuarios/crear_usuario.html', {'form': form})
 
 
+@admin_required
 @login_required_simulado
 def actualizar_usuario(request, id):
-    """
-    Actualiza un usuario existente.
-    """
     usuario = repo.get_user_by_id(id)
     if not usuario:
         messages.error(request, "Usuario no encontrado")
@@ -86,11 +82,9 @@ def actualizar_usuario(request, id):
     return render(request, "usuarios/editar_usuario.html", {"form": form, "usuario": usuario})
 
 
+@admin_required
 @login_required_simulado
 def eliminar_usuario(request, id):
-    """
-    Elimina un usuario.
-    """
     eliminado = repo.delete_users(id)
     if eliminado:
         messages.success(request, "Usuario eliminado correctamente")

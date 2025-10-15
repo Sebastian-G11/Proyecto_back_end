@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-
+from django.contrib import messages
 # Lista de usuarios simulada
 usuarios = [
     {'nombre': 'sebas', 'contrasena': '1234', 'role': 'Usuario', 'role_id' : 30}, 
@@ -35,3 +35,11 @@ def login_required_simulado(view_func):
     return wrapper
 
 
+def admin_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        user = request.session.get("user")
+        if not user or user.get("role_id") != 10:
+            messages.error(request, "No tienes permiso para acceder a esta sección.")
+            return render(request, "error/error_acceso.html", {"mensaje": "Acceso no autorizado"})
+        return view_func(request, *args, **kwargs)
+    return wrapper

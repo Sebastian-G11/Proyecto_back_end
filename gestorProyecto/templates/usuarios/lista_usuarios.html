@@ -103,7 +103,9 @@
       <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
         <h2 class="mb-3">Listado de Usuarios</h2>
         {% if user.role_id == 10 %}
-        <a href="{% url 'usuarios:agregar_usuario' %}" class="btn btn-success mb-2 mb-md-0"> <i class="bi bi-plus-lg"></i> Añadir Usuario </a>
+        <a href="/admin" class="btn btn-success mb-2 mb-md-0">
+          <i class="bi bi-plus-lg"></i> Añadir Usuario
+        </a>
         {% endif %}
       </div>
 
@@ -149,9 +151,9 @@
               <th>Apellido</th>
               <th>Email</th>
               <th>Rol</th>
-              {% if user.role_id == 10 %}
-              <th>Acciones</th>
-              {% endif %}
+             <!-- {% if user.role_id == 10 %} --> 
+            <!-- <th>Acciones</th> -->
+            <!-- {% endif %} --> 
             </tr>
           </thead>
           <tbody>
@@ -161,12 +163,13 @@
               <td>{{ usuario.apellido }}</td>
               <td>{{ usuario.email }}</td>
               <td>{{ usuario.rol }}</td>
-              {% if user.role_id == 10 %}
+             <!-- {% if user.role_id == 10 %}
               <td>
                 <a href="{% url 'usuarios:actualizar_usuario' usuario.id %}" class="btn btn-warning">Editar</a>
                 <button class="btn btn-danger delete-user" data-user-id="{{ usuario.id }}" data-usuario="{{ usuario.nombre }} {{ usuario.apellido }}">Eliminar</button>
               </td>
               {% endif %}
+            -->
             </tr>
             {% endfor %}
           </tbody>

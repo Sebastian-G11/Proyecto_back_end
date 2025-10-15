@@ -1,6 +1,5 @@
 from solicitud_materiales.repositorio.repository_interface import SolicitudRepositoryI
 from solicitud_materiales.repositorio.repository import SolicitudRepository
-from solicitud_materiales.validations import validate_materiales
 from django.db.models import Q
 
 class SolicitudService:

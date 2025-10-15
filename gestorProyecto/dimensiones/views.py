@@ -5,10 +5,11 @@ from .forms import FormDimensiones
 from .service import dimensiones_service
 from .repositorio.repository import DimensionesRepository
 from .models import Dimensiones
-from autenticacion.views import login_required_simulado
+from autenticacion.views import login_required_simulado, admin_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 repo = DimensionesRepository()
+
 
 @login_required_simulado
 def lista_dimensiones(request):
@@ -39,7 +40,7 @@ def lista_dimensiones(request):
         "search_query": search_query
     })
 
-
+@admin_required
 @login_required_simulado
 def agregar_dimension(request):
     if request.method == "POST":
@@ -59,7 +60,7 @@ def agregar_dimension(request):
     })
 
 
-
+@admin_required
 @login_required_simulado
 def editar_dimension(request, id):
     try:
@@ -81,7 +82,7 @@ def editar_dimension(request, id):
         form = FormDimensiones(instance=dimension)
     return render(request, 'dimensiones/editar_dimensiones.html', {'form': form, 'dimension': dimension})
 
-
+@admin_required
 @login_required_simulado
 def eliminar_dimension(request, id):
     eliminado = dimensiones_service.delete_dimension(id)

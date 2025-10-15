@@ -1,16 +1,11 @@
 from .repository_interface import UsersRepositoryI
 from ..models import Usuarios
-from ..validations import validate_nombre, validate_apellido, validate_email, validate_rol
+
 
 class UsersRepository(UsersRepositoryI):
     usuario_model = Usuarios
 
     def create_users(self, nombre, apellido, email, rol='Usuario'):
-        # Realiza las validaciones antes de crear el usuario
-        validate_nombre(nombre)
-        validate_apellido(apellido)
-        validate_email(email)
-        validate_rol(rol)
         usuario = Usuarios(nombre=nombre, apellido=apellido, email=email, rol=rol)
         usuario.save()
         return usuario

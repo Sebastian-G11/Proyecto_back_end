@@ -1,7 +1,8 @@
-from .repository_interface import SubActividadRepositoryInterface
+from .repository_interface import SubActividadRepositoryI
 from sub_actividades.models import SubActividad
 
-class SubActividadRepository(SubActividadRepositoryInterface):
+
+class SubActividadRepository(SubActividadRepositoryI):
     sub_actividades_model = SubActividad
 
     def crear_sub_actividad(self, actividad, nombre, grado_aprobacion):
