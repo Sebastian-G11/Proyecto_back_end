@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from autenticacion.service import auth_service
+
 # Lista de usuarios simulada
 usuarios = [
     {'nombre': 'sebas', 'contrasena': '1234', 'role': 'Usuario', 'role_id' : 30}, 
@@ -10,9 +12,10 @@ usuarios = [
 def display(request):
     mensaje = ""
     if request.method == "POST":
-        user = request.POST.get("nombre")
+        email = request.POST.get("email")
         pwd = request.POST.get("contrasena")
-        encontrado = next((u for u in usuarios if u['nombre'] == user and u['contrasena'] == pwd), None)
+        user_data = {'email': email, 'password': pwd}
+        encontrado = auth_service.auth(user_data)
         if encontrado:
             request.session["user"] = encontrado
             request.session.set_expiry(600)

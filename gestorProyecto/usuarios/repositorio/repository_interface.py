@@ -4,6 +4,10 @@ class UsersRepositoryI(ABC):
     @abstractmethod
     def get_users(self):
         pass
+
+    @abstractmethod
+    def get_user_by_email(self, email):
+        pass
     
     @abstractmethod
     def create_users(self, nombre, apellido, email, rol='Usuario'):

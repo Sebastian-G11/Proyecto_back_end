@@ -2,16 +2,15 @@ from .repositorio.repository_interface import UsersRepositoryI
 from .repositorio.repository import UsersRepository
 from django.db.models import Q
 
-
-
-
-
 class UserService:
     def __init__(self, repository: UsersRepositoryI):
         self.repository = repository
 
     def get_users(self):
         return self.repository.get_users()
+    
+    def get_user_by_username(self, username):
+        return self.repository.get_user_by_username(username)
 
     def create_user(self, nombre, apellido, email, rol='Usuario'):
         return self.repository.create_users(nombre, apellido, email, rol)

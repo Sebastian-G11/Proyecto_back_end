@@ -11,11 +11,14 @@ class UsersRepository(UsersRepositoryI):
         return usuario
 
     def get_users(self):
-        return Usuarios.objects.all()
+        return Usuarios.objects.select_related('rol').all()
+
+    def get_user_by_email(self, email):
+        return Usuarios.objects.select_related('rol').filter(email=email).first()
 
     def get_user_by_id(self, id):
         try:
-            return Usuarios.objects.get(id=id)
+            return Usuarios.objects.select_related('rol').get(id=id)
         except Usuarios.DoesNotExist:
             return None
 
