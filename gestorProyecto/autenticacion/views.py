@@ -41,7 +41,7 @@ def login_required_simulado(view_func):
 def admin_required(view_func):
     def wrapper(request, *args, **kwargs):
         user = request.session.get("user")
-        if not user or user.get("role_id") != 10:
+        if not user or user.get("rol") != 1:
             messages.error(request, "No tienes permiso para acceder a esta sección.")
             return render(request, "error/error_acceso.html", {"mensaje": "Acceso no autorizado"})
         return view_func(request, *args, **kwargs)
