@@ -6,10 +6,6 @@ from .models import SubActividad
 from autenticacion.views import login_required_simulado, admin_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-
-
-
-
 @login_required_simulado
 def listar_subactividades(request):
     subactividades_list = subactividad_service.obtener_sub_actividades()  

@@ -161,21 +161,22 @@
               {{ form.nombre }}
             </div>
 
-            <!-- Contador de caracteres -->
-            <div class="d-flex justify-content-between mt-1">
-              {% if form.nombre.help_text %}
-              <small class="text-muted">{{ form.nombre.help_text }}</small>
-              {% else %}
-              <small class="text-muted">Ingrese un nombre descriptivo para la actividad</small>
-              {% endif %}
-              <small class="text-muted char-counter" id="nombreCounter">0/40</small>
-            </div>
-
             {% if form.nombre.errors %}
             <div class="invalid-feedback d-block">
               {% for error in form.nombre.errors %}
               <i class="bi bi-exclamation-circle me-1"></i>{{ error }} {% endfor %}
             </div>
+            {% endif %}
+          </div>
+
+          <!-- Acción relacionada -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-list-task me-2"></i>{{ form.accion.label }}
+              <span class="text-danger">*</span>
+            </label>
+            {{ form.accion }} {% if form.accion.errors %}
+            <div class="invalid-feedback d-block">{% for error in form.accion.errors %} {{ error }} {% endfor %}</div>
             {% endif %}
           </div>
 

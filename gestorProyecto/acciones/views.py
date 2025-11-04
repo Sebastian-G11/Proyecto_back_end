@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from .models import Accion, VerificacionAccion
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from dimensiones.service import dimensiones_service
 
 ## Mock de acciones y dimensiones para hacer el añadido dinámico en la template, posteriormente vendrán directamente desde la base de datos
 dimensiones = [
@@ -30,8 +31,6 @@ verificaciones = [
 @login_required_simulado
 def display_acciones(request):
     user = request.session.get("user")
-    verificaciones = verificacion_service.get_all_verificaciones()
-
     search_query = request.GET.get('search', '')
     if search_query:
         acciones_list = acciones_service.get_by_filter(search_query)
@@ -50,18 +49,20 @@ def display_acciones(request):
         acciones = paginator.page(1)
     except EmptyPage:
         acciones = paginator.page(paginator.num_pages)
+    
 
-    return render(request, "acciones/lista_acciones.html", {"user": user, "acciones": acciones, "dimensiones": dimensiones, "verificaciones": verificaciones, "search_query": search_query  })
+    return render(request, "acciones/lista_acciones.html", {"user": user, "acciones": acciones, "search_query": search_query  })
 
 @admin_required
 @login_required_simulado
 def display_create_accion(request):
     user = request.session.get("user")
+    dimensiones = dimensiones_service.get_all_dimensiones()
 
     if request.method == "POST":
         form = AccionForm(request.POST)
         if form.is_valid():
-            accion = acciones_service.create_accion(form.cleaned_data)
+            accion = acciones_service.create_accion(request=request, data=form.cleaned_data)
             messages.success(request, f'Acción "{accion.nombre}" creada exitosamente')  
             return redirect("/acciones")
     else:
@@ -102,14 +103,14 @@ def delete_accion(request, id):
 
 @admin_required
 @login_required_simulado
-def display_create_verificacion(request):
+def display_create_verificacion(request, id):
     user = request.session.get("user")
 
     if request.method == "POST":
         form = VerificacionForm(request.POST)
         if form.is_valid():
             try:
-                verificacion = verificacion_service.create_verificacion(form.cleaned_data)
+                verificacion = verificacion_service.create_verificacion(accion_id=id, **form.cleaned_data)
                 messages.success(request, f'Verificación "{verificacion.nombre}" creada exitosamente')
                 return redirect("/acciones")
             except Exception as e:
