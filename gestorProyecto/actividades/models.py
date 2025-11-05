@@ -25,3 +25,4 @@ class VerificacionActividad(models.Model):
     actividad = models.ForeignKey(Actividad, related_name='verificaciones', on_delete=models.CASCADE, default=None)
     nombre = models.CharField(max_length=40)
     url = models.URLField()
+    

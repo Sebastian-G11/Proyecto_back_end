@@ -5,6 +5,8 @@ from usuarios.models import Usuarios
 class Estados(models.Model):
     estado_id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, unique=True)
+    def __str__(self):
+        return self.nombre
 
 # Create your models here.
 class Accion(models.Model):
@@ -26,6 +28,7 @@ class Accion(models.Model):
     def __str__(self):
         return f"{self.nombre}"
 
+    
 class VerificacionAccion(models.Model):
     verificacion_id = models.AutoField(primary_key=True)
     accion = models.ForeignKey(Accion, related_name='verificaciones', on_delete=models.CASCADE, default=None)
