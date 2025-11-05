@@ -17,7 +17,6 @@ class AccionAdmin(admin.ModelAdmin):
     form = AccionForm
     inlines = [VerificacionAccionInline]
 
-    # Columnas visibles en el listado
     list_display = (
         'nombre',
         'dimension_nombre',
@@ -34,44 +33,39 @@ class AccionAdmin(admin.ModelAdmin):
     ordering = ('-fecha_creacion',)
     list_per_page = 10
 
-    def get_fieldsets(self, request, obj=None): 
+    def get_fieldsets(self, request, obj=None):
+        """Define qué campos mostrar según si se está creando o editando."""
         if obj:
             return (
                 ("Información General", {
-                    "fields": ("nombre", "descripcion", "dimension", "estado")
+                    "fields": ("nombre", "descripcion", "estado")
                 }),
                 ("Responsable", {
                     "fields": ("responsable",)
                 }),
                 ("Presupuestos", {
-                    "fields": ("presupuesto_anual", "presupuesto_reajustado")
+                    "fields": ("presupuesto_reajustado",)
                 }),
             )
         else:
             return (
                 ("Información General", {
-                    "fields": ("nombre", "descripcion", "dimension", "estado")
+                    "fields": ("nombre", "descripcion", "dimension")
                 }),
                 ("Responsable", {
                     "fields": ("responsable",)
                 }),
                 ("Presupuestos", {
                     "fields": ("presupuesto_anual",)
-                }),  
+                }),
             )
 
-    
-    # ==========================
-    # 🔹 OPTIMIZACIÓN DE CONSULTAS
-    # ==========================
+
     def get_queryset(self, request):
-        """Optimiza con select_related para evitar consultas repetidas."""
         qs = super().get_queryset(request)
         return qs.select_related('dimension', 'estado', 'responsable')
 
-    # ==========================
-    # 🔹 CAMPOS PERSONALIZADOS
-    # ==========================
+
     def dimension_nombre(self, obj):
         return obj.dimension.nombre if obj.dimension else "-"
     dimension_nombre.short_description = "Dimensión"
@@ -84,9 +78,7 @@ class AccionAdmin(admin.ModelAdmin):
         return obj.estado.nombre if obj.estado else "-"
     estado_nombre.short_description = "Estado"
 
-    # ==========================
-    # 🔹 MENSAJES PERSONALIZADOS
-    # ==========================
+
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if change:
@@ -115,7 +107,6 @@ class VerificacionAccionAdmin(admin.ModelAdmin):
         }),
     )
 
-    # Mostrar nombre legible de la acción
     def accion_nombre(self, obj):
         return obj.accion.nombre if obj.accion else "-"
     accion_nombre.short_description = "Acción"

@@ -7,24 +7,33 @@ from .forms import SubActividadForm
 class SubActividadAdmin(admin.ModelAdmin):
     form = SubActividadForm  
 
-    # ==========================
-    # CONFIGURACIÓN VISUAL
-    # ==========================
-    list_display = ('nombre', 'grado_aprobacion', 'fecha_creacion')
+
+    list_display = ('nombre', 'grado_aprobacion', 'fecha_creacion','fecha_actualizacion')
     list_filter = ('actividad',)
-    search_fields = ('nombre', 'actividad__nombre')  # ✅ relación corregida
+    search_fields = ('nombre', 'actividad__nombre')
     ordering = ('nombre',)
     list_per_page = 10 
 
-    fieldsets = (
-        ("Información de Subactividad", {
-            "fields": ("nombre", "actividad", "grado_aprobacion")
-        }),
-    )
+    def get_fieldsets(self, request, obj=None):
+        """
+        Si se está creando → incluye 'actividad'.
+        Si se está editando → no lo muestra.
+        """
+        if obj: 
+            return (
+                ("Información de Subactividad", {
+                    "fields": ("nombre", "grado_aprobacion")
+                }),
+            )
+        else: 
+            return (
+                ("Información de Subactividad", {
+                    "fields": ("actividad", "nombre", "grado_aprobacion")
+                }),
+            )
 
-    # ==========================
-    # MENSAJES PERSONALIZADOS
-    # ==========================
+
+
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if change:

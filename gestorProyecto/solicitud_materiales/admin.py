@@ -7,11 +7,9 @@ from .form import FormSolicitudMaterial
 class SolicitudMaterialAdmin(admin.ModelAdmin):
     form = FormSolicitudMaterial
 
-    # ==========================
-    # CONFIGURACIÓN VISUAL
-    # ==========================
+
     list_display = (
-        'actividad_id',
+        'actividad',
         'materiales_solicitados',
         'numero_orden',
         'valor_esperado',
@@ -24,19 +22,12 @@ class SolicitudMaterialAdmin(admin.ModelAdmin):
     ordering = ('-fecha_creacion',)
     list_per_page = 10
 
-    # ==========================
-    # FIELDSETS DINÁMICOS
-    # ==========================
+
     def get_fieldsets(self, request, obj=None):
-        """
-        Si se está creando → muestra 'valor_esperado' editable.
-        Si se está editando → muestra 'valor_final' editable y 'valor_esperado' solo lectura.
-        """
-        if obj:  # Editando
+        if obj:  
             return (
                 ("Información de la Solicitud", {
                     "fields": (
-                        "actividad_id",
                         "materiales_solicitados",
                         "numero_orden",
                         "codigo_factura",
@@ -46,11 +37,11 @@ class SolicitudMaterialAdmin(admin.ModelAdmin):
                     "fields": ("valor_esperado", "valor_final")
                 }),
             )
-        else:  # Creando nuevo
+        else: 
             return (
                 ("Información de la Solicitud", {
                     "fields": (
-                        "actividad_id",
+                        "actividad",  
                         "materiales_solicitados",
                         "numero_orden",
                         "codigo_factura",
@@ -61,9 +52,7 @@ class SolicitudMaterialAdmin(admin.ModelAdmin):
                 }),
             )
 
-    # ==========================
-    # CAMPOS SOLO LECTURA
-    # ==========================
+
     def get_readonly_fields(self, request, obj=None):
         """
         Durante la edición, 'valor_esperado' no se puede modificar.
@@ -72,9 +61,7 @@ class SolicitudMaterialAdmin(admin.ModelAdmin):
             return ('valor_esperado', 'fecha_creacion')
         return ('fecha_creacion',)
 
-    # ==========================
-    # MENSAJES PERSONALIZADOS
-    # ==========================
+  
     def save_model(self, request, obj, form, change):
         """Mensaje al crear o actualizar"""
         super().save_model(request, obj, form, change)

@@ -17,27 +17,40 @@ class ActividadAdmin(admin.ModelAdmin):
     )
 
     list_filter = ('estado', 'responsable', 'fecha_creacion')
-    search_fields = ('nombre', 'responsable__nombre', 'accion_id__nombre')
+    search_fields = ('nombre', 'responsable__nombre', 'accion__nombre')
     ordering = ('-fecha_creacion',)
     list_per_page = 10
 
-    fieldsets = (
-        ("Información General", {
-            "fields": ("nombre", "accion_id", "estado")
-        }),
-        ("Responsable", {
-            "fields": ("responsable",)
-        }),
-    
-    )
-
+    def get_fieldsets(self, request, obj=None):
+        """
+        - Si se está creando una actividad: muestra 'accion', oculta 'estado'.
+        - Si se está editando una actividad: oculta 'accion', muestra 'estado'.
+        """
+        if obj:  # Editar
+            return (
+                ("Información General", {
+                    "fields": ("nombre", "estado")
+                }),
+                ("Responsable", {
+                    "fields": ("responsable",)
+                }),
+            )
+        else:  # Crear
+            return (
+                ("Información General", {
+                    "fields": ("nombre", "accion")
+                }),
+                ("Responsable", {
+                    "fields": ("responsable",)
+                }),
+            )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.select_related('estado', 'accion_id', 'responsable')
+        return qs.select_related('estado', 'accion', 'responsable')
 
     def accion_nombre(self, obj):
-        return obj.accion_id.nombre if obj.accion_id else "-"
+        return obj.accion.nombre if obj.accion else "-"
     accion_nombre.short_description = "Acción"
 
     def responsable_nombre(self, obj):
@@ -47,7 +60,6 @@ class ActividadAdmin(admin.ModelAdmin):
     def estado_nombre(self, obj):
         return obj.estado.nombre if obj.estado else "-"
     estado_nombre.short_description = "Estado"
-
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

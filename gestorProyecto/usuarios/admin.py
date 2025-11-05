@@ -7,12 +7,17 @@ from .forms import FormUsuario
 class UsuariosAdmin(admin.ModelAdmin):
     form = FormUsuario  
 
-    # ==========================
-    # CONFIGURACIÓN VISUAL
-    # ==========================
-    list_display = ('nombre', 'apellido', 'email', 'rol')
+
+    list_display = ('nombre', 
+                    'apellido', 
+                    'email', 
+                    'rol')
+    
     list_filter = ('rol',)
-    search_fields = ('nombre', 'apellido', 'email')
+    search_fields = ('nombre', 
+                     'apellido', 
+                     'email')
+    
     ordering = ('nombre',)
     list_per_page = 10 
 
@@ -25,9 +30,7 @@ class UsuariosAdmin(admin.ModelAdmin):
         }),
     )
 
-    # ==========================
-    # MENSAJES PERSONALIZADOS
-    # ==========================
+
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if change:
