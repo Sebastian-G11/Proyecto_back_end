@@ -2,8 +2,8 @@
   <!-- Header con botón de crear -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h6 class="mb-0">Medios de Verificación</h6>
-    {% if user.role_id == 10 %}
-    <a class="btn btn-sm btn-primary add-verification" href="/acciones/crear-verificacion"> <i class="bi bi-plus-lg"></i> Crear </a>
+    {% if user.rol == 1 %}
+    <a class="btn btn-sm btn-primary add-verification" href="/acciones/crear-verificacion/{{ accion_id }}"> <i class="bi bi-plus-lg"></i> Crear </a>
     {% endif %}
   </div>
 
@@ -14,7 +14,7 @@
       <span>{{ verificacion.nombre }}</span>
       <a href="{{ verificacion.url }}">{{ verificacion.url }}</a>
       <span class="verification-actions">
-        {% if user.role_id == 10 %}
+        {% if user.rol == 1 %}
         <a class="btn btn-sm btn-warning edit-verification" href="/acciones/editar-verificacion/{{ verificacion.verificacion_id }}">Editar</a>
         <button class="btn btn-sm btn-danger delete-verification" data-verificacion-id="{{ verificacion.verificacion_id }}" data-verificacion-nombre="{{ verificacion.nombre }}">
           <i class="bi bi-trash"></i> Eliminar

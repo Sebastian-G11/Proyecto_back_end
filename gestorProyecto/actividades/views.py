@@ -6,21 +6,9 @@ from django.contrib import messages
 from .models import Actividad, VerificacionActividad
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-## Mock de actividades y acciones para hacer el añadido dinámico en la template, posteriormente vendrán directamente desde la base de datos
-
-acciones = [
-        {
-          "nombre": "Capacitación Personal"
-        },
-        {
-          "nombre": "Implementación CRM"
-        }
-    ]
-
 @login_required_simulado
 def display_actividades(request):
     user = request.session.get("user")
-    verificaciones = verificaciones_service.get_verificaciones()
 
     search_query = request.GET.get('search', '')
     if search_query:
@@ -41,7 +29,7 @@ def display_actividades(request):
     except EmptyPage:
         actividades = paginator.page(paginator.num_pages)
 
-    return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "acciones": acciones, "verificaciones": verificaciones, "search_query": search_query})
+    return render(request, 'actividades/lista_actividades.html', {"user": user,"actividades": actividades, "search_query": search_query})
 
 
 @admin_required
@@ -51,7 +39,7 @@ def display_crear_actividad(request):
     if request.method == "POST":
         form = ActividadForm(request.POST)
         if form.is_valid():
-            actividad = actividades_service.create_actividad(form.cleaned_data)
+            actividad = actividades_service.create_actividad(request=request, data=form.cleaned_data)
             messages.success(request, f'Acción "{actividad.nombre}" creada exitosamente')  
 
             return redirect("/actividades")
@@ -93,13 +81,13 @@ def eliminar_actividad(request, id):
 
 @admin_required
 @login_required_simulado
-def display_crear_verificacion(request):
+def display_crear_verificacion(request, id):
     user = request.session.get("user")
 
     if request.method == "POST":
         form = VerificacionForm(request.POST)
         if form.is_valid():
-            verificacion = verificaciones_service.create_verificacion(form.cleaned_data)
+            verificacion = verificaciones_service.create_verificacion(id, form.cleaned_data)
             messages.success(request, f'Medio de verificación "{verificacion.nombre}" creado exitosamente')  
             return redirect("/actividades")
     else:

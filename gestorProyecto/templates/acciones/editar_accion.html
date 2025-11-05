@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nueva Acción</title>
+    <title>Editar Acción</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <style>
@@ -53,6 +53,10 @@
         border-color: #adb5bd;
         box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.15);
       }
+      .form-control.is-invalid,
+      .form-select.is-invalid {
+        border-color: #dc3545;
+      }
       .input-group-text {
         background: #6c757d;
         color: white;
@@ -87,8 +91,11 @@
         border-color: #adb5bd;
       }
       .invalid-feedback {
-        font-size: 0.85rem;
-        margin-top: 5px;
+        display: block !important;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        color: #dc3545;
+        font-weight: 500;
       }
       .icon-input {
         position: relative;
@@ -114,9 +121,9 @@
     <div class="container">
       <div class="form-container">
         <div class="form-header">
-          <i class="bi bi-clipboard-check" style="font-size: 3rem; color: #6c757d"></i>
+          <i class="bi bi-pencil-square" style="font-size: 3rem; color: #6c757d"></i>
           <h2>Editar Acción</h2>
-          <p>Complete el formulario con los detalles de la acción</p>
+          <p>Modifique los campos que desee actualizar</p>
         </div>
 
         <!-- Mensajes flash -->
@@ -131,20 +138,39 @@
         <form method="post" id="accionForm">
           {% csrf_token %}
 
+          <!-- Dimensión (solo lectura) -->
+          <div class="mb-4">
+            <label class="form-label"> <i class="bi bi-diagram-3 me-2"></i>Dimensión </label>
+            <input type="text" class="form-control bg-light" value="{{ form.instance.dimension.nombre }}" readonly tabindex="-1" style="cursor: not-allowed" />
+            <!-- Campo oculto para mantener el valor -->
+            <input type="hidden" name="dimension" value="{{ form.instance.dimension.dimension_id }}" />
+            <small class="text-muted d-block mt-1">Este campo no puede modificarse después de la creación</small>
+          </div>
+
           <!-- Nombre -->
           <div class="mb-4">
             <label class="form-label">
-              <i class="bi bi-tag me-2"></i>{{ form.nombre.label }}
+              <i class="bi bi-tag me-2"></i>Nombre de la Acción
               <span class="text-danger">*</span>
             </label>
             <div class="icon-input">
               <i class="bi bi-pencil"></i>
-              {{ form.nombre }}
+              <input
+                type="text"
+                name="nombre"
+                value="{{ form.nombre.value|default:'' }}"
+                class="form-control {% if form.nombre.errors %}is-invalid{% endif %}"
+                placeholder="Ej: Implementación de proyecto X"
+                maxlength="100"
+                required
+              />
             </div>
-            {% if form.nombre.help_text %}
-            <small class="text-muted d-block mt-1">{{ form.nombre.help_text }}</small>
-            {% endif %} {% if form.nombre.errors %}
-            <div class="invalid-feedback d-block">{% for error in form.nombre.errors %} {{ error }} {% endfor %}</div>
+            <small class="text-muted d-block mt-1">Máximo 100 caracteres</small>
+            {% if form.nombre.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.nombre.errors %}
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error }} {% endfor %}
+            </div>
             {% endif %}
           </div>
 
@@ -152,55 +178,95 @@
           <div class="row">
             <div class="col-md-6 mb-4">
               <label class="form-label">
-                <i class="bi bi-currency-dollar me-2"></i>{{ form.presupuesto_anual.label }}
+                <i class="bi bi-currency-dollar me-2"></i>Presupuesto Anual
                 <span class="text-danger">*</span>
               </label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
-                {{ form.presupuesto_anual }}
+                <input type="text" class="form-control bg-light" value="{{ form.instance.presupuesto_anual|floatformat:0 }}" readonly tabindex="-1" style="cursor: not-allowed" />
               </div>
-              {% if form.presupuesto_anual.help_text %}
-              <small class="text-muted d-block mt-1">{{ form.presupuesto_anual.help_text }}</small>
-              {% endif %} {% if form.presupuesto_anual.errors %}
-              <div class="invalid-feedback d-block">{% for error in form.presupuesto_anual.errors %} {{ error }} {% endfor %}</div>
-              {% endif %}
+              <!-- Campo oculto para enviar el valor -->
+              <input type="hidden" name="presupuesto_anual" value="{{ form.instance.presupuesto_anual }}" />
+              <small class="text-muted d-block mt-1">Este campo no puede modificarse después de la creación</small>
             </div>
 
             <div class="col-md-6 mb-4">
-              <label class="form-label">
-                <i class="bi bi-cash-coin me-2"></i>{{ form.presupuesto_reajustado.label }}
-                <span class="text-danger">*</span>
-              </label>
+              <label class="form-label"> <i class="bi bi-cash-coin me-2"></i>Presupuesto Reajustado </label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
-                {{ form.presupuesto_reajustado }}
+                <input
+                  type="number"
+                  name="presupuesto_reajustado"
+                  value="{{ form.presupuesto_reajustado.value|default:'' }}"
+                  class="form-control {% if form.presupuesto_reajustado.errors %}is-invalid{% endif %}"
+                  placeholder="0"
+                  min="0"
+                  step="0.01"
+                />
               </div>
-              {% if form.presupuesto_reajustado.help_text %}
-              <small class="text-muted d-block mt-1">{{ form.presupuesto_reajustado.help_text }}</small>
-              {% endif %} {% if form.presupuesto_reajustado.errors %}
-              <div class="invalid-feedback d-block">{% for error in form.presupuesto_reajustado.errors %} {{ error }} {% endfor %}</div>
+              <small class="text-muted d-block mt-1">Presupuesto ajustado según necesidades</small>
+              {% if form.presupuesto_reajustado.errors %}
+              <div class="invalid-feedback">
+                {% for error in form.presupuesto_reajustado.errors %}
+                <i class="bi bi-exclamation-circle me-1"></i>{{ error }} {% endfor %}
+              </div>
               {% endif %}
             </div>
           </div>
 
+          <!-- Estado -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-flag me-2"></i>Estado
+            </label>
+            <select name="estado" class="form-select {% if form.estado.errors %}is-invalid{% endif %}">
+              {% for estado in form.estado.field.queryset %}
+              <option value="{{ estado.estado_id }}" 
+                {% if form.estado.value == estado.estado_id or form.instance.estado.estado_id == estado.estado_id %}selected{% endif %}>
+                {{ estado.nombre }}
+              </option>
+              {% endfor %}
+            </select>
+            <small class="text-muted d-block mt-1">Actualice el estado según el avance de la acción</small>
+            {% if form.estado.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.estado.errors %}
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+
           <!-- Descripción -->
           <div class="mb-4">
             <label class="form-label">
-              <i class="bi bi-text-paragraph me-2"></i>{{ form.descripcion.label }}
+              <i class="bi bi-text-paragraph me-2"></i>Descripción
               <span class="text-danger">*</span>
             </label>
-            {{ form.descripcion }} {% if form.descripcion.help_text %}
-            <small class="text-muted d-block mt-1">{{ form.descripcion.help_text }}</small>
-            {% endif %} {% if form.descripcion.errors %}
-            <div class="invalid-feedback d-block">{% for error in form.descripcion.errors %} {{ error }} {% endfor %}</div>
+            <textarea
+              name="descripcion"
+              class="form-control {% if form.descripcion.errors %}is-invalid{% endif %}"
+              placeholder="Describa detalladamente la acción a realizar..."
+              rows="5"
+              required
+            >
+{{ form.descripcion.value|default:'' }}</textarea
+            >
+            <small class="text-muted d-block mt-1">Detalle completo de la acción</small>
+            {% if form.descripcion.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.descripcion.errors %}
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error }} {% endfor %}
+            </div>
             {% endif %}
           </div>
 
           <!-- Errores generales del formulario -->
           {% if form.non_field_errors %}
           <div class="alert alert-danger" role="alert">
-            <strong>Errores:</strong>
-            <ul class="mb-0">
+            <strong><i class="bi bi-exclamation-triangle me-2"></i>Errores:</strong>
+            <ul class="mb-0 mt-2">
               {% for error in form.non_field_errors %}
               <li>{{ error }}</li>
               {% endfor %}
@@ -210,7 +276,7 @@
 
           <!-- Botones -->
           <div class="d-flex gap-3 justify-content-center mt-5">
-            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-2"></i>Editar Acción</button>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-2"></i>Guardar Cambios</button>
             <a href="/acciones" class="btn btn-secondary"> <i class="bi bi-x-circle me-2"></i>Cancelar </a>
           </div>
         </form>

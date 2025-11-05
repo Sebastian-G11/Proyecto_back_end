@@ -2,8 +2,8 @@
   <!-- Inputs para agregar un nuevo medio -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h6 class="mb-0">Medios de Verificación</h6>
-    {% if user.role_id == 10 %}
-    <a class="btn btn-sm btn-primary add-verification" href="/actividades/crear-verificacion/"> <i class="bi bi-plus-lg"></i> Crear </a>
+    {% if user.rol == 1 %}
+    <a class="btn btn-sm btn-primary add-verification" href="/actividades/crear-verificacion/{{actividad_id}}"> <i class="bi bi-plus-lg"></i> Crear </a>
     {% endif %}
   </div>
   <!-- Lista de medios de verificación existentes -->
@@ -15,7 +15,7 @@
         <a href="{{ verificacion.url }}" target="_blank">{{ verificacion.url }}</a>
       </span>
       <span class="verification-actions">
-        {% if user.role_id == 10 %}
+        {% if user.rol == 1 %}
         <a class="btn btn-sm btn-warning edit-verification" href="/actividades/editar-verificacion/{{ verificacion.verificacion_id }}/"> <i class="bi bi-pencil"></i> Editar </a>
         <button class="btn btn-sm btn-danger delete-verification" data-verificacion-id="{{ verificacion.verificacion_id }}" data-verificacion-nombre="{{ verificacion.nombre }}">
           <i class="bi bi-trash"></i> Eliminar

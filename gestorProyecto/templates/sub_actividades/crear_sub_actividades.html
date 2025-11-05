@@ -122,30 +122,31 @@
         <form method="POST">
           {% csrf_token %}
 
+          <!-- Actividad relacionada -->
           <div class="mb-4">
             <label class="form-label">
-              <i class="bi bi-diagram-3-fill label-icon"></i>{{ form.actividad.label }}
+              <i class="bi bi-list-task me-2"></i>{{ form.actividad.label }}
+              <span class="text-danger">*</span>
             </label>
-            {{ form.actividad }}
-            {% if form.actividad.errors %}
-            <div class="invalid-feedback d-block">{{ form.actividad.errors }}</div>
+            {{ form.actividad }} {% if form.actividad.help_text %}
+            <small class="text-muted d-block mt-1">{{ form.actividad.help_text }}</small>
+            {% endif %} {% if form.actividad.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in form.actividad.errors %}
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error }} {% endfor %}
+            </div>
             {% endif %}
           </div>
 
           <div class="mb-4">
-            <label class="form-label">
-              <i class="bi bi-pencil-square label-icon"></i>{{ form.nombre.label }}
-            </label>
-            {{ form.nombre }}
-            {% if form.nombre.errors %}
+            <label class="form-label"> <i class="bi bi-pencil-square label-icon"></i>{{ form.nombre.label }} </label>
+            {{ form.nombre }} {% if form.nombre.errors %}
             <div class="invalid-feedback d-block">{{ form.nombre.errors }}</div>
             {% endif %}
           </div>
 
           <div class="mb-4">
-            <label class="form-label">
-              <i class="bi bi-bar-chart-line label-icon"></i>{{ form.grado_aprobacion.label }}
-            </label>
+            <label class="form-label"> <i class="bi bi-bar-chart-line label-icon"></i>{{ form.grado_aprobacion.label }} </label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-percent"></i></span>
               {{ form.grado_aprobacion }}
@@ -160,12 +161,8 @@
           {% endif %}
 
           <div class="d-flex gap-3 justify-content-center mt-5">
-            <button type="submit" class="btn btn-primary">
-              <i class="bi bi-check-circle me-2"></i>Guardar Sub-Actividad
-            </button>
-            <a href="{% url 'subactividades:listar_subactividades' %}" class="btn btn-secondary">
-              <i class="bi bi-x-circle me-2"></i>Cancelar
-            </a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-2"></i>Guardar Sub-Actividad</button>
+            <a href="{% url 'subactividades:listar_subactividades' %}" class="btn btn-secondary"> <i class="bi bi-x-circle me-2"></i>Cancelar </a>
           </div>
         </form>
       </div>

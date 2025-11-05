@@ -150,7 +150,7 @@
     <main class="content">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0">Listado de Actividades</h2>
-        {% if user.role_id == 10 %}
+        {% if user.rol == 1 %}
         <a href="/actividades/crear-actividad/" class="btn btn-success" id="addActivityBtn"><i class="bi bi-plus-lg"></i> Añadir Actividad</a>
         {% endif %}
       </div>
@@ -198,7 +198,7 @@
               <th>Nombre</th>
               <th>Responsable</th>
               <th>Estado</th>
-              {% if user.role_id == 30 %}
+              {% if user.rol == 2 %}
               <th class="text-center">Detalles</th>
               {% else %}
               <th class="text-center">Detalles / Acciones</th>
@@ -213,15 +213,13 @@
               <td>{{ actividad.nombre }}</td>
               <td>{{ actividad.responsable }}</td>
               <td>
-                <span class="badge {% if actividad.estado == 1 %}bg-success{% else %}bg-secondary{% endif %}">
-                  {% if actividad.estado == 1 %}Activo{% else %}Inactivo{% endif %}
-                </span>
+                <span class="badge {% if actividad.estado == 1 %}bg-success{% else %}bg-secondary{% endif %}"> {{actividad.estado.nombre}} </span>
               </td>
               <td class="text-center">
                 <button class="btn btn-sm btn-info toggle-detail" data-target="details{{ forloop.counter }}">
                   <i class="bi bi-chevron-down"></i>
                 </button>
-                {% if user.role_id == 10 %}
+                {% if user.rol == 1 %}
                 <a class="btn btn-sm btn-warning edit-activity" href="/actividades/editar-actividad/{{ actividad.actividad_id }}/"> <i class="bi bi-pencil"></i> Editar </a>
                 <button class="btn btn-sm btn-danger delete-activity" data-actividad-id="{{ actividad.actividad_id }}" data-actividad-nombre="{{ actividad.nombre }}">
                   <i class="bi bi-trash"></i> Eliminar
@@ -242,7 +240,7 @@
                   </div>
                   <hr />
 
-                  {% include "actividades/verificaciones.html" with verificaciones=verificaciones %}
+                  {% include "actividades/verificaciones.html" with verificaciones=actividad.verificaciones.all actividad_id=actividad.actividad_id %}
                 </div>
               </td>
             </tr>
@@ -307,20 +305,6 @@
             }
             return;
           }
-        });
-
-        // 🔹 Abrir modal para añadir actividad
-        document.getElementById("addActivityBtn").addEventListener("click", () => {
-          currentRow = null;
-          const form = document.getElementById("activityForm");
-          form.reset();
-          document.getElementById("activityModalLabel").textContent = "Añadir Actividad";
-          activityModal.show();
-        });
-
-        // 🔹 Guardar actividad (solo cierra modal, no manipula tabla)
-        document.getElementById("saveActivityBtn").addEventListener("click", () => {
-          activityModal.hide();
         });
       });
     </script>

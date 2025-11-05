@@ -2,6 +2,7 @@ from .repositorio.repositiorio_interface import ActividadesRepositoryI, Verifica
 from .repositorio.repositorio import ActividadesRepository, VerificacionesRepository
 from django.db.models import Q
 
+
 class ActividadesService:
     def __init__(self, repository: ActividadesRepositoryI):
         self.repository = repository
@@ -9,11 +10,15 @@ class ActividadesService:
     def get_actividades(self):
         return self.repository.get_actividades()
 
-    def create_actividad(self, data):
-        return self.repository.create_actividad(data)
+    def create_actividad(self, request, data):
+        user = request.session.get("user")
+        if user: 
+            data['responsable_id'] = user['usuario_id']
 
-    def update_actividad(self, id, data) -> bool:
-        return self.repository.update_actividad(id, data)
+        return self.repository.create_actividad(**data)
+
+    def update_actividad(self, id, data):
+        return self.repository.update_actividad(id, **data)
 
     def delete_actividad(self, id) -> bool:
         return self.repository.delete_actividad(id)
@@ -29,7 +34,8 @@ class VerificacionesService:
     def get_verificaciones(self):
         return self.repository.get_verificaciones()
 
-    def create_verificacion(self, data):
+    def create_verificacion(self, actividad_id, data):
+        data['actividad_id'] = actividad_id
         return self.repository.create_verificacion(data)
 
     def update_verificacion(self, id, data) -> bool:
