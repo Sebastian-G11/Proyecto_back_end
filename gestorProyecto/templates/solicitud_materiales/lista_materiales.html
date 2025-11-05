@@ -119,7 +119,7 @@
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center header-flex mb-3">
         <h2 class="mb-0">Listado de Solicitudes de Materiales</h2>
-        {% if user.role_id == 10 %}
+        {% if user.rol == 1 %}
         <a class="btn btn-success" id="addSolicitudBtn" href="/solicitud_materiales/crear-solicitud/"><i class="bi bi-plus-lg"></i> Añadir Solicitud</a>
         {% endif %}
       </div>
@@ -171,8 +171,7 @@
               <th>Valor Final Compra</th>
               <th>Código Factura</th>
               <th>Fecha Creación</th>
-              <th>Responsable</th>
-              {% if user.role_id == 10 %}
+              {% if user.rol == 1 %}
               <th>Acciones</th>
               {% endif %}
             </tr>
@@ -180,15 +179,14 @@
           <tbody>
             {% for solicitud in solicitudes %}
             <tr class="align-middle">
-              <td>{{ solicitud.actividad_id.nombre }}</td>
+              <td>{{ solicitud.actividad }}</td>
               <td>{{ solicitud.materiales_solicitados }}</td>
               <td>{{ solicitud.numero_orden }}</td>
               <td>${{ solicitud.valor_esperado }}</td>
               <td>{% if solicitud.valor_final %}${{ solicitud.valor_final }}{% else %}-{% endif %}</td>
               <td>{{ solicitud.codigo_factura }}</td>
               <td>{{ solicitud.fecha_creacion }}</td>
-              <td>{{ solicitud.responsable_nombre }}</td>
-              {% if user.role_id == 10 %}
+              {% if user.rol == 1 %}
               <td class="text-nowrap">
                 <a class="btn btn-sm btn-warning edit-solicitud mb-1 mb-md-0" href="/solicitud_materiales/editar-solicitud/{{ solicitud.solicitud_id }}">Editar</a>
                 <button class="btn btn-sm btn-danger delete-solicitud" data-solicitud-id="{{ solicitud.solicitud_id }}" data-materiales="{{ solicitud.materiales_solicitados }}">
