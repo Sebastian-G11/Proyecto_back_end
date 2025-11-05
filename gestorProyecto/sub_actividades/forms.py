@@ -7,12 +7,12 @@ class SubActividadForm(forms.ModelForm):
         model = SubActividad
         fields = ['actividad', 'nombre', 'grado_aprobacion']
         widgets = {
-            'actividad': forms.Select(attrs={'class': 'form-select'}),
+            'actividad_id': forms.Select(attrs={'class': 'form-select'}),
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre de la subactividad'}),
             'grado_aprobacion': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0 - 100'}),
         }
         labels = {
-            'actividad': 'Actividad Asociada',
+            'actividad_id': 'Actividad Asociada',
             'nombre': 'Nombre de la Subactividad',
             'grado_aprobacion': 'Grado de Aprobación (%)',
         }

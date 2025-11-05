@@ -180,7 +180,7 @@
           <tbody>
             {% for solicitud in solicitudes %}
             <tr class="align-middle">
-              <td>{{ solicitud.actividad_nombre }}</td>
+              <td>{{ solicitud.actividad_id.nombre }}</td>
               <td>{{ solicitud.materiales_solicitados }}</td>
               <td>{{ solicitud.numero_orden }}</td>
               <td>${{ solicitud.valor_esperado }}</td>

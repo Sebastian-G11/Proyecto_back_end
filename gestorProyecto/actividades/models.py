@@ -11,6 +11,8 @@ class Actividad(models.Model):
     fecha_creacion = models.DateField(auto_now_add=True)
     fecha_actualizacion = models.DateField(auto_now=True)
     estado = models.ForeignKey(Estados, related_name='actividades', on_delete=models.PROTECT, default=1)
+    def __str__(self):
+        return self.nombre
 
 
 class VerificacionActividad(models.Model):
@@ -18,3 +20,4 @@ class VerificacionActividad(models.Model):
     actividad_id = models.ForeignKey(Actividad, related_name='verificaciones', on_delete=models.PROTECT, default=None)
     nombre = models.CharField(max_length=40)
     url = models.URLField()
+    
