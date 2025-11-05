@@ -8,7 +8,7 @@ class SolicitudRepository(SolicitudRepositoryI):
         return self.solicitudes_model.objects.create(**data)
     
     def get_solicitudes(self):
-        return self.solicitudes_model.objects.all()
+        return self.solicitudes_model.objects.select_related('actividad').all()
 
     def update_solicitud(self, id, data):
         return self.solicitudes_model.objects.filter(solicitud_id=id).update(**data)
@@ -17,4 +17,4 @@ class SolicitudRepository(SolicitudRepositoryI):
         return self.solicitudes_model.objects.filter(solicitud_id=id).delete()
     
     def get_by_filter(self, q_filters):
-        return self.solicitudes_model.objects.filter(q_filters)
+        return self.solicitudes_model.objects.select_related('actividad').all().filter(**q_filters)

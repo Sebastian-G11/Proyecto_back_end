@@ -16,10 +16,6 @@ class SubActividadService:
 
     def obtener_sub_actividades(self):
         return self.repository.obtener_sub_actividades()
-    @staticmethod
-    def eliminar_sub_actividad(id):
-        repository = SubActividadRepository()
-        return repository.eliminar_sub_actividad(id)
     
     @staticmethod
     def get_by_filter(search_query):
@@ -32,8 +28,8 @@ class SubActividadService:
         return self.repository.obtener_sub_actividad_por_id(id)
 
 
-    def actualizar_sub_actividad(self, id, actividad, nombre, grado_aprobacion):
-        return self.repository.actualizar_sub_actividad(id, actividad, nombre, grado_aprobacion)
+    def actualizar_sub_actividad(self, id, data):
+        return self.repository.actualizar_sub_actividad(id,**data)
 
 
     def eliminar_sub_actividad(self, id):

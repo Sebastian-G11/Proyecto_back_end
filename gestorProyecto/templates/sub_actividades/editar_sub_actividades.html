@@ -101,11 +101,11 @@
           {% csrf_token %}
 
           <div class="mb-4">
-            <label class="form-label">Actividad</label>
-            <select class="form-select" name="actividad" required>
-              <option value="Actividad1" {% if form.actividad.value == "Actividad1" %}selected{% endif %}>Actividad 1</option>
-              <option value="Actividad2" {% if form.actividad.value == "Actividad2" %}selected{% endif %}>Actividad 2</option>
-            </select>
+            <label class="form-label"> <i class="bi bi-list-task me-2"></i>Acción </label>
+            <input type="text" class="form-control bg-light" value="{{ subactividad.actividad.nombre }}" readonly tabindex="-1" style="cursor: not-allowed" />
+            <!-- Campo oculto para mantener el valor -->
+            <input type="hidden" name="accion" value="{{ subactividad.actividad.actividad_id }}" />
+            <small class="text-muted d-block mt-1">Este campo no puede modificarse después de la creación</small>
           </div>
 
           <div class="mb-4">
@@ -119,12 +119,8 @@
           </div>
 
           <div class="d-flex gap-3 justify-content-center mt-5">
-            <button type="submit" class="btn btn-primary">
-              <i class="bi bi-check-circle me-2"></i>Actualizar Sub-Actividad
-            </button>
-            <a href="{% url 'subactividades:listar_subactividades' %}" class="btn btn-secondary">
-              <i class="bi bi-x-circle me-2"></i>Cancelar
-            </a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-2"></i>Actualizar Sub-Actividad</button>
+            <a href="{% url 'subactividades:listar_subactividades' %}" class="btn btn-secondary"> <i class="bi bi-x-circle me-2"></i>Cancelar </a>
           </div>
         </form>
       </div>

@@ -20,17 +20,14 @@ class SubActividadRepository(SubActividadRepositoryI):
     def obtener_sub_actividad_por_id(self, id):
         return SubActividad.objects.get(id=id)
 
-    def actualizar_sub_actividad(self, id, actividad, nombre, grado_aprobacion):
-        sub_actividad = self.obtener_sub_actividad_por_id(id)
-        sub_actividad.actividad = actividad
-        sub_actividad.nombre = nombre
-        sub_actividad.grado_aprobacion = grado_aprobacion
-        sub_actividad.save()
-        return sub_actividad
 
+    def actualizar_sub_actividad(self, id, **data):
+        return self.sub_actividades_model.objects.filter(sub_actividad_id=id).update(**data)
+    
     def eliminar_sub_actividad(self, id):
-        sub_actividad = self.obtener_sub_actividad_por_id(id)
-        sub_actividad.delete()
+        return self.sub_actividades_model.objects.filter(sub_actividad_id=id).delete()
 
     def get_by_filter(self, q_filters):
         return self.sub_actividades_model.objects.filter(q_filters)
+    
+

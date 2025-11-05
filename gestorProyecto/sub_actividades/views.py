@@ -62,22 +62,19 @@ def agregar_subactividad(request):
 @admin_required
 @login_required_simulado
 def editar_subactividad(request, id):
-    subactividad = get_object_or_404(SubActividad, id=id)
+    subactividad = get_object_or_404(SubActividad, sub_actividad_id=id)
     
     if request.method == 'POST':
         form = SubActividadForm(request.POST, instance=subactividad)
         if form.is_valid():
-            actividad = form.cleaned_data['actividad']
-            nombre = form.cleaned_data['nombre']
-            grado_aprobacion = form.cleaned_data['grado_aprobacion']
-            
             try:
-                subactividad_service.actualizar_sub_actividad(id, actividad, nombre, grado_aprobacion)
+                subactividad_service.actualizar_sub_actividad(id, form.cleaned_data)
                 messages.success(request, "La sub-actividad se ha actualizado correctamente.")
                 return redirect('subactividades:listar_subactividades')
             except Exception as e:
                 messages.error(request, f"No se pudo actualizar la sub-actividad. {str(e)}")
         else:
+            print(form.errors)
             messages.error(request, "No se pudo actualizar la sub-actividad. Revisa los datos ingresados.")
     else:
         form = SubActividadForm(instance=subactividad)
