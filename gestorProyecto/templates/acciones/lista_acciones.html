@@ -132,7 +132,7 @@
       <!-- Botón Añadir Acción -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-3">Listado de Acciones</h2>
-        {% if user.role_id == 10 %}
+        {% if user.rol == 1 %}
         <a href="/acciones/crear-accion/" class="btn btn-success" id="addActionBtn"><i class="bi bi-plus-lg"></i> Añadir Acción</a>
         {% endif %}
       </div>
@@ -185,7 +185,7 @@
               <th>Presupuesto Anual</th>
               <th>Presupuesto Reajustado</th>
               <th>Estado</th>
-              {% if user.role_id == 10 %}
+              {% if user.rol == 1 %}
               <th>Detalles / Acciones</th>
               {% else %}
               <th>Detalles</th>
@@ -197,17 +197,17 @@
             <tr class="align-middle">
               <td>{{ accion.dimension }}</td>
               <td>{{ accion.nombre }}</td>
-              <td>{{ accion.responsable }}</td>
+              <td>{{ accion.responsable.nombre }}</td>
               <td>${{ accion.presupuesto_anual }}</td>
               <td>{% if accion.presupuesto_reajustado %}${{ accion.presupuesto_reajustado }}{% else %}-{% endif %}</td>
               <td>
-                <span class="badge {% if accion.estado == 'Activo' %}bg-success{% else %}bg-secondary{% endif %}"> {{ accion.estado }} </span>
+                <span class="badge {% if accion.estado.nombre == 'Completado' %}bg-success{% else %}bg-secondary{% endif %}"> {{ accion.estado.nombre }} </span>
               </td>
               <td class="text-nowrap">
                 <button class="btn btn-sm btn-info toggle-detail" data-target="details{{ forloop.counter }}">
                   <i class="bi bi-chevron-down"></i>
                 </button>
-                {% if user.role_id == 10 %}
+                {% if user.rol == 1 %}
                 <a class="btn btn-sm btn-warning edit-action" href="/acciones/editar-accion/{{ accion.accion_id }}">Editar</a>
                 <button class="btn btn-sm btn-danger delete-action" data-accion-id="{{ accion.accion_id }}" data-accion-nombre="{{ accion.nombre }}">Eliminar</button>
                 {% endif %}
@@ -227,7 +227,7 @@
                   </div>
                   <hr />
 
-                  {% include "acciones/verificaciones.html" with verificaciones=verificaciones %}
+                  {% include "acciones/verificaciones.html" with verificaciones=accion.verificaciones.all accion_id=accion.accion_id %}
                 </div>
               </td>
             </tr>

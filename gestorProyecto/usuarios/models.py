@@ -15,3 +15,11 @@ class Usuarios(models.Model):
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=128)
     rol = models.ForeignKey(Roles, related_name='usuarios', on_delete=models.PROTECT, default=2)
+
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+    
+    def __str__(self):
+        return f"{self.nombre}"
+

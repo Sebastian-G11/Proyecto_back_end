@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nueva Actividad</title>
+    <title>Editar Actividad</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     <style>
@@ -41,13 +41,15 @@
         margin-bottom: 8px;
         font-size: 0.9rem;
       }
-      .form-control {
+      .form-control,
+      .form-select {
         border-radius: 10px;
         border: 2px solid #e9ecef;
-        padding: 12px 15px 12px 45px;
+        padding: 12px 15px;
         transition: all 0.3s ease;
       }
-      .form-control:focus {
+      .form-control:focus,
+      .form-select:focus {
         border-color: #adb5bd;
         box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.15);
       }
@@ -61,6 +63,9 @@
         transform: translateY(-50%);
         color: #6c757d;
         z-index: 10;
+      }
+      .icon-input .form-control {
+        padding-left: 45px;
       }
       .btn-primary {
         background: #6c757d;
@@ -90,35 +95,10 @@
         border-color: #adb5bd;
       }
       .invalid-feedback {
+        display: block !important;
         font-size: 0.85rem;
         margin-top: 5px;
-      }
-      .char-counter {
-        text-align: right;
-        font-size: 0.85rem;
-        margin-top: 5px;
-      }
-      .char-counter.warning {
-        color: #ffc107;
-      }
-      .char-counter.danger {
         color: #dc3545;
-      }
-      .info-badge {
-        background: #e7f3ff;
-        border-left: 4px solid #0d6efd;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 25px;
-      }
-      .info-badge i {
-        color: #0d6efd;
-        margin-right: 8px;
-      }
-      .info-badge p {
-        margin: 0;
-        color: #495057;
-        font-size: 0.9rem;
       }
     </style>
   </head>
@@ -126,68 +106,93 @@
     <div class="container">
       <div class="form-container">
         <div class="form-header">
-          <i class="bi bi-calendar-check" style="font-size: 3rem; color: #6c757d"></i>
+          <i class="bi bi-pencil-square" style="font-size: 3rem; color: #6c757d"></i>
           <h2>Editar Actividad</h2>
-          <p>Complete el formulario para editar la actividad</p>
+          <p>Modifique los campos que desee actualizar</p>
         </div>
 
         <!-- Mensajes flash -->
-        {% if messages %} {% for message in messages %}
+        {% if messages %} 
+        {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
           <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'danger' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
           {{ message }}
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        {% endfor %} {% endif %}
-
-        <!-- Información adicional -->
-        <div class="info-badge">
-          <i class="bi bi-info-circle-fill"></i>
-          <p><strong>Importante:</strong> El nombre de la actividad debe ser claro y descriptivo. Las fechas se registrarán automáticamente.</p>
-        </div>
+        {% endfor %} 
+        {% endif %}
 
         <form method="post" id="actividadForm">
           {% csrf_token %}
 
+          <!-- Acción relacionada (solo lectura) -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-list-task me-2"></i>Acción
+            </label>
+            <input 
+              type="text" 
+              class="form-control bg-light" 
+              value="{{ actividad.accion.nombre }}" 
+              readonly 
+              tabindex="-1" 
+              style="cursor: not-allowed" 
+            />
+            <!-- Campo oculto para mantener el valor -->
+            <input type="hidden" name="accion" value="{{ actividad.accion.accion_id }}" />
+            <small class="text-muted d-block mt-1">Este campo no puede modificarse después de la creación</small>
+          </div>
+
           <!-- Nombre de la Actividad -->
           <div class="mb-4">
             <label class="form-label">
-              <i class="bi bi-tag me-2"></i>{{ form.nombre.label }}
+              <i class="bi bi-tag me-2"></i>Nombre de la Actividad
               <span class="text-danger">*</span>
               <span class="badge bg-secondary ms-2">Máx. 40 caracteres</span>
             </label>
             <div class="icon-input">
               <i class="bi bi-pencil"></i>
-              {{ form.nombre }}
+              <input 
+                type="text" 
+                name="nombre" 
+                class="form-control {% if form.nombre.errors %}is-invalid{% endif %}"
+                placeholder="Ej: Capacitación de personal"
+                maxlength="40"
+                value="{{ form.nombre.value|default:'' }}"
+                required
+              />
             </div>
-
-            <!-- Contador de caracteres -->
-            <div class="d-flex justify-content-between mt-1">
-              {% if form.nombre.help_text %}
-              <small class="text-muted">{{ form.nombre.help_text }}</small>
-              {% else %}
-              <small class="text-muted">Ingrese un nombre descriptivo para la actividad</small>
-              {% endif %}
-              <small class="text-muted char-counter" id="nombreCounter">0/40</small>
-            </div>
-
+            <small class="text-muted d-block mt-1">Ingrese un nombre descriptivo para la actividad</small>
             {% if form.nombre.errors %}
-            <div class="invalid-feedback d-block">
+            <div class="invalid-feedback">
               {% for error in form.nombre.errors %}
-              <i class="bi bi-exclamation-circle me-1"></i>{{ error }} {% endfor %}
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+              {% endfor %}
             </div>
             {% endif %}
           </div>
 
-          <!-- Información de fechas (solo informativa) -->
-          <div class="alert alert-light border" role="alert">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-clock-history me-2" style="font-size: 1.5rem; color: #6c757d"></i>
-              <div>
-                <strong>Fechas automáticas:</strong>
-                <p class="mb-0 small text-muted">La fecha de creación y actualización se registrarán automáticamente al guardar.</p>
-              </div>
+          <!-- Estado -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-flag me-2"></i>Estado
+            </label>
+            <select name="estado" class="form-select {% if form.estado.errors %}is-invalid{% endif %}">
+              {% for estado in form.estado.field.queryset %}
+              <option value="{{ estado.estado_id }}" 
+                {% if form.estado.value == estado.estado_id or actividad.estado.estado_id == estado.estado_id %}selected{% endif %}>
+                {{ estado.nombre }}
+              </option>
+              {% endfor %}
+            </select>
+            <small class="text-muted d-block mt-1">Actualice el estado según el avance de la actividad</small>
+            {% if form.estado.errors %}
+            <div class="invalid-feedback">
+              {% for error in form.estado.errors %}
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+              {% endfor %}
             </div>
+            {% endif %}
           </div>
 
           <!-- Errores generales del formulario -->
@@ -204,8 +209,12 @@
 
           <!-- Botones -->
           <div class="d-flex gap-3 justify-content-center mt-4">
-            <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-2"></i>Guardar Actividad</button>
-            <a href="/actividades" class="btn btn-secondary"> <i class="bi bi-x-circle me-2"></i>Cancelar </a>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+            </button>
+            <a href="/actividades" class="btn btn-secondary"> 
+              <i class="bi bi-x-circle me-2"></i>Cancelar 
+            </a>
           </div>
         </form>
       </div>

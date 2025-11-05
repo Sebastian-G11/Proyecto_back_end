@@ -1,11 +1,30 @@
 from django import forms
 from actividades.models import Actividad, VerificacionActividad
+from acciones.models import Accion
+from acciones.models import Estados
 
 
 class ActividadForm(forms.ModelForm):
+    accion = forms.ModelChoiceField(
+        queryset=Accion.objects.select_related('dimension', 'responsable').all(),
+        empty_label="Seleccione una acción",
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Acción',
+        help_text='Seleccione la acción a la que pertenece esta actividad'
+    )
+    
+    estado = forms.ModelChoiceField(
+        queryset=Estados.objects.all(),
+        empty_label="Seleccione un estado",
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Estado',
+        help_text='Seleccione el estado actual de la actividad',
+        required=False
+    )
+    
     class Meta:
         model = Actividad
-        fields = ['nombre']
+        fields = ['accion', 'nombre', 'estado']
         
         widgets = {
             'nombre': forms.TextInput(attrs={
@@ -17,50 +36,42 @@ class ActividadForm(forms.ModelForm):
         
         labels = {
             'nombre': 'Nombre de la Actividad',
+            'estado': 'Estado',
         }
         
         help_texts = {
             'nombre': 'Máximo 40 caracteres',
+            'estado': 'Estado actual de la actividad',
         }
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not self.instance.pk:
+            self.fields.pop('estado', None)
+        
+        if self.instance and self.instance.pk:
+            self.fields.pop('accion', None)
+    
     def clean_nombre(self):
-        """Validar nombre de la actividad"""
         nombre = self.cleaned_data.get('nombre')
         
-        # Validar que no esté vacío
-        if not nombre or len(nombre.strip()) == 0:
+        if not nombre or not nombre.strip():
             raise forms.ValidationError("El nombre es requerido.")
         
-        # Validar longitud mínima
-        if len(nombre.strip()) < 3:
-            raise forms.ValidationError(
-                "El nombre debe tener al menos 3 caracteres."
-            )
+        nombre = nombre.strip()
         
-        # Validar que no sea solo números
-        if nombre.strip().isdigit():
-            raise forms.ValidationError(
-                "El nombre no puede ser solo números."
-            )
+        if len(nombre) < 3:
+            raise forms.ValidationError("El nombre debe tener al menos 3 caracteres.")
         
-        # Validar longitud máxima
+        if nombre.isdigit():
+            raise forms.ValidationError("El nombre no puede ser solo números.")
+        
         if len(nombre) > 40:
-            raise forms.ValidationError(
-                f"El nombre no puede exceder 40 caracteres. Actualmente tiene {len(nombre)}."
-            )
+            raise forms.ValidationError(f"El nombre excede el máximo de 40 caracteres.")
         
-        # Validar que no contenga caracteres especiales peligrosos
-        caracteres_prohibidos = ['<', '>', '{', '}', '|', '\\', '^', '`', ';']
-        for char in caracteres_prohibidos:
-            if char in nombre:
-                raise forms.ValidationError(
-                    f"El nombre contiene caracteres no permitidos: {char}"
-                )
-        
-        
-        
-        return nombre.strip()
-    
+        return nombre
+
 
 class VerificacionForm(forms.ModelForm):
     class Meta:
@@ -70,7 +81,7 @@ class VerificacionForm(forms.ModelForm):
         widgets = {
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Ej: Acta de reunión, Informe mensual',
+                'placeholder': 'Ej: Acta de reunión',
                 'maxlength': '40'
             }),
             'url': forms.URLInput(attrs={
@@ -86,100 +97,41 @@ class VerificacionForm(forms.ModelForm):
         
         help_texts = {
             'nombre': 'Máximo 40 caracteres',
-            'url': 'URL completa del documento o recurso',
+            'url': 'URL completa del documento',
         }
     
     def clean_nombre(self):
-        """Validar nombre del medio de verificación"""
         nombre = self.cleaned_data.get('nombre')
         
-        # Validar que no esté vacío
-        if not nombre or len(nombre.strip()) == 0:
+        if not nombre or not nombre.strip():
             raise forms.ValidationError("El nombre es requerido.")
         
-        # Validar longitud mínima
-        if len(nombre.strip()) < 3:
-            raise forms.ValidationError(
-                "El nombre debe tener al menos 3 caracteres."
-            )
+        nombre = nombre.strip()
         
-        # Validar que no sea solo números
-        if nombre.strip().isdigit():
-            raise forms.ValidationError(
-                "El nombre no puede ser solo números."
-            )
+        if len(nombre) < 3:
+            raise forms.ValidationError("Debe tener al menos 3 caracteres.")
         
-        # Validar longitud máxima
+        if nombre.isdigit():
+            raise forms.ValidationError("No puede ser solo números.")
+        
         if len(nombre) > 40:
-            raise forms.ValidationError(
-                f"El nombre no puede exceder 40 caracteres. Actualmente tiene {len(nombre)}."
-            )
+            raise forms.ValidationError("Excede el máximo de 40 caracteres.")
         
-        # Validar que no contenga caracteres especiales peligrosos
-        caracteres_prohibidos = ['<', '>', '{', '}', '|', '\\', '^', '`']
-        for char in caracteres_prohibidos:
-            if char in nombre:
-                raise forms.ValidationError(
-                    f"El nombre contiene caracteres no permitidos: {char}"
-                )
-        
-        return nombre.strip()
+        return nombre
     
     def clean_url(self):
-        """Validar URL del medio de verificación"""
         url = self.cleaned_data.get('url')
         
-        # Validar que no esté vacío
         if not url:
             raise forms.ValidationError("La URL es requerida.")
         
-        # Validar longitud mínima
-        if len(url) < 10:
-            raise forms.ValidationError(
-                "La URL debe tener al menos 10 caracteres."
-            )
-        
-        # Validar que comience con http:// o https://
         if not url.startswith(('http://', 'https://')):
-            raise forms.ValidationError(
-                "La URL debe comenzar con 'http://' o 'https://'"
-            )
+            raise forms.ValidationError("Debe comenzar con http:// o https://")
         
-        # Validar longitud máxima (200 caracteres es estándar para URLField)
         if len(url) > 200:
-            raise forms.ValidationError(
-                "La URL no puede exceder 200 caracteres."
-            )
+            raise forms.ValidationError("URL demasiado larga.")
         
-        # Validar que no contenga espacios
         if ' ' in url:
-            raise forms.ValidationError(
-                "La URL no puede contener espacios."
-            )
-        
-        # Validar formato básico de URL
-        import re
-        url_pattern = re.compile(
-            r'^https?://'  # http:// o https://
-            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # dominio
-            r'localhost|'  # localhost
-            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # o IP
-            r'(?::\d+)?'  # puerto opcional
-            r'(?:/?|[/?]\S+)$', re.IGNORECASE
-        )
-        
-        if not url_pattern.match(url):
-            raise forms.ValidationError(
-                "La URL no tiene un formato válido."
-            )
-        
-        # Validar dominios peligrosos o sospechosos (opcional)
-        dominios_bloqueados = ['malware.com', 'phishing.com', 'spam.com']
-        for dominio in dominios_bloqueados:
-            if dominio in url.lower():
-                raise forms.ValidationError(
-                    f"El dominio '{dominio}' está bloqueado por seguridad."
-                )
+            raise forms.ValidationError("No puede contener espacios.")
         
         return url
-    

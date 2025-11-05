@@ -117,6 +117,22 @@
         <form method="post" id="solicitudForm">
           {% csrf_token %}
 
+          <!-- Actividad asociada -->
+          <div class="mb-4">
+            <label class="form-label">
+              <i class="bi bi-list-task me-2"></i>{{ form.actividad.label }}
+              <span class="text-danger">*</span>
+            </label>
+            {{ form.actividad }} {% if form.actividad.help_text %}
+            <small class="text-muted d-block mt-1">{{ form.actividad.help_text }}</small>
+            {% endif %} {% if form.actividad.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in form.actividad.errors %}
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error }} {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
           <div class="mb-4">
             <label class="form-label"> <i class="bi bi-box-seam me-2"></i>{{ form.materiales_solicitados.label }} </label>
             <div class="icon-input">

@@ -1,25 +1,72 @@
 from django import forms
 from solicitud_materiales.models import SolicitudMaterial
+from actividades.models import Actividad  # ✅ Importa el modelo Actividad
 
 class FormSolicitudMaterial(forms.ModelForm):
+    actividad = forms.ModelChoiceField(
+        queryset=Actividad.objects.select_related('accion').all(),
+        empty_label="Seleccione una actividad",
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Actividad Asociada',
+        help_text='Seleccione la actividad a la que pertenece esta solicitud'
+    )
+    
     class Meta:
         model = SolicitudMaterial
-        fields = ["materiales_solicitados", "numero_orden", "valor_esperado", "codigo_factura", "valor_final"]
+        fields = ["actividad", "materiales_solicitados", "numero_orden", "valor_esperado", "codigo_factura", "valor_final"]  
 
         widgets = {
-            'materiales_solicitados': forms.TextInput(attrs={'class': 'form-control'}),
-            'numero_orden': forms.TextInput(attrs={'class': 'form-control'}),
-            'valor_esperado': forms.NumberInput(attrs={'class': 'form-control'}),
-            'codigo_factura': forms.TextInput(attrs={'class': 'form-control'}),
-            'valor_final': forms.NumberInput(attrs={'class': 'form-control'}),
+            'materiales_solicitados': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Cemento, arena, ladrillos...',
+                'maxlength': '50'
+            }),
+            'numero_orden': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: ORD-2024-001',
+                'maxlength': '15'
+            }),
+            'valor_esperado': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '0',
+                'min': '0',
+                'step': '0.01'
+            }),
+            'codigo_factura': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: FACT-2024-001',
+                'maxlength': '25'
+            }),
+            'valor_final': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '0',
+                'min': '0',
+                'step': '0.01'
+            }),
         }
 
         labels = {
-            'materiales_solicitados': 'Materiales',
+            'materiales_solicitados': 'Materiales Solicitados',
             'numero_orden': 'Número de Orden',
             'valor_esperado': 'Valor Esperado',
             'codigo_factura': 'Código de Factura',
+            'valor_final': 'Valor Final',
         }
+
+        help_texts = {
+            'materiales_solicitados': 'Máximo 50 caracteres',
+            'numero_orden': 'Código único de la orden (3-15 caracteres)',
+            'valor_esperado': 'Valor estimado de la solicitud',
+            'codigo_factura': 'Código único de la factura (3-25 caracteres)',
+            'valor_final': 'Valor real de la solicitud',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        if self.instance and self.instance.pk:
+            self.fields.pop('actividad', None)
+        
 
     def clean_materiales_solicitados(self):
         materiales = self.cleaned_data.get('materiales_solicitados')
@@ -141,9 +188,23 @@ class FormSolicitudMaterial(forms.ModelForm):
         
         return codigo.upper()
     
-
+    def clean_valor_final(self):
+        """Validar valor final"""
+        valor = self.cleaned_data.get('valor_final')
         
-    
-
-    
-
+        # El valor final puede ser None o 0 inicialmente
+        if valor is None:
+            return valor
+        
+        # Si tiene valor, validar que sea positivo
+        if valor < 0:
+            raise forms.ValidationError("El valor final no puede ser negativo.")
+        
+        # Validar valor máximo
+        VALOR_MAXIMO = 10000000
+        if valor > VALOR_MAXIMO:
+            raise forms.ValidationError(
+                f"El valor final no puede exceder ${VALOR_MAXIMO:,.0f}."
+            )
+        
+        return valor

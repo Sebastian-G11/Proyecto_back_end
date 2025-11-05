@@ -1,23 +1,30 @@
 from .repositiorio_interface import ActividadesRepositoryI, VerificacionesRepositoryI
 from ..models import Actividad, VerificacionActividad
 
+
+
 class ActividadesRepository(ActividadesRepositoryI):
     actividades_model = Actividad
 
     def get_actividades(self):
-        return self.actividades_model.objects.all()
+        return self.actividades_model.objects.select_related(
+            'accion'
+        ).all()
 
-    def create_actividad(self, data):
+    def create_actividad(self, **data):
         return self.actividades_model.objects.create(**data)
 
-    def update_actividad(self, id, data) -> bool:
+    def update_actividad(self, id, **data) -> bool:
         return self.actividades_model.objects.filter(actividad_id=id).update(**data)
 
     def delete_actividad(self, id) -> bool:
         return self.actividades_model.objects.filter(actividad_id=id).delete()
     
     def get_by_filter(self, q_filters):
-        return self.actividades_model.objects.filter(q_filters)
+        return self.actividades_model.objects.select_related(
+            'accion'
+        ).filter(**q_filters).all()
+
 
 class VerificacionesRepository(VerificacionesRepositoryI):
     verificaciones_model = VerificacionActividad

@@ -1,21 +1,48 @@
 from django import forms
 from .models import SubActividad
+from actividades.models import Actividad  
 import re
 
 class SubActividadForm(forms.ModelForm):
+    actividad = forms.ModelChoiceField(
+        queryset=Actividad.objects.all(),
+        empty_label="Seleccione una actividad",
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Actividad Asociada',
+        help_text='Seleccione la actividad a la que pertenece esta subactividad'
+    )
+    
     class Meta:
         model = SubActividad
         fields = ['actividad', 'nombre', 'grado_aprobacion']
         widgets = {
-            'actividad': forms.Select(attrs={'class': 'form-select'}),
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el nombre de la subactividad'}),
-            'grado_aprobacion': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0 - 100'}),
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Ingrese el nombre de la subactividad',
+                'maxlength': '80'
+            }),
+            'grado_aprobacion': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'placeholder': '0 - 100',
+                'min': '0',
+                'max': '100',
+                'step': '1'
+            }),
         }
         labels = {
-            'actividad': 'Actividad Asociada',
             'nombre': 'Nombre de la Subactividad',
             'grado_aprobacion': 'Grado de Aprobación (%)',
         }
+        help_texts = {
+            'nombre': 'Máximo 80 caracteres',
+            'grado_aprobacion': 'Valor entre 0 y 100',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance and self.instance.pk:
+            self.fields.pop('actividad', None)
 
 
     def clean_nombre(self):

@@ -7,7 +7,7 @@ urlpatterns = [
     path('crear-accion/', display_create_accion, name='crear_accion'),
     path('editar-accion/<int:id>/', display_edit_accion, name='editar_accion'),
     path('eliminar-accion/<int:id>/', delete_accion, name='eliminar_accion'),
-    path('crear-verificacion/', display_create_verificacion, name='crear_verificacion'),
+    path('crear-verificacion/<int:id>/', display_create_verificacion, name='crear_verificacion'),
     path('editar-verificacion/<int:id>/', display_edit_verificacion, name='editar_verificacion'),
     path('eliminar-verificacion/<int:id>/', eliminar_verificacion, name='eliminar_verificacion'),
 ]
