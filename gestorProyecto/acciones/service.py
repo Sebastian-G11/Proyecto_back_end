@@ -24,6 +24,12 @@ class AccionesService:
     def get_by_filter(self, search_query):
         q_filter = Q(nombre__icontains=search_query) | Q(descripcion__icontains=search_query)
         return self.repository.get_by_filter(q_filter)
+    
+    def get_acciones_agrupadas_por_estado(self):
+        return self.repository.get_acciones_agrupadas_por_estado()
+    
+    def get_acciones_por_mes(self):
+        return self.repository.get_acciones_por_mes()
 
 
 class VerificacionService:

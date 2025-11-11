@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard General</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+        min-height: 100vh;
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .main-wrapper {
+        margin-left: 250px;
+        padding: 40px 30px;
+        transition: margin-left 0.3s ease;
+      }
+
+      .sidebar.collapsed ~ .main-wrapper {
+        margin-left: 80px;
+      }
+
+      .dashboard-container {
+        background: transparent;
+        padding: 0;
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .chart-card {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+
+      .chart-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .btn-action {
+        background: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+
+      .btn-action:hover {
+        background: #495057;
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .btn-action-secondary {
+        background: white;
+        color: #6c757d;
+        border: 2px solid #6c757d;
+      }
+
+      .btn-action-secondary:hover {
+        background: #f8f9fa;
+        color: #495057;
+        border-color: #495057;
+      }
+
+      .stats-card {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+        box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
+      }
+
+      .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+      }
+
+      .stats-card h3 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .stats-card p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .chart-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e9ecef;
+      }
+
+      .timestamp {
+        background: #f8f9fa;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border: 1px solid #e9ecef;
+      }
+
+      .equal-height-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+
+      .equal-height-row > [class*="col-"] {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .equal-height-row .chart-card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0;
+      }
+
+      .mini-kpis-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        flex: 1;
+      }
+
+      .mini-kpi-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid #dee2e6;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .mini-kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .mini-kpi-icon {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+      }
+
+      .mini-kpi-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #495057;
+        margin-bottom: 4px;
+      }
+
+      .mini-kpi-label {
+        font-size: 0.7rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+      }
+
+      @media (max-width: 768px) {
+        .main-wrapper {
+          margin-left: 0;
+          padding: 10px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .btn-action {
+          width: 100%;
+        }
+
+        .stats-card h3 {
+          font-size: 2rem;
+        }
+
+        .chart-title {
+          font-size: 1rem;
+        }
+
+        .mini-kpis-grid {
+          gap: 8px;
+        }
+
+        .mini-kpi-value {
+          font-size: 1.2rem;
+        }
+
+        .mini-kpi-icon {
+          font-size: 1.2rem;
+        }
+
+        .equal-height-row {
+          display: block;
+        }
+
+        .equal-height-row .chart-card {
+          margin-bottom: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'ui/navbar.html' %}
+
+    <div class="main-wrapper">
+      <div class="container-fluid">
+        <div class="dashboard-container">
+          <!-- Botones de acción -->
+          <div class="action-buttons">
+            <button onclick="location.reload()" class="btn btn-action"><i class="bi bi-arrow-clockwise"></i> Actualizar</button>
+            <a href="/dimensiones" class="btn btn-action btn-action-secondary"> <i class="bi bi-arrow-left"></i> Volver </a>
+          </div>
+
+          <!-- Fila 1: Presupuesto y KPIs lado a lado CON ALTURA UNIFORME -->
+          <div class="row equal-height-row">
+            <!-- Columna Izquierda: Gráfico de Presupuesto -->
+            <div class="col-lg-8 col-md-7 col-sm-12">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="bi bi-cash-stack text-primary"></i>
+                  <span>Presupuesto por Dimensión</span>
+                </div>
+                {{ grafico_presupuestos|safe }}
+              </div>
+            </div>
+
+            <!-- Columna Derecha: Grid 2x2 de KPIs -->
+            <div class="col-lg-4 col-md-5 col-sm-12">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="bi bi-speedometer2 text-info"></i>
+                  <span>Indicadores Clave</span>
+                </div>
+                <div class="mini-kpis-grid">
+                  <!-- KPI 1: Total Dimensiones -->
+                  <div class="mini-kpi-card">
+                    <div class="mini-kpi-icon">
+                      <i class="bi bi-layers text-primary"></i>
+                    </div>
+                    <div class="mini-kpi-value">{{ total_dimensiones }}</div>
+                    <div class="mini-kpi-label">Dimensiones</div>
+                  </div>
+
+                  <!-- KPI 2: Total Acciones -->
+                  <div class="mini-kpi-card">
+                    <div class="mini-kpi-icon">
+                      <i class="bi bi-list-check text-success"></i>
+                    </div>
+                    <div class="mini-kpi-value">{{ total_acciones }}</div>
+                    <div class="mini-kpi-label">Acciones</div>
+                  </div>
+
+                  <!-- KPI 3: Total Actividades -->
+                  <div class="mini-kpi-card">
+                    <div class="mini-kpi-icon">
+                      <i class="bi bi-calendar-check text-warning"></i>
+                    </div>
+                    <div class="mini-kpi-value">{{ total_actividades }}</div>
+                    <div class="mini-kpi-label">Actividades</div>
+                  </div>
+
+                  <!-- KPI 4: Total Solicitudes -->
+                  <div class="mini-kpi-card">
+                    <div class="mini-kpi-icon">
+                      <i class="bi bi-file-earmark-text text-danger"></i>
+                    </div>
+                    <div class="mini-kpi-value">{{ total_solicitudes }}</div>
+                    <div class="mini-kpi-label">Solicitudes</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila 2: Acciones por Estado y Evolución CON ESPACIO EN MEDIO -->
+          <div class="row">
+            <div class="col-lg-5 col-md-6 col-sm-12">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="bi bi-pie-chart text-success"></i>
+                  <span>Acciones por Estado</span>
+                </div>
+                {{ grafico_acciones_estado|safe }}
+              </div>
+            </div>
+
+            <div class="col-lg-2 col-md-0 d-none d-lg-block"></div>
+
+            <div class="col-lg-5 col-md-6 col-sm-12">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="bi bi-graph-up text-info"></i>
+                  <span>Acciones creadas por mes</span>
+                </div>
+                {{ grafico_evolucion_acciones|safe }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila 3: Progreso de Actividades (ANCHO COMPLETO) -->
+          <div class="row">
+            <div class="col-12">
+              <div class="chart-card">
+                <div class="chart-title">
+                  <i class="bi bi-bar-chart text-warning"></i>
+                  <span>Progreso de Actividades por Dimensión</span>
+                </div>
+                {{ grafico_progreso_actividades|safe }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer con timestamp -->
+          <div class="timestamp">
+            <i class="bi bi-clock"></i>
+            Última actualización: {% now "d/m/Y H:i" %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

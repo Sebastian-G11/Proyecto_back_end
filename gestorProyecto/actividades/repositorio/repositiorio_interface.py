@@ -21,6 +21,10 @@ class ActividadesRepositoryI(ABC):
     def get_by_filter(self, q_filters):
         pass
 
+    @abstractmethod
+    def get_actividades_agrupadas_por_accion(self):
+        pass
+
 class VerificacionesRepositoryI(ABC):
     @abstractmethod
     def get_verificaciones(self):

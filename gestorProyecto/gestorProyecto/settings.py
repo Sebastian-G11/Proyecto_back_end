@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'dimensiones',
     'solicitud_materiales',
     'sub_actividades',
-    'usuarios'
+    'usuarios',
+    'dashboard'
 ]
 
 MIDDLEWARE = [
@@ -88,6 +89,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gestorProyecto.wsgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -145,3 +151,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'

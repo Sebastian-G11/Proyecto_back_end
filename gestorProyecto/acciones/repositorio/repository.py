@@ -1,8 +1,11 @@
 from .repository_interface import AccionesRepositoryI, VerificacionRepositoryI
-from ..models import Accion, VerificacionAccion
+from ..models import Accion, VerificacionAccion, Estados
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
 
 class AccionesRepository(AccionesRepositoryI):
     acciones_model = Accion
+    estados_model = Estados
 
     def get_acciones(self):
          return self.acciones_model.objects.select_related(
@@ -30,6 +33,14 @@ class AccionesRepository(AccionesRepositoryI):
         ).prefetch_related(
             'verificaciones'  
         ).all().filter(q_filter)
+    
+    def get_acciones_agrupadas_por_estado(self):
+        return self.estados_model.objects.annotate(
+            total_acciones = Count('acciones')
+        ).values('nombre', 'total_acciones')
+    
+    def get_acciones_por_mes(self):
+        return self.acciones_model.objects.annotate(mes=TruncMonth('fecha_creacion')).values('mes').annotate(total=Count('accion_id')).order_by('mes')
 
 class VerificacionRepository(VerificacionRepositoryI):
     verificaciones_model = VerificacionAccion

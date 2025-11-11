@@ -21,6 +21,14 @@ class AccionesRepositoryI(ABC):
     def get_by_filter(self, q_filters):
         pass
 
+    @abstractmethod
+    def get_acciones_agrupadas_por_estado(self):
+        pass
+
+    @abstractmethod
+    def get_acciones_por_mes(self):
+        pass
+
 
 class VerificacionRepositoryI(ABC):
     @abstractmethod
