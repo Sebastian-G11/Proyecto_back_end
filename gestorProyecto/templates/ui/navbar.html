@@ -191,6 +191,15 @@
     <!-- Navigation Menu -->
     <div class="sidebar-menu">
       <nav class="nav flex-column">
+
+        {% if user.rol == 1 %}
+        <div class="menu-section">Dashboard</div>
+        <a href="/dashboard" class="nav-link">
+          <i class="bi bi-graph-up"></i>
+          Panel
+        </a>
+
+        {% endif %}
         <!-- Sección de Gestión -->
         <div class="menu-section">Gestión</div>
         <a class="nav-link" href="/usuarios">

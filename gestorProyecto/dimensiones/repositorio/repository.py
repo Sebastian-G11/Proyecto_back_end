@@ -1,5 +1,6 @@
 from .repository_interface import DimensionesRepositoryI
 from ..models import Dimensiones
+from django.db.models import Sum
 
 class DimensionesRepository(DimensionesRepositoryI):
     dimensiones_model = Dimensiones
@@ -35,3 +36,9 @@ class DimensionesRepository(DimensionesRepositoryI):
 
     def get_by_filter(self, q_filters):
         return self.dimensiones_model.objects.filter(q_filters)
+    
+    def get_suma_presupuestos(self):
+        return self.dimensiones_model.objects.annotate(
+            total_anual=Sum('acciones__presupuesto_anual'),
+            total_reajustado=Sum('acciones__presupuesto_reajustado')
+        ).values('nombre', 'total_anual', 'total_reajustado')

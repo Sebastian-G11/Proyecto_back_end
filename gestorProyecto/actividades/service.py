@@ -27,6 +27,9 @@ class ActividadesService:
         q_filters = Q(nombre__icontains=search_query) | Q()
         return self.repository.get_by_filter(q_filters)
     
+    def get_actividades_agrupadas_por_accion(self):
+        return self.repository.get_actividades_agrupadas_por_accion()
+    
 class VerificacionesService:
     def __init__(self, repository: VerificacionesRepositoryI):
         self.repository = repository

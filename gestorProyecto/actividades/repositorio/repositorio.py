@@ -1,6 +1,6 @@
 from .repositiorio_interface import ActividadesRepositoryI, VerificacionesRepositoryI
 from ..models import Actividad, VerificacionActividad
-
+from django.db.models import Count
 
 
 class ActividadesRepository(ActividadesRepositoryI):
@@ -24,6 +24,20 @@ class ActividadesRepository(ActividadesRepositoryI):
         return self.actividades_model.objects.select_related(
             'accion'
         ).filter(**q_filters).all()
+    
+    def get_actividades_agrupadas_por_accion(self):
+        return self.actividades_model.objects.select_related(
+            'estado',
+            'accion',
+            'accion__dimension'
+        ).values(
+            'accion__accion_id',
+            'accion__nombre',
+            'accion__dimension__nombre',
+            'estado__nombre'
+        ).annotate(
+            total_actividades=Count('actividad_id')
+        ).order_by('accion__accion_id')
 
 
 class VerificacionesRepository(VerificacionesRepositoryI):

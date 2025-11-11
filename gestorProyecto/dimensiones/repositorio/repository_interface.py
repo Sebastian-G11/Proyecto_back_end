@@ -20,3 +20,7 @@ class DimensionesRepositoryI(ABC):
     @abstractmethod
     def get_by_filter(self, q_filters):
         pass
+
+    @abstractmethod
+    def get_suma_presupuestos(self):
+        pass
