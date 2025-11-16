@@ -8,7 +8,7 @@ class SubActividadAdmin(admin.ModelAdmin):
     form = SubActividadForm  
 
 
-    list_display = ('nombre', 'grado_aprobacion', 'fecha_creacion','fecha_actualizacion')
+    list_display = ('nombre','actividad', 'grado_aprobacion', 'fecha_creacion','fecha_actualizacion')
     list_filter = ('actividad',)
     search_fields = ('nombre', 'actividad__nombre')
     ordering = ('nombre',)
